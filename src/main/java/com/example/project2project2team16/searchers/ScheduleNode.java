@@ -18,8 +18,12 @@ public class ScheduleNode {
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
         this.processorCount = processorCount;
-        processorEndTimes = new ArrayList<>(processorCount);
         visited = new HashMap<>();
+        processorEndTimes = new ArrayList<>();
+
+        for (int i = 0; i < processorCount; i++) {
+            processorEndTimes.add(0);
+        }
     }
 
     public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor) {
