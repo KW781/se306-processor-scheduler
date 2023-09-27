@@ -55,4 +55,28 @@ public class ScheduleNode {
 
         return result;
     }
+
+    private void AddTask(Node newTask, Integer processor) {
+        Iterable<Edge> parents = newTask.getEachEnteringEdge();
+
+        Integer earliestStartTime = processorEndTimes.get(processor);
+
+        for (Edge parent : parents) {
+            Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
+
+            if (visited.get(parent.getSourceNode().getId()).getKey() != processor) {
+                parentEndTime += parent.getAttribute("Weight", Integer.class);
+            }
+
+            earliestStartTime = Math.max(earliestStartTime, parentEndTime);
+        }
+
+        Integer endTime = earliestStartTime + newTask.getAttribute("Weight", Integer.class);
+
+        visited.put(newTask.getId(), new Pair<>(processor, endTime));
+        processorEndTimes.set(processor, endTime);
+        availableTasks.remove(newTask);
+
+        AddNewTasks(newTask);
+    }
 }
