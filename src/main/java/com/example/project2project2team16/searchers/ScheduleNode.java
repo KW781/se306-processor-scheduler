@@ -65,13 +65,13 @@ public class ScheduleNode {
             Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
 
             if (visited.get(parent.getSourceNode().getId()).getKey() != processor) {
-                parentEndTime += parent.getAttribute("Weight", Integer.class);
+                parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
             }
 
             earliestStartTime = Math.max(earliestStartTime, parentEndTime);
         }
 
-        Integer endTime = earliestStartTime + newTask.getAttribute("Weight", Integer.class);
+        Integer endTime = earliestStartTime + newTask.getAttribute("Weight", Double.class).intValue();
 
         visited.put(newTask.getId(), new Pair<>(processor, endTime));
         processorEndTimes.set(processor, endTime);
