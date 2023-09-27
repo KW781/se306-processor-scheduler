@@ -14,11 +14,13 @@ public class SchedulingProblem {
     ScheduleNode startingNode;
     Integer taskCount;
 
-    public SchedulingProblem(Graph taskGraph) {
+    public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
         this.taskCount = taskGraph.getNodeCount();
 
-        GenerateStartNodes();
+        Set<Node> startingTasks = GenerateStartingTasks();
+
+        startingNode = new ScheduleNode(processorCount, startingTasks);
     }
 
     public ScheduleNode GetStartNode() {
@@ -38,7 +40,7 @@ public class SchedulingProblem {
         return 0;
     }
 
-    private void GenerateStartNodes() {
+    private Set<Node> GenerateStartingTasks() {
         Set<Node> startingTasks = new HashSet<>();
 
         for (Node taskNode : taskGraph) {
@@ -46,6 +48,8 @@ public class SchedulingProblem {
                 startingTasks.add(taskNode);
             }
         }
+
+        return startingTasks;
     }
 
 }
