@@ -38,4 +38,14 @@ public class SchedulingProblem {
         return 0;
     }
 
+    private void GenerateStartNodes() {
+        Set<Node> startingTasks = new HashSet<>();
+
+        for (Node taskNode : taskGraph) {
+            if (taskNode.getInDegree() == 0) {
+                startingTasks.add(taskNode);
+            }
+        }
+    }
+
 }
