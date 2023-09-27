@@ -1,0 +1,15 @@
+digraph G {
+	0	 [Weight=5.0,Start=5,Processor=0]
+	1	 [Weight=6.0,Start=11,Processor=0]
+	2	 [Weight=5.0,Start=21,Processor=1]
+	3	 [Weight=6.0,Start=28,Processor=0]
+	4	 [Weight=4.0,Start=22,Processor=0]
+	5	 [Weight=7.0,Start=28,Processor=1]
+	6	 [Weight=7.0,Start=18,Processor=0]
+	0 -> 1	 [Weight=15.0]
+	0 -> 2	 [Weight=11.0]
+	0 -> 3	 [Weight=11.0]
+	1 -> 4	 [Weight=19.0]
+	1 -> 5	 [Weight=4.0]
+	1 -> 6	 [Weight=21.0]
+}
