@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="828.0" prefWidth="867.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project2project2team16.MainVisualisationController">
+   <stylesheets>
+      <URL value="@../css/main-visualisation.css" />
+      <URL value="@../css/main-visualisation.css" />
+   </stylesheets>
+   <children>
+      <VBox alignment="CENTER" prefHeight="74.0" prefWidth="867.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="74.0" prefWidth="867.0" text="OVERVIEW" textFill="WHITE">
+               <font>
+                  <Font size="33.0" />
+               </font>
+            </Label>
+         </children></VBox>
+   </children>
+</Pane>
