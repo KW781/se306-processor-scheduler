@@ -2,6 +2,7 @@ package com.example.project2project2team16.searchers;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Stack;
 
 /*
@@ -47,8 +48,12 @@ public class DFSSearcher {
         return frontier.isEmpty();
     }
 
-    private void AddToFrontier(Collection<ScheduleNode> newNodes) {
-        frontier.addAll(newNodes);
+    private void AddToFrontier(List<ScheduleNode> newNodes) {
+        for (int i = newNodes.size() - 1; i >= 0; i--) {
+            if (optimal == null || newNodes.get(i).GetValue() < currentOptimalTime) {
+                frontier.add(newNodes.get(i));
+            }
+        }
     }
 
     private void UpdateOptimal(ScheduleNode newSolution) {
