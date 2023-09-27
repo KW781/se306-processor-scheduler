@@ -1,18 +1,28 @@
 package com.example.project2project2team16.searchers;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SchedulingProblem {
-    List<ScheduleNode> startingNodes;
+
+    Graph taskGraph;
+    ScheduleNode startingNode;
     Integer taskCount;
 
-    public SchedulingProblem(List<TaskNode> startingTasks, Integer taskNumber) {
-        GenerateStartingNodes(startingTasks);
-        this.taskCount = taskNumber;
+    public SchedulingProblem(Graph taskGraph) {
+        this.taskGraph = taskGraph;
+        this.taskCount = taskGraph.getNodeCount();
+
+        GenerateStartNodes();
     }
 
-    public List<ScheduleNode> GetStartNodes() {
-        return startingNodes;
+    public ScheduleNode GetStartNode() {
+        return startingNode;
     }
 
     public boolean IsGoal(ScheduleNode node) {
