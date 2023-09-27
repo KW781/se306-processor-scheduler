@@ -9,7 +9,6 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="828.0" prefWidth="867.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
    <stylesheets>
       <URL value="@../css/main-visualisation.css" />
-      <URL value="@../css/main-visualisation.css" />
    </stylesheets>
    <children>
       <VBox alignment="CENTER" prefHeight="74.0" prefWidth="867.0">
