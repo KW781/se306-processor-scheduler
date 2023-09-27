@@ -1,6 +1,7 @@
 package searchertests;
 
 import com.example.project2project2team16.model.DotFileParser;
+import com.example.project2project2team16.searchers.AStarSearcher;
 import com.example.project2project2team16.searchers.DFSSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import org.graphstream.graph.Graph;
@@ -18,46 +19,70 @@ public class DFSSearcherTests {
     }
 
     @Test
-    public void Nodes7Test() {
+    public void Nodes7Processor2Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_7_OutTree.dot");
 
         assertEquals(28, RunSearch(taskGraph,2));
+    }
+
+    @Test
+    public void Nodes7Processor4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_7_OutTree.dot");
+
         assertEquals(22, RunSearch(taskGraph,4));
     }
 
     @Test
-    public void Nodes8Test() {
+    public void Nodes8Processor2Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_8_Random.dot");
 
         assertEquals(581, RunSearch(taskGraph,2));
+    }
+
+    @Test
+    public void Nodes8Processor4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_8_Random.dot");
+
         assertEquals(581, RunSearch(taskGraph,4));
     }
 
     @Test
-    public void Nodes9Test() {
+    public void Nodes9Processor2Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_9_SeriesParallel.dot");
 
         assertEquals(55, RunSearch(taskGraph,2));
+    }
+
+    @Test
+    public void Nodes9Processor4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_9_SeriesParallel.dot");
+
         assertEquals(55, RunSearch(taskGraph,4));
     }
 
     @Test
-    public void Nodes10Test() {
+    public void Nodes10Processor2Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_10_Random.dot");
 
         assertEquals(50, RunSearch(taskGraph,2));
+    }
+
+    @Test
+    public void Nodes10Processor4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_10_Random.dot");
+
         assertEquals(50, RunSearch(taskGraph,4));
     }
 
     @Test
-    public void Nodes11TestProcessor2() {
+    public void Nodes11Processor2Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
 
         assertEquals(350, RunSearch(taskGraph,2));
     }
 
     @Test
-    public void Nodes11TestProcessor4() {
+    public void Nodes11Processor4Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
 
         assertEquals(227, RunSearch(taskGraph,4));
