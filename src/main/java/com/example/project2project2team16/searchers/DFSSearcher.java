@@ -1,5 +1,6 @@
 package com.example.project2project2team16.searchers;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Stack;
 
@@ -13,10 +14,11 @@ public class DFSSearcher {
     Stack<ScheduleNode> frontier;
     ScheduleNode optimal = null;
     Integer currentOptimalTime;
+
     public DFSSearcher(SchedulingProblem problem) {
         this.problem = problem;
         InitialiseFrontier();
-        AddToFrontier(problem.GetStartNodes());
+        AddToFrontier(Arrays.asList(problem.GetStartNode()));
     }
 
     //Exhaustive search
