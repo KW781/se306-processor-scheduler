@@ -79,4 +79,24 @@ public class ScheduleNode {
 
         AddNewTasks(newTask);
     }
+
+    private void AddNewTasks(Node newTask) {
+        Iterable<Edge> children = newTask.getEachLeavingEdge();
+
+        for (Edge child : children) {
+            boolean prereqsMet = true;
+            Iterable<Edge> dependencies = child.getTargetNode().getEachEnteringEdge();
+
+            for (Edge dependency : dependencies) {
+                if (!visited.containsKey(dependency.getSourceNode().getId())) {
+                    prereqsMet = false;
+                    break;
+                }
+            }
+
+            if (prereqsMet) {
+                availableTasks.add(child.getTargetNode());
+            }
+        }
+    }
 }
