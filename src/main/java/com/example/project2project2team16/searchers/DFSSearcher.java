@@ -25,7 +25,8 @@ public class DFSSearcher {
     public ScheduleNode Search() {
 
         while (!IsFrontierEmpty()) {
-            ScheduleNode nextNode = frontier.pop();
+            ScheduleNode nextNode = frontier.peek();
+            frontier.pop();
 
             if (problem.IsGoal(nextNode)) {
                 UpdateOptimal(nextNode);
