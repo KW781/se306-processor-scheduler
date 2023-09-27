@@ -30,6 +30,7 @@ public class ScheduleNode {
         this.visited = new HashMap<>(copy.visited);
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
+        this.processorCount = copy.processorCount;
 
         AddTask(newTask, processor);
     }
@@ -69,13 +70,13 @@ public class ScheduleNode {
             Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
 
             if (visited.get(parent.getSourceNode().getId()).getKey() != processor) {
-                parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
+                parentEndTime += parent.getAttribute("weight", Double.class).intValue();
             }
 
             earliestStartTime = Math.max(earliestStartTime, parentEndTime);
         }
 
-        Integer endTime = earliestStartTime + newTask.getAttribute("Weight", Double.class).intValue();
+        Integer endTime = earliestStartTime + newTask.getAttribute("weight", Double.class).intValue();
 
         visited.put(newTask.getId(), new Pair<>(processor, endTime));
         processorEndTimes.set(processor, endTime);
