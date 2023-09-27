@@ -6,4 +6,6 @@ module com.example.project2project2team16 {
 
     opens com.example.project2project2team16 to javafx.fxml;
     exports com.example.project2project2team16;
+    exports com.example.project2project2team16.controllers;
+    opens com.example.project2project2team16.controllers to javafx.fxml;
 }
