@@ -2,8 +2,7 @@ package com.example.project2project2team16.utils;
 
 import com.example.project2project2team16.exceptions.InvalidArgsException;
 
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
+import java.io.File;
 
 public class ArgsParser {
     public static AppConfig parseArgs(String[] args) {
@@ -62,9 +61,8 @@ public class ArgsParser {
         }
 
         // test that the input file path provided is a valid one
-        try {
-            Paths.get(inputFilePath);
-        } catch (InvalidPathException | NullPointerException ex) {
+        File testFile = new File(inputFilePath);
+        if (!testFile.exists()) {
             System.err.println("System could not find the input file provided. Please provide a valid file path/name.");
             throw new InvalidArgsException();
         }
