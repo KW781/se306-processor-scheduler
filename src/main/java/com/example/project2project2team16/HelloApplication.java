@@ -1,6 +1,9 @@
 package com.example.project2project2team16;
 
-import com.example.project2project2team16.model.DotFileParser;
+import com.example.project2project2team16.exceptions.InvalidArgsException;
+import com.example.project2project2team16.utils.AppConfig;
+import com.example.project2project2team16.utils.ArgsParser;
+import com.example.project2project2team16.utils.DotFileParser;
 import com.example.project2project2team16.searchers.DFSSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import javafx.application.Application;
@@ -22,56 +25,23 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
-
-        String inputFilePath = null;
-        int numProcessors = 1;
+        AppConfig appConfig = null;
         try {
-            inputFilePath = args[0];
-            numProcessors = Integer.parseInt(args[1]);
-        } catch (Exception e) {
-            System.err.println("Invalid arguments. Please provide a valid input file and number of processors.");
+            appConfig = ArgsParser.parseArgs(args);
+        } catch (InvalidArgsException e) {
             System.exit(1);
         }
 
-        int numCores = 1; // Default number of cores
-
-        boolean visualize = false;
-        String outputFileName = "INPUT-output.dot"; // Default output file name
-
-        // Parse command-line arguments
-        for (int i = 2; i < args.length; i++) {
-            if (args[i].equals("-p") && i + 1 < args.length) {
-                try {
-                    numCores = Integer.parseInt(args[i + 1]);
-                    i++; // Skip the next argument since it's been used
-                } catch (NumberFormatException e) {
-                    System.err.println("Invalid value for -p. Please provide an integer.");
-                    System.exit(1);
-                }
-            } else if (args[i].equals("-v")) {
-                visualize = true;
-            } else if (args[i].equals("-o") && i + 1 < args.length) {
-                outputFileName = args[i + 1];
-                i++; // Skip the next argument since it's been used
-            }
-        }
-
-        // Check if the input file exists
-        if (inputFilePath == null) {
-            System.err.println("Input file not provided. Please specify a valid input file.");
-            System.exit(1);
-        }
-
-        Graph taskGraph = DotFileParser.parseDotFile(inputFilePath);
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, numProcessors);
+        Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
+        SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
         DFSSearcher searcher = new DFSSearcher(problem);
 
-        System.out.println("Input File: " + inputFilePath);
-        System.out.println("Number of Cores: " + numCores);
-        System.out.println("Visualize: " + visualize);
-        System.out.println("Output File: " + outputFileName);
+        System.out.println("Input File: " + appConfig.getInputFilePath());
+        System.out.println("Number of Cores: " + appConfig.getNumCores());
+        System.out.println("Visualize: " + appConfig.isVisualized());
+        System.out.println("Output File: " + appConfig.getOutputFileName());
 
-        DotFileParser.outputDotFile(searcher.Search(), taskGraph, outputFileName);
-        launch();
+        DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
+        if (appConfig.isVisualized()) launch();
     }
 }
