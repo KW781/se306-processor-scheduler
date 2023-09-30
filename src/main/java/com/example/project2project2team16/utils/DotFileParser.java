@@ -1,4 +1,4 @@
-package com.example.project2project2team16.model;
+package com.example.project2project2team16.utils;
 
 import com.example.project2project2team16.searchers.ScheduleNode;
 import javafx.util.Pair;
