@@ -32,7 +32,7 @@ public class DotFileParser {
     }
 
     public static void outputDotFile(ScheduleNode optimalSchedule, Graph graph, String outputFileName) {
-        String dotFilePath = "src/main/resources/" + outputFileName + ".dot";
+        String dotFilePath = "src/main/resources/outputs" + outputFileName + ".dot";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilePath))) {
             writer.write("digraph " + outputFileName + " {\n");
             for (Map.Entry<String, Pair<Integer, Integer>> entry : optimalSchedule.GetVisited().entrySet()) {
