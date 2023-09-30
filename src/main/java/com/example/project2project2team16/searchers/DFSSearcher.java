@@ -10,9 +10,7 @@ import java.util.Stack;
  */
 public class DFSSearcher {
     SchedulingProblem problem;
-
-    //Needs to be list type in the future.
-    Stack<ScheduleNode> frontier;
+    Collection<ScheduleNode> frontier;
     ScheduleNode optimal = null;
     Integer currentOptimalTime;
 
@@ -26,8 +24,7 @@ public class DFSSearcher {
     public ScheduleNode Search() {
 
         while (!IsFrontierEmpty()) {
-            ScheduleNode nextNode = frontier.peek();
-            frontier.pop();
+            ScheduleNode nextNode = GetNextNode();
 
             if (problem.IsGoal(nextNode)) {
                 UpdateOptimal(nextNode);
@@ -40,15 +37,22 @@ public class DFSSearcher {
         return optimal;
     }
 
-    private void InitialiseFrontier() {
+    protected ScheduleNode GetNextNode() {
+        ScheduleNode nextNode = ((Stack<ScheduleNode>) frontier).peek();
+        ((Stack<ScheduleNode>) frontier).pop();
+
+        return nextNode;
+    }
+
+    protected void InitialiseFrontier() {
         frontier = new Stack<ScheduleNode>();
     }
 
-    private boolean IsFrontierEmpty() {
+    protected boolean IsFrontierEmpty() {
         return frontier.isEmpty();
     }
 
-    private void AddToFrontier(List<ScheduleNode> newNodes) {
+    protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             if (optimal == null || newNodes.get(i).GetValue() < currentOptimalTime) {
                 frontier.add(newNodes.get(i));

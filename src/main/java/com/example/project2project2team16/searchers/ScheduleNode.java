@@ -64,6 +64,10 @@ public class ScheduleNode {
         return result;
     }
 
+    public Integer GetPathCost() {
+        return GetValue();
+    }
+
     private void AddTask(Node newTask, Integer processor) {
         Iterable<Edge> parents = newTask.getEachEnteringEdge();
 
