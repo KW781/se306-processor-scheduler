@@ -26,6 +26,6 @@ public class OutputParseTests {
     public void Nodes7Test() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_7_OutTree.dot");
 
-        DotFileParser.outputDotFile(RunSearch(taskGraph,2), taskGraph);
+        DotFileParser.outputDotFile(RunSearch(taskGraph,2), taskGraph, "Nodes_7_OutTree");
     }
 }
