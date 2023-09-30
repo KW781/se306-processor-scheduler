@@ -1,11 +1,8 @@
 package searchertests;
 
-import com.example.project2project2team16.model.DotFileParser;
-import com.example.project2project2team16.searchers.AStarSearcher;
 import com.example.project2project2team16.searchers.DFSSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import org.graphstream.graph.Graph;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,6 +1,6 @@
 package searchertests;
 
-import com.example.project2project2team16.model.DotFileParser;
+import com.example.project2project2team16.utils.DotFileParser;
 import org.graphstream.graph.Graph;
 import org.junit.jupiter.api.*;
 
