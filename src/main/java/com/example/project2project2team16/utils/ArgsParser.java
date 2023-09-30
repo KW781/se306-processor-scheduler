@@ -35,6 +35,14 @@ public class ArgsParser {
                             System.err.println("Invalid value for -p. Please provide an integer.");
                             throw new InvalidArgsException();
                         }
+                        // check whether number of cores requested is greater than cores available on machine, if so then inform user of error
+                        int numCoresAvailable = Runtime.getRuntime().availableProcessors();
+                        if (numCores > numCoresAvailable) {
+                            System.err.println("Number of cores requested for parallelization is greater than the " +
+                                    "number of cores available, only " + numCoresAvailable + " cores are available. " +
+                                    " Please request fewer cores.");
+                            throw new InvalidArgsException();
+                        }
                     } else {
                         System.err.println("Please provide a number of cores when using -p");
                         throw new InvalidArgsException();
