@@ -36,11 +36,6 @@ public class HelloApplication extends Application {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
         DFSSearcher searcher = new DFSSearcher(problem);
 
-        System.out.println("Input File: " + appConfig.getInputFilePath());
-        System.out.println("Number of Cores: " + appConfig.getNumCores());
-        System.out.println("Visualize: " + appConfig.isVisualized());
-        System.out.println("Output File: " + appConfig.getOutputFileName());
-
         DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
         if (appConfig.isVisualized()) launch();
     }
