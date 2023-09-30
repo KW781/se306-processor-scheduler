@@ -31,10 +31,10 @@ public class DotFileParser {
         return graph;
     }
 
-    public static void outputDotFile(ScheduleNode optimalSchedule, Graph graph) {
-        String dotFilePath = "src/main/resources/output.dot";
+    public static void outputDotFile(ScheduleNode optimalSchedule, Graph graph, String outputFileName) {
+        String dotFilePath = "src/main/resources/" + outputFileName + ".dot";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilePath))) {
-            writer.write("digraph output {\n");
+            writer.write("digraph " + outputFileName + " {\n");
             for (Map.Entry<String, Pair<Integer, Integer>> entry : optimalSchedule.GetVisited().entrySet()) {
                 writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + graph.getNode(entry.getKey()).getAttribute("Weight", Double.class).intValue() + ",Start=" + entry.getValue().getValue() + ",Processor=" + (entry.getValue().getKey() + 1) + "];\n");
             }
