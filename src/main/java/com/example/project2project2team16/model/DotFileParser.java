@@ -32,11 +32,12 @@ public class DotFileParser {
     }
 
     public static void outputDotFile(ScheduleNode optimalSchedule, Graph graph, String outputFileName) {
-        String dotFilePath = "src/main/resources/outputs" + outputFileName + ".dot";
+        String dotFilePath = outputFileName + ".dot";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilePath))) {
             writer.write("digraph " + outputFileName + " {\n");
             for (Map.Entry<String, Pair<Integer, Integer>> entry : optimalSchedule.GetVisited().entrySet()) {
-                writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + graph.getNode(entry.getKey()).getAttribute("Weight", Double.class).intValue() + ",Start=" + entry.getValue().getValue() + ",Processor=" + (entry.getValue().getKey() + 1) + "];\n");
+                int weight = graph.getNode(entry.getKey()).getAttribute("Weight", Double.class).intValue();
+                writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + weight + ",Start=" + (entry.getValue().getValue() - weight)  + ",Processor=" + (entry.getValue().getKey() + 1) + "];\n");
             }
             for (Edge edge : graph.getEachEdge()) {
                 writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];\n");
