@@ -61,6 +61,7 @@ public class ArgsParser {
             }
         }
 
+        // test that the input file path provided is a valid one
         try {
             Paths.get(inputFilePath);
         } catch (InvalidPathException | NullPointerException ex) {
