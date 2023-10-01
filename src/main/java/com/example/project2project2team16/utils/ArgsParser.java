@@ -19,7 +19,7 @@ public class ArgsParser {
         int numCores = 1; // Default number of cores
 
         boolean visualize = false;
-        String outputFileName = "INPUT-output"; // Default output file name
+        String outputFileName = inputFilePath.substring(0,inputFilePath.length()-4) + "-output"; // Default output file name
 
         // Parse command-line arguments
         for (int i = 2; i < args.length; i++) {
