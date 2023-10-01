@@ -8,6 +8,6 @@ public class Main {
      * @param args List of command line arguments when JAR is run from the terminal
      */
     public static void main(String[] args) {
-        HelloApplication.main(args);
+        VisualisationApplication.main(args);
     }
 }
