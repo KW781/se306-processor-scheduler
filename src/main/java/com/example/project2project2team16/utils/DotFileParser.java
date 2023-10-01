@@ -9,6 +9,7 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
@@ -26,7 +27,8 @@ public class DotFileParser {
             // Load and parse the DOT file
             fs.readAll(path);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Invalid input file.");
+            System.exit(1);
         }
         return graph;
     }
@@ -43,11 +45,12 @@ public class DotFileParser {
                 writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];" + System.lineSeparator());
             }
             writer.write("}");
+        } catch (FileNotFoundException e) {
+            System.err.println("Invalid output file name.");
+            System.exit(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } ;
-
-
+        }
     }
 
 }
