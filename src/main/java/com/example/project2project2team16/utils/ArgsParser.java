@@ -40,8 +40,11 @@ public class ArgsParser {
                         int numCoresAvailable = Runtime.getRuntime().availableProcessors();
                         if (numCores > numCoresAvailable) {
                             System.err.println("Number of cores requested for parallelization is greater than the " +
-                                    "number of cores available, only " + numCoresAvailable + " cores are available. " +
+                                    "number of cores available, only " + numCoresAvailable + " cores are available." +
                                     " Please request fewer cores.");
+                            throw new InvalidArgsException();
+                        } else if (numCores <= 0) {
+                            System.err.println("Number of cores requested for parallelization must be greater than 0.");
                             throw new InvalidArgsException();
                         }
                     } else {
