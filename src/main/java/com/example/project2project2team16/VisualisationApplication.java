@@ -2,7 +2,10 @@ package com.example.project2project2team16;
 
 import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.helper.SceneManager;
-import com.example.project2project2team16.model.DotFileParser;
+import com.example.project2project2team16.exceptions.InvalidArgsException;
+import com.example.project2project2team16.utils.AppConfig;
+import com.example.project2project2team16.utils.ArgsParser;
+import com.example.project2project2team16.utils.DotFileParser;
 import com.example.project2project2team16.searchers.DFSSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import javafx.application.Application;
@@ -51,19 +54,26 @@ public class VisualisationApplication extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
-
-        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_7_OutTree.dot");
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, 1);
-        DFSSearcher searcher = new DFSSearcher(problem);
-        System.out.println(searcher.Search().GetValue());
     }
 
     public static void main(String[] args) {
-//        System.out.println(args[0]); // placeholder to make sure cmd line argument is read
-//        Graph taskGraph = DotFileParser.parseDotFile(args[0]);
+        AppConfig appConfig = null;
+        try {
+            appConfig = ArgsParser.parseArgs(args);
+        } catch (InvalidArgsException e) {
+            System.exit(1);
+        }
 
-        System.setProperty("org.graphstream.ui", "javafx");
-        System.setProperty("gs.ui.layout", "LinLog");
-        launch();
+        Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
+        SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
+        DFSSearcher searcher = new DFSSearcher(problem);
+
+        if (appConfig.isVisualized()) {
+            System.setProperty("org.graphstream.ui", "javafx");
+            System.setProperty("gs.ui.layout", "LinLog");
+            launch();
+        }
+
+        DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
     }
 }

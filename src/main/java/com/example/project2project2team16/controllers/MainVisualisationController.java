@@ -54,9 +54,7 @@ public class MainVisualisationController {
             if (autoLayoutButton.getStyleClass().get(0).equals("svgButton")) {
                 autoLayoutButton.getStyleClass().clear();
                 autoLayoutButton.getStyleClass().add("svgButtonActive");
-                Layout layout = new LinLog();
-                layout.setQuality(2.0);
-                viewer.enableAutoLayout(layout);
+                viewer.enableAutoLayout();
             } else {
                 System.out.println("svgButtonActive");
                 autoLayoutButton.getStyleClass().clear();

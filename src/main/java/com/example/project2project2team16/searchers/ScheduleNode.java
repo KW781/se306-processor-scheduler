@@ -1,7 +1,6 @@
 package com.example.project2project2team16.searchers;
 
 import javafx.util.Pair;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
 
@@ -36,6 +35,10 @@ public class ScheduleNode {
         AddTask(newTask, processor);
     }
 
+    public Map<String, Pair<Integer, Integer>> GetVisited() {
+        return visited;
+    }
+
     public List<ScheduleNode> GenerateNeighbours() {
         List<ScheduleNode> neighbours = new ArrayList<>();
 
@@ -60,6 +63,10 @@ public class ScheduleNode {
         }
 
         return result;
+    }
+
+    public Integer GetPathCost() {
+        return GetValue();
     }
 
     private void AddTask(Node newTask, Integer processor) {

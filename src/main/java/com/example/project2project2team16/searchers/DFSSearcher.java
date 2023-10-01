@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.VisualisationApplication;
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
@@ -15,9 +16,7 @@ import java.util.Stack;
  */
 public class DFSSearcher {
     SchedulingProblem problem;
-
-    //Needs to be list type in the future.
-    Stack<ScheduleNode> frontier;
+    Collection<ScheduleNode> frontier;
     ScheduleNode optimal = null;
     Integer currentOptimalTime;
 
@@ -31,8 +30,7 @@ public class DFSSearcher {
     public ScheduleNode Search() {
 
         while (!IsFrontierEmpty()) {
-            ScheduleNode nextNode = frontier.peek();
-            frontier.pop();
+            ScheduleNode nextNode = GetNextNode();
 
             if (problem.IsGoal(nextNode)) {
                 UpdateOptimal(nextNode);
@@ -45,11 +43,18 @@ public class DFSSearcher {
         return optimal;
     }
 
-    private void InitialiseFrontier() {
+    protected ScheduleNode GetNextNode() {
+        ScheduleNode nextNode = ((Stack<ScheduleNode>) frontier).peek();
+        ((Stack<ScheduleNode>) frontier).pop();
+
+        return nextNode;
+    }
+
+    protected void InitialiseFrontier() {
         frontier = new Stack<ScheduleNode>();
     }
 
-    private boolean IsFrontierEmpty() {
+    protected boolean IsFrontierEmpty() {
         return frontier.isEmpty();
     }
 
