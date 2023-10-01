@@ -16,9 +16,12 @@ import javafx.stage.Stage;
 import org.graphstream.graph.Graph;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class VisualisationApplication extends Application {
     private static MainVisualisationController mainVisualisationController;
+    private static AppConfig appConfig;
 
     /**
      * Returns the node associated to the input file. The method expects that the file is located in
@@ -56,24 +59,33 @@ public class VisualisationApplication extends Application {
         stage.show();
     }
 
+    public static void startSearch() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.submit(() -> {
+            Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
+            SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
+            DFSSearcher searcher = new DFSSearcher(problem);
+            DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
+            mainVisualisationController.stopTimer();
+        });
+
+        executorService.shutdown();
+    }
+
     public static void main(String[] args) {
-        AppConfig appConfig = null;
+        appConfig = null;
         try {
             appConfig = ArgsParser.parseArgs(args);
         } catch (InvalidArgsException e) {
             System.exit(1);
         }
 
-        Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
-        DFSSearcher searcher = new DFSSearcher(problem);
-
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");
-            System.setProperty("gs.ui.layout", "LinLog");
             launch();
+        } else {
+            startSearch();
         }
-
-        DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
     }
 }

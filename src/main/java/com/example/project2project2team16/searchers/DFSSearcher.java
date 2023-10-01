@@ -1,10 +1,6 @@
 package com.example.project2project2team16.searchers;
 
-import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.SingleGraph;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,8 +66,11 @@ public class DFSSearcher {
         Integer newSolutionTime = newSolution.GetValue();
 
         if (optimal == null || newSolutionTime < currentOptimalTime) {
+            GraphVisualisationHelper.addNode(newSolution, optimal);
+            GraphVisualisationHelper.updateOptimalNode(newSolution);
             optimal = newSolution;
             currentOptimalTime = newSolutionTime;
+            System.out.println(currentOptimalTime);
         }
     }
 }

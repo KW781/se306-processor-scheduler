@@ -4,14 +4,16 @@ graph {
 }
 
 node {
-    size: 10px;
+    size: 30px;
     shape: circle;
     fill-color: #D9D9D9;
     stroke-mode: none;
 }
 
 node:clicked {
-    fill-color: red;
+    stroke-mode: plain;
+    stroke-color: black;
+    stroke-width: 4;
 }
 
 edge {

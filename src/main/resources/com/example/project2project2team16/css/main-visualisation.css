@@ -10,6 +10,16 @@ Pane {
     -fx-background-color: #272A3D;
 }
 
+.container {
+    -fx-background-color: #272A3D;
+}
+
+#startButton {
+    -fx-background-color: #181818;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-style: none;
+}
+
 .svgButton {
     -fx-background-color: transparent;
     -fx-border-style: none;
