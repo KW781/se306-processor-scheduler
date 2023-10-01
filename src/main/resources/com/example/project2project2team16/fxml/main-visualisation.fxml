@@ -1,23 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="828.0" prefWidth="867.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="850.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
    <stylesheets>
       <URL value="@../css/main-visualisation.css" />
    </stylesheets>
    <children>
-      <VBox alignment="CENTER" prefHeight="74.0" prefWidth="867.0">
+      <VBox alignment="TOP_CENTER" prefHeight="850.0" prefWidth="900.0">
          <children>
-            <Label alignment="CENTER" prefHeight="74.0" prefWidth="867.0" text="OVERVIEW" textFill="WHITE">
+            <Label alignment="CENTER" text="OVERVIEW" textFill="WHITE">
                <font>
                   <Font size="33.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="4.0" />
+               </VBox.margin>
             </Label>
-         </children></VBox>
+            <AnchorPane prefWidth="868.0">
+               <children>
+                  <HBox alignment="CENTER_RIGHT" layoutX="434.0" layoutY="5.0" minWidth="200.0" prefHeight="45.0" prefWidth="432.0" spacing="4.0">
+                     <padding>
+                        <Insets bottom="8.0" left="4.0" right="8.0" top="4.0" />
+                     </padding>
+                     <children>
+                        <Button alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER" visible="false">
+                           <graphic>
+                              <Group disable="true" visible="false">
+                                 <children>
+                                    <SVGPath content="M200-440v-80h560v80H200Z" disable="true" fill="WHITE" scaleX="0.04" scaleY="0.04" visible="false" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER" visible="false">
+                           <graphic>
+                              <Group disable="true" visible="false">
+                                 <children>
+                                    <SVGPath content="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" disable="true" fill="WHITE" scaleX="0.04" scaleY="0.04" visible="false" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER" visible="false">
+                           <graphic>
+                              <Group disable="true" visible="false">
+                                 <children>
+                                    <SVGPath content="M480-80 310-250l57-57 73 73v-166h80l-1 165 73-73 58 58L480-80ZM250-310 80-480l169-169 57 57-72 72h166v80H235l73 72-58 58Zm460 0-57-57 73-73H560v-80l165 1-73-73 58-58 170 170-170 170ZM440-560v-166l-73 73-57-57 170-170 170 170-57 57-73-73v166h-80Z" disable="true" fill="WHITE" scaleX="0.04" scaleY="0.04" visible="false" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="backButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER" visible="false">
+                           <graphic>
+                              <Group disable="true" visible="false">
+                                 <children>
+                                    <SVGPath content="M280-200v-80h284q63 0 109.5-40T720-420q0-60-46.5-100T564-560H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800-420q0 94-69.5 157T564-200H280Z" disable="true" fill="WHITE" scaleX="0.04" scaleY="0.04" visible="false" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="autoLayoutButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
+                           <graphic>
+                              <Group>
+                                 <children>
+                                    <SVGPath content="M204-318q-22-38-33-78t-11-82q0-134 93-228t227-94h7l-64-64 56-56 160 160-160 160-56-56 64-64h-7q-100 0-170 70.5T240-478q0 26 6 51t18 49l-60 60ZM481-40 321-200l160-160 56 56-64 64h7q100 0 170-70.5T720-482q0-26-6-51t-18-49l60-60q22 38 33 78t11 82q0 134-93 228t-227 94h-7l64 64-56 56Z" fill="WHITE" scaleX="0.04" scaleY="0.04" />
+                                 </children>
+                              </Group>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutY="5.0" minWidth="200.0" prefHeight="45.0" prefWidth="432.0">
+                     <children>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Time Elapsed: ">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Text>
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00" wrappingWidth="97.953125">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Text>
+                     </children>
+                     <padding>
+                        <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <Pane id="graphPane" fx:id="graphPane" prefHeight="455.0" prefWidth="868.0" />
+         </children>
+         <padding>
+            <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+         </padding></VBox>
    </children>
 </Pane>

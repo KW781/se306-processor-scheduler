@@ -6,6 +6,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ScheduleNode {
 
@@ -62,7 +63,7 @@ public class ScheduleNode {
     }
 
     private void AddTask(Node newTask, Integer processor) {
-        Iterable<Edge> parents = newTask.getEachEnteringEdge();
+        Iterable<Edge> parents = newTask.enteringEdges().collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
 
@@ -86,11 +87,11 @@ public class ScheduleNode {
     }
 
     private void AddNewTasks(Node newTask) {
-        Iterable<Edge> children = newTask.getEachLeavingEdge();
+        Iterable<Edge> children = newTask.leavingEdges().collect(Collectors.toList());
 
         for (Edge child : children) {
             boolean prereqsMet = true;
-            Iterable<Edge> dependencies = child.getTargetNode().getEachEnteringEdge();
+            Iterable<Edge> dependencies = child.getTargetNode().enteringEdges().collect(Collectors.toList());
 
             for (Edge dependency : dependencies) {
                 if (!visited.containsKey(dependency.getSourceNode().getId())) {

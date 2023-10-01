@@ -1,5 +1,10 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.VisualisationApplication;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
