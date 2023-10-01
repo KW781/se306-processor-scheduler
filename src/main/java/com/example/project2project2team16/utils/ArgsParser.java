@@ -11,6 +11,7 @@ public class ArgsParser {
         try {
             inputFilePath = args[0];
             numProcessors = Integer.parseInt(args[1]);
+            if (numProcessors <= 0) throw new InvalidArgsException();
         } catch (Exception e) {
             System.err.println("Invalid arguments. Please provide a valid input file and number of processors.");
             throw new InvalidArgsException();
