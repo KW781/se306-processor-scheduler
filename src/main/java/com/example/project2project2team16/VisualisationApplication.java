@@ -1,8 +1,10 @@
 package com.example.project2project2team16;
 
 import com.example.project2project2team16.controllers.MainVisualisationController;
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.helper.SceneManager;
 import com.example.project2project2team16.exceptions.InvalidArgsException;
+import com.example.project2project2team16.searchers.AStarSearcher;
 import com.example.project2project2team16.utils.AppConfig;
 import com.example.project2project2team16.utils.ArgsParser;
 import com.example.project2project2team16.utils.DotFileParser;
@@ -14,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +57,7 @@ public class VisualisationApplication extends Application {
 
         Scene scene = new Scene(SceneManager.getUiRoot(SceneManager.AppScene.MAIN_VISUALISATION));
 
+        stage.setResizable(false);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
@@ -81,6 +85,7 @@ public class VisualisationApplication extends Application {
             System.exit(1);
         }
 
+        GraphVisualisationHelper.setGraph(new SingleGraph("Search Graph"));
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");
             launch();
