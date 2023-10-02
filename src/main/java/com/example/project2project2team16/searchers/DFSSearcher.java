@@ -70,7 +70,6 @@ public class DFSSearcher {
             GraphVisualisationHelper.updateOptimalNode(newSolution);
             optimal = newSolution;
             currentOptimalTime = newSolutionTime;
-            System.out.println(currentOptimalTime);
         }
     }
 }

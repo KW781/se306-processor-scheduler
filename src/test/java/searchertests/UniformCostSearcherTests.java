@@ -7,7 +7,7 @@ import org.graphstream.graph.Graph;
 
 public class UniformCostSearcherTests extends SearcherTests {
     @Override
-    Integer RunSearch(Graph taskGraph, Integer processorNum) {
+    public Integer RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         UniformCostSearcher searcher = new UniformCostSearcher(problem);
 

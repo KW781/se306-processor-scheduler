@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class SearcherTests {
-    abstract Integer RunSearch(Graph taskGraph, Integer processorNum);
+    public abstract Integer RunSearch(Graph taskGraph, Integer processorNum);
 
     @Order(1)
     @Test

@@ -1,7 +1,7 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
-import org.graphstream.graph.Node;
 
 import java.util.List;
 import java.util.PriorityQueue;
@@ -27,6 +27,8 @@ public class AStarSearcher extends GreedySearcher {
     public ScheduleNode Search() {
         while (!IsFrontierEmpty()) {
             ScheduleNode nextNode = GetNextNode();
+            GraphVisualisationHelper.addNode(nextNode, nextNode.parent);
+            GraphVisualisationHelper.updateOptimalNode(nextNode);
 
             if (problem.IsGoal(nextNode)) {
                 return nextNode;

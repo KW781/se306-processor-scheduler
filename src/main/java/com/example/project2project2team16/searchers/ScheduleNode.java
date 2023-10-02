@@ -14,6 +14,7 @@ public class ScheduleNode {
     Set<Node> availableTasks;
     List<Integer> processorEndTimes;
     Integer processorCount;
+    ScheduleNode parent;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -31,6 +32,7 @@ public class ScheduleNode {
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
         this.processorCount = copy.processorCount;
+        this.parent = copy;
 
         AddTask(newTask, processor);
     }
