@@ -1,6 +1,7 @@
 package com.example.project2project2team16.helper;
 
 import com.example.project2project2team16.VisualisationApplication;
+import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.searchers.ScheduleNode;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -26,7 +27,11 @@ public class GraphVisualisationHelper {
     }
 
     public static void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
-        Node node = graph.addNode(scheduleNode.toString());
+        Node node = graph.getNode(scheduleNode.toString());
+        if (node != null) {
+            return;
+        }
+        node = graph.addNode(scheduleNode.toString());
         node.setAttribute("scheduleNode", scheduleNode);
 
         Color randomColour = generateRandomColour();
@@ -56,6 +61,9 @@ public class GraphVisualisationHelper {
     }
 
     public static void updateOptimalNode(ScheduleNode newOptimal) {
-        VisualisationApplication.getMainVisualisationController().updateShortestTime(newOptimal.GetValue());
+        MainVisualisationController mainVisualisationController = VisualisationApplication.getMainVisualisationController();
+        if (mainVisualisationController != null) {
+            mainVisualisationController.updateShortestTime(newOptimal.GetValue());
+        }
     }
 }

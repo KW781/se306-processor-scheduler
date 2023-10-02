@@ -4,7 +4,7 @@ graph {
 }
 
 node {
-    size: 30px;
+    size: 5px;
     shape: circle;
     fill-color: #D9D9D9;
     stroke-mode: none;

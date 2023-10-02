@@ -7,15 +7,32 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.fx_viewer.FxDefaultView;
+import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
+import org.graphstream.ui.fx_viewer.util.FxMouseManager;
+import org.graphstream.ui.fx_viewer.util.FxMouseOverMouseManager;
+import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
+import org.graphstream.ui.javafx.FxGraphRenderer;
+import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.camera.Camera;
+import org.graphstream.ui.view.util.GraphMetrics;
+import org.graphstream.ui.view.util.InteractiveElement;
+import org.graphstream.ui.view.util.MouseManager;
+
+import javax.sound.midi.SysexMessage;
+import java.util.EnumSet;
 
 public class MainVisualisationController {
     @FXML
@@ -28,9 +45,17 @@ public class MainVisualisationController {
     @FXML
     private Button autoLayoutButton;
     @FXML
+    private HBox graphControls;
+    @FXML
+    private HBox scheduleControls;
+    @FXML
     private Button backButton;
     @FXML
     private Button startButton;
+    @FXML
+    private Button pointerButton;
+    @FXML
+    private Button dragButton;
     @FXML
     private VBox mainBox;
     @FXML
@@ -38,16 +63,33 @@ public class MainVisualisationController {
     private FxViewer viewer;
     private double timeElapsed = 0;
     private Timeline timeline;
+    private Double mouseX;
+    private Double mouseY;
 
     @FXML
     public void initialize() {
+        graphControls.setDisable(false);
+        graphControls.setVisible(true);
+
+        scheduleControls.setDisable(true);
+        scheduleControls.setVisible(false);
+
         mainBox.setDisable(true);
+
         startBox.setDisable(false);
         startBox.setVisible(true);
 
         backButton.managedProperty().bind(backButton.visibleProperty());
         backButton.getStyleClass().clear();
         backButton.getStyleClass().add("svgButton");
+
+        pointerButton.managedProperty().bind(pointerButton.visibleProperty());
+        pointerButton.getStyleClass().clear();
+        pointerButton.getStyleClass().add("svgButtonActive");
+
+        dragButton.managedProperty().bind(dragButton.visibleProperty());
+        dragButton.getStyleClass().clear();
+        dragButton.getStyleClass().add("svgButton");
 
         autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
         autoLayoutButton.getStyleClass().clear();
@@ -91,7 +133,7 @@ public class MainVisualisationController {
         viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
         viewer.enableAutoLayout();
 
-        FxDefaultView view = (FxDefaultView) viewer.addDefaultView(false);
+        FxViewPanel view = (FxViewPanel) viewer.addView(FxViewer.DEFAULT_VIEW_ID, new FxGraphRenderer());
         view.setPrefWidth(graphPane.getPrefWidth());
         view.setPrefHeight(graphPane.getPrefHeight());
         view.getCamera().resetView();
@@ -101,6 +143,7 @@ public class MainVisualisationController {
                 autoLayoutButton.getStyleClass().clear();
                 autoLayoutButton.getStyleClass().add("svgButtonActive");
                 viewer.enableAutoLayout();
+                view.getCamera().resetView();
             } else {
                 autoLayoutButton.getStyleClass().clear();
                 autoLayoutButton.getStyleClass().add("svgButton");
@@ -108,7 +151,88 @@ public class MainVisualisationController {
             }
         }));
 
-        graphPane.getChildren().add(view);
+        pointerButton.setOnMouseClicked((mouseEvent -> {
+            if (pointerButton.getStyleClass().get(0).equals("svgButtonActive")) {
+                return;
+            }
+
+            pointerButton.getStyleClass().clear();
+            pointerButton.getStyleClass().add("svgButtonActive");
+
+            dragButton.getStyleClass().clear();
+            dragButton.getStyleClass().add("svgButton");
+
+            view.setOnMousePressed(pressEvent -> {});
+            view.setOnMouseDragged(dragEvent -> {});
+
+            view.setCursor(Cursor.DEFAULT);
+
+            view.setMouseManager(new FxMouseManager());
+        }));
+
+        dragButton.setOnMouseClicked((mouseEvent -> {
+            if (dragButton.getStyleClass().get(0).equals("svgButtonActive")) {
+                return;
+            }
+
+            dragButton.getStyleClass().clear();
+            dragButton.getStyleClass().add("svgButtonActive");
+
+            pointerButton.getStyleClass().clear();
+            pointerButton.getStyleClass().add("svgButton");
+
+
+            view.setOnMousePressed(pressEvent -> {
+                mouseX = pressEvent.getX();
+                mouseY = pressEvent.getY();
+            });
+
+            view.setOnMouseDragged(dragEvent -> {
+                double zoom = view.getCamera().getViewPercent();
+                GraphMetrics metrics = view.getCamera().getMetrics();
+
+                double deltaX = metrics.lengthToGu((dragEvent.getX() - mouseX) * 1 * zoom, StyleConstants.Units.PX);
+                double deltaY = metrics.lengthToGu((dragEvent.getY() - mouseY) * 1 * zoom, StyleConstants.Units.PX);
+
+                Point3 point3 = view.getCamera().getViewCenter();
+
+                view.getCamera().setViewCenter(point3.x - deltaX, point3.y + deltaY, 0);
+
+                mouseX = dragEvent.getX();
+                mouseY = dragEvent.getY();
+            });
+
+            view.setCursor(Cursor.MOVE);
+
+            view.setMouseManager(new MouseManager() {
+                @Override
+                public void init(GraphicGraph graphicGraph, View view) {
+
+                }
+                @Override
+                public void release() {
+
+                }
+                @Override
+                public EnumSet<InteractiveElement> getManagedTypes() {
+                    return null;
+                }
+            });
+        }));
+
+        graphPane.getChildren().addAll(view);
+
+        graphPane.setOnScroll(scrollEvent -> {
+            if (scrollEvent.getDeltaY() < 0) {
+                view.getCamera().setViewPercent(view.getCamera().getViewPercent() + 0.1);
+            } else {
+                if (view.getCamera().getViewPercent() <= 0.2) {
+                    return;
+                }
+
+                view.getCamera().setViewPercent(view.getCamera().getViewPercent() - 0.1);
+            }
+        });
     }
 
     public Graph getScheduleSearchGraph() {
