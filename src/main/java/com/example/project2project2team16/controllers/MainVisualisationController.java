@@ -188,11 +188,10 @@ public class MainVisualisationController {
             });
 
             view.setOnMouseDragged(dragEvent -> {
-                double zoom = view.getCamera().getViewPercent();
                 GraphMetrics metrics = view.getCamera().getMetrics();
 
-                double deltaX = metrics.lengthToGu((dragEvent.getX() - mouseX) * 1 * zoom, StyleConstants.Units.PX);
-                double deltaY = metrics.lengthToGu((dragEvent.getY() - mouseY) * 1 * zoom, StyleConstants.Units.PX);
+                double deltaX = metrics.lengthToGu((dragEvent.getX() - mouseX) * 1, StyleConstants.Units.PX);
+                double deltaY = metrics.lengthToGu((dragEvent.getY() - mouseY) * 1, StyleConstants.Units.PX);
 
                 Point3 point3 = view.getCamera().getViewCenter();
 
