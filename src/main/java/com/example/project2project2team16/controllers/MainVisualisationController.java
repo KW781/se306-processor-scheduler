@@ -95,10 +95,10 @@ public class MainVisualisationController {
         autoLayoutButton.getStyleClass().clear();
         autoLayoutButton.getStyleClass().add("svgButtonActive");
 
-        timeline = new Timeline(new KeyFrame(Duration.seconds(0.01),
+        timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
-                    timeElapsed += 0.01;
-                    timeElapsedText.setText(String.format("%.2fs", timeElapsed));
+                    timeElapsed += 0.001;
+                    timeElapsedText.setText(String.format("%.3fs", timeElapsed));
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
