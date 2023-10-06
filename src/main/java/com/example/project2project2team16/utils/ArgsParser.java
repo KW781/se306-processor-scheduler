@@ -11,6 +11,7 @@ public class ArgsParser {
         try {
             inputFilePath = args[0];
             numProcessors = Integer.parseInt(args[1]);
+            if (numProcessors <= 0) throw new InvalidArgsException();
         } catch (Exception e) {
             System.err.println("Invalid arguments. Please provide a valid input file and number of processors.");
             throw new InvalidArgsException();
@@ -19,7 +20,7 @@ public class ArgsParser {
         int numCores = 1; // Default number of cores
 
         boolean visualize = false;
-        String outputFileName = "INPUT-output.dot"; // Default output file name
+        String outputFileName = inputFilePath.substring(0,inputFilePath.length()-4) + "-output"; // Default output file name
 
         // Parse command-line arguments
         for (int i = 2; i < args.length; i++) {
@@ -39,8 +40,11 @@ public class ArgsParser {
                         int numCoresAvailable = Runtime.getRuntime().availableProcessors();
                         if (numCores > numCoresAvailable) {
                             System.err.println("Number of cores requested for parallelization is greater than the " +
-                                    "number of cores available, only " + numCoresAvailable + " cores are available. " +
+                                    "number of cores available, only " + numCoresAvailable + " cores are available." +
                                     " Please request fewer cores.");
+                            throw new InvalidArgsException();
+                        } else if (numCores <= 0) {
+                            System.err.println("Number of cores requested for parallelization must be greater than 0.");
                             throw new InvalidArgsException();
                         }
                     } else {

@@ -9,6 +9,7 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
@@ -26,7 +27,8 @@ public class DotFileParser {
             // Load and parse the DOT file
             fs.readAll(path);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Invalid input file.");
+            System.exit(1);
         }
         return graph;
     }
@@ -34,24 +36,27 @@ public class DotFileParser {
     public static void outputDotFile(ScheduleNode optimalSchedule, Graph graph, String outputFileName) {
         String dotFilePath = outputFileName + ".dot";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilePath))) {
-            writer.write("digraph " + outputFileName + " {\n");
+            writer.write("digraph " + outputFileName + " {" + System.lineSeparator());
             for (Map.Entry<String, Pair<Integer, Integer>> entry : optimalSchedule.GetVisited().entrySet()) {
                 int weight = graph.getNode(entry.getKey()).getAttribute("Weight", Double.class).intValue();
-                writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + weight + ",Start=" + (entry.getValue().getValue() - weight)  + ",Processor=" + (entry.getValue().getKey() + 1) + "];\n");
+                writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + weight + ",Start=" + (entry.getValue().getValue() - weight)  + ",Processor=" + (entry.getValue().getKey() + 1) + "];" + System.lineSeparator());
             }
+
             graph.edges().forEach(edge -> {
                 try {
-                    writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];\n");
+                    writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];" + System.lineSeparator());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             });
+
             writer.write("}");
+        } catch (FileNotFoundException e) {
+            System.err.println("Invalid output file name.");
+            System.exit(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } ;
-
-
+        }
     }
 
 }
