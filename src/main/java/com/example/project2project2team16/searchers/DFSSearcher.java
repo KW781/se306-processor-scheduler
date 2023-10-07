@@ -18,8 +18,8 @@ public class DFSSearcher {
 
     public DFSSearcher(SchedulingProblem problem) {
         this.problem = problem;
-        InitialiseFrontier();
-        AddToFrontier(Arrays.asList(problem.GetStartNode()));
+//        InitialiseFrontier();
+//        AddToFrontier(Arrays.asList(problem.GetStartNode()));
     }
 
     //Exhaustive search
@@ -54,7 +54,7 @@ public class DFSSearcher {
         return frontier.isEmpty();
     }
 
-    private void AddToFrontier(List<ScheduleNode> newNodes) {
+    protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             if (optimal == null || newNodes.get(i).GetValue() < currentOptimalTime) {
                 frontier.add(newNodes.get(i));

@@ -13,8 +13,8 @@ public class ScheduleNodeGreedyComparator implements Comparator<ScheduleNode> {
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-        Integer heuristic1 = problem.Heuristic(node1);
-        Integer heuristic2 = problem.Heuristic(node2);
+        Integer heuristic1 = problem.CalculateF(node1);
+        Integer heuristic2 = problem.CalculateF(node2);
 
         if (heuristic1 < heuristic2) {
             return -1;

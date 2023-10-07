@@ -14,8 +14,8 @@ public class ScheduleNodeAStarComparator implements Comparator<ScheduleNode> {
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-        Integer value1 = problem.Heuristic(node1) + node1.GetPathCost();
-        Integer value2 = problem.Heuristic(node2) + node2.GetPathCost();
+        int value1 = problem.CalculateF(node1);
+        int value2 = problem.CalculateF(node2);
 
         if (value1 < value2) {
             return -1;

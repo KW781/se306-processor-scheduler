@@ -13,17 +13,23 @@ public class ScheduleNode {
     Map<String, Pair<Integer, Integer>> visited;
     Set<Node> availableTasks;
     List<Integer> processorEndTimes;
+    List<Node> processorLastTasks;
+    Node lastTask;
+    Integer lastProcessor;
     Integer processorCount;
     ScheduleNode parent;
+    Integer fValue = 0;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
         this.processorCount = processorCount;
         visited = new HashMap<>();
         processorEndTimes = new ArrayList<>();
+        processorLastTasks = new ArrayList<>();
 
         for (int i = 0; i < processorCount; i++) {
             processorEndTimes.add(0);
+            processorLastTasks.add(null);
         }
     }
 
@@ -33,6 +39,7 @@ public class ScheduleNode {
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
         this.processorCount = copy.processorCount;
         this.parent = copy;
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
 
         AddTask(newTask, processor);
     }
@@ -57,6 +64,10 @@ public class ScheduleNode {
         return (taskCount == visited.size());
     }
 
+    public ScheduleNode GetParent() {
+        return parent;
+    }
+
     public Integer GetValue() {
         int result = 0;
 
@@ -69,6 +80,10 @@ public class ScheduleNode {
 
     public Integer GetPathCost() {
         return GetValue();
+    }
+
+    public Integer GetProcessorPathCost(Integer processor) {
+        return processorEndTimes.get(processor);
     }
 
     private void AddTask(Node newTask, Integer processor) {
@@ -90,7 +105,10 @@ public class ScheduleNode {
 
         visited.put(newTask.getId(), new Pair<>(processor, endTime));
         processorEndTimes.set(processor, endTime);
+        processorLastTasks.set(processor, newTask);
         availableTasks.remove(newTask);
+        lastTask = newTask;
+        lastProcessor = processor;
 
         AddNewTasks(newTask);
     }
@@ -113,5 +131,41 @@ public class ScheduleNode {
                 availableTasks.add(child.getTargetNode());
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScheduleNode other = (ScheduleNode) o;
+
+        for (String nodeId : visited.keySet()) {
+            Pair<Integer, Integer> otherProcessorEndTime = other.visited.get(nodeId);
+
+            if (otherProcessorEndTime == null) {
+                return false;
+            }
+
+            Pair<Integer, Integer> thisProcessorEndTime = visited.get(nodeId);
+
+            if (!thisProcessorEndTime.getValue().equals(otherProcessorEndTime.getValue())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        Map<String, Integer> nodeEndTime = new HashMap<>();
+
+        for (String nodeId : visited.keySet()) {
+            Pair<Integer, Integer> processorEndTime = visited.get(nodeId);
+
+            nodeEndTime.put(nodeId, processorEndTime.getValue());
+        }
+
+        return Objects.hash(nodeEndTime);
     }
 }
