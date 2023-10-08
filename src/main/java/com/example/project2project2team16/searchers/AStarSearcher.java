@@ -3,7 +3,6 @@ package com.example.project2project2team16.searchers;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -12,9 +11,19 @@ import java.util.List;
 public class AStarSearcher extends GreedySearcher {
     Set<ScheduleNode> opened = new HashSet<>();
     Set<ScheduleNode> closed = new HashSet<>();
+    int tasksVisited = 0;
 
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
+    }
+
+    @Override
+    public void InitialiseSearcher() {
+        super.InitialiseSearcher();
+        ScheduleNode startNode = problem.GetStartNode();
+        GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+        helper.addNode(startNode, startNode.parent);
+        helper.setStartNode(startNode);
     }
 
     @Override
@@ -22,6 +31,9 @@ public class AStarSearcher extends GreedySearcher {
         frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeAStarComparator(problem));
     }
 
+    int dups = 0;
+    int explored = 0;
+    int schedulesAdded = 0;
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
@@ -30,6 +42,7 @@ public class AStarSearcher extends GreedySearcher {
                 continue;
             }
 
+            schedulesAdded++;
             frontier.add(newNode);
             opened.add(newNode);
         }
@@ -48,8 +61,18 @@ public class AStarSearcher extends GreedySearcher {
     public ScheduleNode Search() {
         while (!IsFrontierEmpty()) {
             ScheduleNode nextNode = GetNextNode();
+            explored++;
+            if (nextNode.visited.size() > tasksVisited) {
+                GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+                helper.addNode(nextNode, nextNode.parent);
+                helper.updateOptimalNode(nextNode);
+                tasksVisited = nextNode.visited.size();
+            }
 
             if (problem.IsGoal(nextNode)) {
+                System.out.println(schedulesAdded + " schedules added");
+                System.out.println(dups + " duplicates detected");
+                System.out.println(explored + " schedules explored");
                 return nextNode;
             }
             else {
