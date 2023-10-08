@@ -108,7 +108,7 @@ public class MainVisualisationController {
             startBox.setVisible(false);
             mainBox.setDisable(false);
 
-            setGraphAndDisplay(GraphVisualisationHelper.getGraph());
+            setGraphAndDisplay(GraphVisualisationHelper.instance().getGraph());
             timeline.play();
             VisualisationApplication.startSearch();
         });

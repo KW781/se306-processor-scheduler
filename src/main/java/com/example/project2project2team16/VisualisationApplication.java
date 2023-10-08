@@ -86,7 +86,7 @@ public class VisualisationApplication extends Application {
             System.exit(1);
         }
 
-        GraphVisualisationHelper.setGraph(new SingleGraph("Search Graph"));
+        GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");
             launch();

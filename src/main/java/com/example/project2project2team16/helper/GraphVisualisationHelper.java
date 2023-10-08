@@ -10,23 +10,36 @@ import java.awt.*;
 import java.util.Random;
 
 public class GraphVisualisationHelper {
-    private static Graph graph;
+    private static GraphVisualisationHelper instance = null;
+    private Graph graph;
 
-    public static void setGraph(Graph graph) {
-        GraphVisualisationHelper.graph = graph;
+    private GraphVisualisationHelper() {
+
     }
 
-    public static Graph getGraph() {
+    public static GraphVisualisationHelper instance() {
+        if (instance == null) {
+            instance = new GraphVisualisationHelper();
+        }
+
+        return instance;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
+
+    public Graph getGraph() {
         return graph;
     }
 
-    public static void addEdge(Node source, Node target) {
+    public void addEdge(Node source, Node target) {
         if (source != null) {
             graph.addEdge("Edge-" + source + "-" + target, source, target, true).setAttribute("ui.min_length", 50);;
         }
     }
 
-    public static void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
+    public void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
         if (graph == null) {
             return;
         }
@@ -54,17 +67,17 @@ public class GraphVisualisationHelper {
         }
     }
 
-    private static Color generateRandomColour() {
+    private Color generateRandomColour() {
         Random random = new Random();
         return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
-    public static void setStartNode(ScheduleNode node) {
+    public void setStartNode(ScheduleNode node) {
         Node graphNode = graph.getNode(node.toString());
         graphNode.setAttribute("ui.style", "fill-color: #00FF19;");
     }
 
-    public static void updateOptimalNode(ScheduleNode newOptimal) {
+    public void updateOptimalNode(ScheduleNode newOptimal) {
         MainVisualisationController mainVisualisationController = VisualisationApplication.getMainVisualisationController();
         if (mainVisualisationController != null) {
             mainVisualisationController.updateShortestTime(newOptimal.GetValue());

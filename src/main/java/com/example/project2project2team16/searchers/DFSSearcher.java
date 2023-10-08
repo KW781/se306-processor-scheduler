@@ -69,8 +69,9 @@ public class DFSSearcher {
         Integer newSolutionTime = newSolution.GetValue();
 
         if (optimal == null || newSolutionTime < currentOptimalTime) {
-            GraphVisualisationHelper.addNode(newSolution, optimal);
-            GraphVisualisationHelper.updateOptimalNode(newSolution);
+            GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+            helper.addNode(newSolution, optimal);
+            helper.updateOptimalNode(newSolution);
             optimal = newSolution;
             currentOptimalTime = newSolutionTime;
         }
