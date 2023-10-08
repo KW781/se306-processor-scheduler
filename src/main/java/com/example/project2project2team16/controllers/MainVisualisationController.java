@@ -65,35 +65,30 @@ public class MainVisualisationController {
     private Timeline timeline;
     private Double mouseX;
     private Double mouseY;
+    final String buttonStyle = "svgButton";
+    final String buttonEvent = "svgButtonActive";
 
     @FXML
     public void initialize() {
         graphControls.setDisable(false);
         graphControls.setVisible(true);
 
-        scheduleControls.setDisable(true);
-        scheduleControls.setVisible(false);
-
         mainBox.setDisable(true);
 
         startBox.setDisable(false);
         startBox.setVisible(true);
 
-        backButton.managedProperty().bind(backButton.visibleProperty());
-        backButton.getStyleClass().clear();
-        backButton.getStyleClass().add("svgButton");
-
         pointerButton.managedProperty().bind(pointerButton.visibleProperty());
         pointerButton.getStyleClass().clear();
-        pointerButton.getStyleClass().add("svgButtonActive");
+        pointerButton.getStyleClass().add(buttonEvent);
 
         dragButton.managedProperty().bind(dragButton.visibleProperty());
         dragButton.getStyleClass().clear();
-        dragButton.getStyleClass().add("svgButton");
+        dragButton.getStyleClass().add(buttonStyle);
 
         autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
         autoLayoutButton.getStyleClass().clear();
-        autoLayoutButton.getStyleClass().add("svgButtonActive");
+        autoLayoutButton.getStyleClass().add(buttonEvent);
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
@@ -139,28 +134,28 @@ public class MainVisualisationController {
         view.getCamera().resetView();
 
         autoLayoutButton.setOnMouseClicked((mouseEvent -> {
-            if (autoLayoutButton.getStyleClass().get(0).equals("svgButton")) {
+            if (autoLayoutButton.getStyleClass().get(0).equals(buttonStyle)) {
                 autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add("svgButtonActive");
+                autoLayoutButton.getStyleClass().add(buttonEvent);
                 viewer.enableAutoLayout();
                 view.getCamera().resetView();
             } else {
                 autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add("svgButton");
+                autoLayoutButton.getStyleClass().add(buttonStyle);
                 viewer.disableAutoLayout();
             }
         }));
 
         pointerButton.setOnMouseClicked((mouseEvent -> {
-            if (pointerButton.getStyleClass().get(0).equals("svgButtonActive")) {
+            if (pointerButton.getStyleClass().get(0).equals(buttonEvent)) {
                 return;
             }
 
             pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add("svgButtonActive");
+            pointerButton.getStyleClass().add(buttonEvent);
 
             dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add("svgButton");
+            dragButton.getStyleClass().add(buttonStyle);
 
             view.setOnMousePressed(pressEvent -> {});
             view.setOnMouseDragged(dragEvent -> {});
@@ -171,15 +166,15 @@ public class MainVisualisationController {
         }));
 
         dragButton.setOnMouseClicked((mouseEvent -> {
-            if (dragButton.getStyleClass().get(0).equals("svgButtonActive")) {
+            if (dragButton.getStyleClass().get(0).equals(buttonEvent)) {
                 return;
             }
 
             dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add("svgButtonActive");
+            dragButton.getStyleClass().add(buttonEvent);
 
             pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add("svgButton");
+            pointerButton.getStyleClass().add(buttonStyle);
 
 
             view.setOnMousePressed(pressEvent -> {

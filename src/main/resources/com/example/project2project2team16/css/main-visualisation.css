@@ -2,15 +2,17 @@
     -fx-background-color: #1D1F2E;
 }
 
-AnchorPane {
-    -fx-background-color: #272A3D;
-}
-
-Pane {
-    -fx-background-color: #272A3D;
-}
-
 .container {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 7px;
+}
+
+#displayBox {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 7px;
+}
+
+#graphPane {
     -fx-background-color: #272A3D;
 }
 
