@@ -10,15 +10,11 @@ import java.util.Set;
 import java.util.List;
 
 public class AStarSearcher extends GreedySearcher {
-    Set<ScheduleNode> opened;
-    Set<ScheduleNode> closed;
+    Set<ScheduleNode> opened = new HashSet<>();
+    Set<ScheduleNode> closed = new HashSet<>();
 
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
-        opened = new HashSet<>();
-        closed = new HashSet<>();
-        InitialiseFrontier();
-        AddToFrontier(Arrays.asList(problem.GetStartNode()));
     }
 
     @Override

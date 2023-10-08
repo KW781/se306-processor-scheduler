@@ -10,6 +10,7 @@ public class UniformCostSearcherTests extends SearcherTests {
     public Integer RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         UniformCostSearcher searcher = new UniformCostSearcher(problem);
+        searcher.InitialiseSearcher();
 
         return searcher.Search().GetValue();
     }

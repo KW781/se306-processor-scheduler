@@ -18,8 +18,11 @@ public class DFSSearcher {
 
     public DFSSearcher(SchedulingProblem problem) {
         this.problem = problem;
-//        InitialiseFrontier();
-//        AddToFrontier(Arrays.asList(problem.GetStartNode()));
+    }
+
+    public void InitialiseSearcher() {
+        InitialiseFrontier();
+        AddToFrontier(Arrays.asList(problem.GetStartNode()));
     }
 
     //Exhaustive search

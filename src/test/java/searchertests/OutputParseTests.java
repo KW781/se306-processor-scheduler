@@ -14,6 +14,7 @@ public class OutputParseTests {
     private ScheduleNode RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         DFSSearcher searcher = new DFSSearcher(problem);
+        searcher.InitialiseSearcher();
 
         return searcher.Search();
     }

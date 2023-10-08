@@ -27,6 +27,10 @@ public class GraphVisualisationHelper {
     }
 
     public static void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
+        if (graph == null) {
+            return;
+        }
+
         Node node = graph.getNode(scheduleNode.toString());
         if (node != null) {
             return;

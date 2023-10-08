@@ -9,6 +9,7 @@ public class AStarSearcherTests extends SearcherTests {
     public Integer RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         AStarSearcher searcher = new AStarSearcher(problem);
+        searcher.InitialiseSearcher();
 
         return searcher.Search().GetValue();
     }

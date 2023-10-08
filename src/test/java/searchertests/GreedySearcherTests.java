@@ -10,6 +10,7 @@ public class GreedySearcherTests extends SearcherTests {
     public Integer RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         GreedySearcher searcher = new GreedySearcher(problem);
+        searcher.InitialiseSearcher();
 
         return searcher.Search().GetValue();
     }
