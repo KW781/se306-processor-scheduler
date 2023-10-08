@@ -233,8 +233,4 @@ public class MainVisualisationController {
             }
         });
     }
-
-    public Graph getScheduleSearchGraph() {
-        return scheduleSearchGraph;
-    }
 }
