@@ -64,10 +64,6 @@ public class ScheduleNode {
         return (taskCount == visited.size());
     }
 
-    public ScheduleNode GetParent() {
-        return parent;
-    }
-
     public Integer GetValue() {
         int result = 0;
 
