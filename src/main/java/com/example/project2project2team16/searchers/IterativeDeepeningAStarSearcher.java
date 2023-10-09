@@ -13,7 +13,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
-            Integer value = problem.getMaximumHeuristic(newNodes.get(i)) + newNodes.get(i).GetPathCost();
+            int value = problem.getMaximumHeuristic(newNodes.get(i)) + newNodes.get(i).GetPathCost();
 
             if (value < evalLimit) {
                 frontier.add(newNodes.get(i));
