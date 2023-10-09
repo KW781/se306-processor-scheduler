@@ -25,9 +25,9 @@
 }
 
 #displayBar {
-    -fx-background-color: #282626;
-    -fx-background-radius: 15px;
-    -fx-border-radius: 15px;
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
     -fx-border-color: #5A57D8;
     -fx-border-width: 0.5px;
 }

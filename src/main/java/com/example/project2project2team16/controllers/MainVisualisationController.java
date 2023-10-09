@@ -15,23 +15,19 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.graphstream.graph.Graph;
-import org.graphstream.ui.fx_viewer.FxDefaultView;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.fx_viewer.util.FxMouseManager;
-import org.graphstream.ui.fx_viewer.util.FxMouseOverMouseManager;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.camera.Camera;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 
-import javax.sound.midi.SysexMessage;
 import java.util.EnumSet;
 
 public class MainVisualisationController {
@@ -61,8 +57,8 @@ public class MainVisualisationController {
     private Timeline timeline;
     private Double mouseX;
     private Double mouseY;
-    final String buttonStyle = "svgButton";
-    final String buttonEvent = "svgButtonActive";
+    static final String INACTIVE_BUTTON = "svgButton";
+    static final String ACTIVE_BUTTON = "svgButtonActive";
 
     @FXML
     public void initialize() {
@@ -76,15 +72,15 @@ public class MainVisualisationController {
 
         pointerButton.managedProperty().bind(pointerButton.visibleProperty());
         pointerButton.getStyleClass().clear();
-        pointerButton.getStyleClass().add(buttonEvent);
+        pointerButton.getStyleClass().add(ACTIVE_BUTTON);
 
         dragButton.managedProperty().bind(dragButton.visibleProperty());
         dragButton.getStyleClass().clear();
-        dragButton.getStyleClass().add(buttonStyle);
+        dragButton.getStyleClass().add(INACTIVE_BUTTON );
 
         autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
         autoLayoutButton.getStyleClass().clear();
-        autoLayoutButton.getStyleClass().add(buttonEvent);
+        autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
@@ -130,28 +126,28 @@ public class MainVisualisationController {
         view.getCamera().resetView();
 
         autoLayoutButton.setOnMouseClicked((mouseEvent -> {
-            if (autoLayoutButton.getStyleClass().get(0).equals(buttonStyle)) {
+            if (autoLayoutButton.getStyleClass().get(0).equals(INACTIVE_BUTTON)) {
                 autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add(buttonEvent);
+                autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
                 viewer.enableAutoLayout();
                 view.getCamera().resetView();
             } else {
                 autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add(buttonStyle);
+                autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
                 viewer.disableAutoLayout();
             }
         }));
 
         pointerButton.setOnMouseClicked((mouseEvent -> {
-            if (pointerButton.getStyleClass().get(0).equals(buttonEvent)) {
+            if (pointerButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
                 return;
             }
 
             pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add(buttonEvent);
+            pointerButton.getStyleClass().add(ACTIVE_BUTTON);
 
             dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add(buttonStyle);
+            dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
             view.setOnMousePressed(pressEvent -> {});
             view.setOnMouseDragged(dragEvent -> {});
@@ -162,15 +158,15 @@ public class MainVisualisationController {
         }));
 
         dragButton.setOnMouseClicked((mouseEvent -> {
-            if (dragButton.getStyleClass().get(0).equals(buttonEvent)) {
+            if (dragButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
                 return;
             }
 
             dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add(buttonEvent);
+            dragButton.getStyleClass().add(ACTIVE_BUTTON);
 
             pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add(buttonStyle);
+            pointerButton.getStyleClass().add(INACTIVE_BUTTON);
 
 
             view.setOnMousePressed(pressEvent -> {

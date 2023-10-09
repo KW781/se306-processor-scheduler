@@ -30,8 +30,8 @@
                     <StackPane id="displayBox" maxHeight="480.0" maxWidth="700">
                         <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"
                                     styleClass="graphPane"/>
-                        <HBox id="displayBar" alignment="CENTER" maxHeight="35.0" maxWidth="180"
-                              StackPane.alignment="BOTTOM_CENTER">
+                        <HBox id="displayBar" alignment="CENTER" maxHeight="35.0" maxWidth="150"
+                              StackPane.alignment="TOP_RIGHT">
                             <HBox fx:id="graphControls" spacing="15.0">
                                 <Button fx:id="dragButton" alignment="CENTER" contentDisplay="CENTER"
                                         mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
@@ -73,7 +73,7 @@
                                 </HBox.margin>
                             </HBox>
                             <StackPane.margin>
-                                <Insets bottom="6.0"/>
+                                <Insets top="4.0" right="4.0"/>
                             </StackPane.margin>
                         </HBox>
                     </StackPane>
