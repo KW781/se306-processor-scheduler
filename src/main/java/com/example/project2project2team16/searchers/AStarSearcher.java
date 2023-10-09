@@ -1,11 +1,18 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.List;
 
 public class AStarSearcher extends GreedySearcher {
+    Set<ScheduleNode> opened = new HashSet<>();
+    Set<ScheduleNode> closed = new HashSet<>();
+
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
     }
@@ -17,9 +24,24 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
-        //Removed DFS pruning logic as multiple goal states won't be checked given that the heuristic is admissible
+        for (int i = newNodes.size() - 1; i >= 0; i--) {
+            ScheduleNode newNode = newNodes.get(i);
+            if (closed.contains(newNode) || opened.contains(newNode)) {
+                continue;
+            }
 
-        frontier.addAll(newNodes);
+            frontier.add(newNode);
+            opened.add(newNode);
+        }
+    }
+
+    @Override
+    protected ScheduleNode GetNextNode() {
+        ScheduleNode node = ((PriorityQueue<ScheduleNode>) frontier).poll();
+        closed.add(node);
+        opened.remove(node);
+
+        return node;
     }
 
     @Override

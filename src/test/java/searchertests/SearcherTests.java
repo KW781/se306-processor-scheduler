@@ -1,14 +1,21 @@
 package searchertests;
 
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.utils.DotFileParser;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class SearcherTests {
-    abstract Integer RunSearch(Graph taskGraph, Integer processorNum);
+    public abstract Integer RunSearch(Graph taskGraph, Integer processorNum);
+
+    @BeforeEach
+    public void setup() {
+        GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
+    }
 
     @Order(1)
     @Test

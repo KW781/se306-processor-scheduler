@@ -1,5 +1,7 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +18,9 @@ public class DFSSearcher {
 
     public DFSSearcher(SchedulingProblem problem) {
         this.problem = problem;
+    }
+
+    public void InitialiseSearcher() {
         InitialiseFrontier();
         AddToFrontier(Arrays.asList(problem.GetStartNode()));
     }
@@ -64,6 +69,9 @@ public class DFSSearcher {
         Integer newSolutionTime = newSolution.GetValue();
 
         if (optimal == null || newSolutionTime < currentOptimalTime) {
+            GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+            helper.addNode(newSolution, optimal);
+            helper.updateOptimalNode(newSolution);
             optimal = newSolution;
             currentOptimalTime = newSolutionTime;
         }

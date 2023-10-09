@@ -41,9 +41,15 @@ public class DotFileParser {
                 int weight = graph.getNode(entry.getKey()).getAttribute("Weight", Double.class).intValue();
                 writer.write("\t" + entry.getKey() + "\t" + " [Weight=" + weight + ",Start=" + (entry.getValue().getValue() - weight)  + ",Processor=" + (entry.getValue().getKey() + 1) + "];" + System.lineSeparator());
             }
-            for (Edge edge : graph.getEachEdge()) {
-                writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];" + System.lineSeparator());
-            }
+
+            graph.edges().forEach(edge -> {
+                try {
+                    writer.write("\t" + edge.getSourceNode().getId() + " -> " + edge.getTargetNode().getId() + "\t" + " [Weight=" + edge.getAttribute("Weight",Double.class).intValue() + "];" + System.lineSeparator());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
             writer.write("}");
         } catch (FileNotFoundException e) {
             System.err.println("Invalid output file name.");
