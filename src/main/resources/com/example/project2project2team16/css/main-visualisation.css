@@ -7,13 +7,29 @@
     -fx-background-radius: 7px;
 }
 
-#displayBox {
+#title {
+    -fx-font-size: 33px;
+    -fx-font-weight: bolder;
+}
+#displayTimer {
     -fx-background-color: #272A3D;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.5px;
+}
+
+#displayBox {
+    -fx-background-color: #282626;
     -fx-background-radius: 7px;
 }
 
-#graphPane {
-    -fx-background-color: #272A3D;
+#displayBar {
+    -fx-background-color: #282626;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.5px;
 }
 
 #startButton {

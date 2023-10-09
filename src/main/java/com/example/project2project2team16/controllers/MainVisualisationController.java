@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -41,15 +41,11 @@ public class MainVisualisationController {
     private Text currentShortestTimeText;
     private Graph scheduleSearchGraph;
     @FXML
-    private Pane graphPane;
+    private AnchorPane graphPane;
     @FXML
     private Button autoLayoutButton;
     @FXML
     private HBox graphControls;
-    @FXML
-    private HBox scheduleControls;
-    @FXML
-    private Button backButton;
     @FXML
     private Button startButton;
     @FXML
