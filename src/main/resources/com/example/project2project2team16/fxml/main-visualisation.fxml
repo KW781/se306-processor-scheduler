@@ -28,8 +28,7 @@
             <children>
                 <HBox id="topContainer" spacing="15.0">
                     <StackPane id="displayBox" maxHeight="480.0" maxWidth="700">
-                        <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"
-                                    styleClass="graphPane"/>
+                        <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"/>
                         <HBox id="displayBar" alignment="CENTER" maxHeight="35.0" maxWidth="150"
                               StackPane.alignment="TOP_RIGHT">
                             <HBox fx:id="graphControls" spacing="15.0">
@@ -78,7 +77,7 @@
                         </HBox>
                     </StackPane>
                     <VBox id="hardwareDisplay" spacing="15.0" maxWidth="200.0">
-                        <VBox id="displayTimer" prefHeight="78.0" prefWidth="170.0" alignment="CENTER">
+                        <VBox id="displayTimer" prefHeight="78.0" prefWidth="150.0" alignment="CENTER">
                             <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Time Elapsed: ">
                                 <font>
                                     <Font size="12.0"/>
@@ -91,14 +90,14 @@
                                 </font>
                             </Text>
                         </VBox>
-                        <VBox prefHeight="185.0" prefWidth="170.0" styleClass="container">
+                        <VBox prefHeight="185.0" prefWidth="150.0" styleClass="container">
                             <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CPU">
                                 <font>
                                     <Font size="16.0"/>
                                 </font>
                             </Text>
                         </VBox>
-                        <VBox prefHeight="185.0" prefWidth="170.0" styleClass="container">
+                        <VBox prefHeight="185.0" prefWidth="150.0" styleClass="container">
                             <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="MEMORY">
                                 <font>
                                     <Font size="16.0"/>
@@ -110,34 +109,35 @@
                         <Insets top="-10.0"/>
                     </padding>
                 </HBox>
-                <ProgressBar id="progressBar" fx:id="progressBar" prefWidth="880" progress="0.0"/>
-                <HBox prefHeight="100.0" prefWidth="880.0" spacing="16.0">
-                    <children>
-                        <VBox prefHeight="100.0" prefWidth="450.0" styleClass="container">
-                            <children>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE">
-                                    <font>
-                                        <Font size="24.0"/>
-                                    </font>
-                                </Text>
-                            </children>
-                        </VBox>
-                        <VBox prefHeight="100.0" prefWidth="450.0" styleClass="container" HBox.hgrow="NEVER">
-                            <children>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT SHORTEST TIME">
-                                    <font>
-                                        <Font size="24.0"/>
-                                    </font>
-                                </Text>
-                                <Text fx:id="currentShortestTimeText" fill="WHITE" strokeType="OUTSIDE"
-                                      strokeWidth="0.0" text="0" textAlignment="CENTER" wrappingWidth="380.75">
-                                    <font>
-                                        <Font size="110.0"/>
-                                    </font>
-                                </Text>
-                            </children>
-                        </VBox>
-                    </children>
+                <ProgressBar id="progressBar" fx:id="progressBar" prefWidth="900.0" progress="0.0"/>
+                <HBox maxWidth="900.0" spacing="15.0">
+                    <VBox prefWidth="350.0" styleClass="container">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE">
+                            <font>
+                                <Font size="24.0"/>
+                            </font>
+                        </Text>
+                    </VBox>
+                    <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT SHORTEST TIME">
+                            <font>
+                                <Font size="24.0"/>
+                            </font>
+                        </Text>
+                        <Text fx:id="currentShortestTimeText" fill="WHITE" strokeType="OUTSIDE"
+                              strokeWidth="0.0" text="0" textAlignment="CENTER">
+                            <font>
+                                <Font size="110.0"/>
+                            </font>
+                        </Text>
+                    </VBox>
+                    <VBox minWidth="152.0" styleClass="container">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Heuristics">
+                            <font>
+                                <Font size="24.0"/>
+                            </font>
+                        </Text>
+                    </VBox>
                 </HBox>
             </children>
             <padding>
