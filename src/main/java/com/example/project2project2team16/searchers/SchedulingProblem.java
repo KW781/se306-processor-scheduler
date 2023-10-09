@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import javafx.util.Pair;
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
@@ -41,8 +42,43 @@ public class SchedulingProblem {
 //        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
 //
 //        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
-        System.out.println("load balance heuristic: " +  loadBalanceHeuristic);
-        return loadBalanceHeuristic;
+        System.out.println("heuristic: " +  dataReadyTimeHeuristic);
+        return dataReadyTimeHeuristic;
+    }
+
+    private int dataReadyTimeHeuristic(ScheduleNode node) {
+        Set<Node> freeTasks = node.availableTasks;
+
+        int maxDataReadyTime = Integer.MIN_VALUE;
+
+        for (Node freeTask : freeTasks) {
+            int minDataReadyTime = calculateMinDRT(freeTask, node.processorCount, node.visited);
+            maxDataReadyTime = Math.max(maxDataReadyTime, minDataReadyTime);
+        }
+        return maxDataReadyTime;
+    }
+
+    private int calculateMinDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
+        int DRT = 0;
+
+        Iterable<Edge> parents = taskNode.getEachEnteringEdge();
+
+        for (Edge parent : parents) {
+            Node sourceTask = parent.getSourceNode();
+            int parentProcessor = visited.get(sourceTask.getId()).getKey();
+            int communicationCost = parent.getAttribute("Weight", Double.class).intValue();
+
+            int earliestStartTime = 0;
+
+            if (parentProcessor != processor) {
+                earliestStartTime = DRT + communicationCost;
+            } else {
+                earliestStartTime = DRT;
+            }
+
+            DRT = Math.max(DRT, earliestStartTime);
+        }
+        return DRT;
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
@@ -76,6 +112,7 @@ public class SchedulingProblem {
             String taskName = entry.getKey();
             int processor = entry.getValue().getKey();
             int endTime = entry.getValue().getValue();
+
             if (processor == i) {
                 int computationTime = taskGraph.getNode(taskName).getAttribute("Weight", Double.class).intValue();
                 idleTime += endTime - currentTime - computationTime;
