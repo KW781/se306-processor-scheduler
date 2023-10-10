@@ -43,7 +43,7 @@ public class ScheduleNode {
         this.parent = copy;
         this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
 
-        AddTask(newTask, processor);
+        addTask(newTask, processor);
     }
 
     public Map<String, Pair<Integer, Integer>> GetVisited() {
@@ -84,17 +84,17 @@ public class ScheduleNode {
         return processorEndTimes.get(processor);
     }
 
-    private void AddTask(Node newTask, Integer processor) {
-        Iterable<Edge> parents = newTask.enteringEdges().collect(Collectors.toList());
+    private void addTask(Node newTask, Integer processor) {
+        List<Edge> incomingEdges = newTask.enteringEdges().collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
         Integer previousEndTime = earliestStartTime;
 
-        for (Edge parent : parents) {
-            Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
+        for (Edge incomingEdge : incomingEdges) {
+            Integer parentEndTime = visited.get(incomingEdge.getSourceNode().getId()).getValue();
 
-            if (visited.get(parent.getSourceNode().getId()).getKey() != processor) {
-                parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
+            if (visited.get(incomingEdge.getSourceNode().getId()).getKey() != processor) {
+                parentEndTime += incomingEdge.getAttribute("Weight", Double.class).intValue();
             }
 
             earliestStartTime = Math.max(earliestStartTime, parentEndTime);
