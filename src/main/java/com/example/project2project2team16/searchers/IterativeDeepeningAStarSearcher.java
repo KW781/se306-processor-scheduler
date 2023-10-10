@@ -1,19 +1,22 @@
 package com.example.project2project2team16.searchers;
 
-import com.example.project2project2team16.helper.GraphVisualisationHelper;
-
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
-//    Integer evalLimit = 0;
-//    Integer nextEvalLimit = Integer.MAX_VALUE;
+    Integer evalLimit = 0;
+    Integer nextEvalLimit = Integer.MAX_VALUE;
 
     public IterativeDeepeningAStarSearcher(SchedulingProblem problem) {
         super(problem);
     }
-    int j = 0;
+
+    @Override
+    public void InitialiseSearcher() {
+        super.InitialiseSearcher();
+        evalLimit = problem.GetStartNode().fValue;
+    }
+
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
@@ -26,11 +29,11 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
                     continue;
                 }
 
+                schedulesAdded++;
                 frontier.add(newNode);
                 opened.add(newNode);
             }
             else {
-                j++;
                 nextEvalLimit = Math.min(nextEvalLimit, value);
             }
         }
@@ -42,11 +45,18 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
 
         while (result == null) {
             result = super.Search();
-            AddToFrontier(Arrays.asList(problem.GetStartNode()));
             closed.clear();
             opened.clear();
             evalLimit = nextEvalLimit;
             nextEvalLimit = Integer.MAX_VALUE;
+            System.out.println(schedulesAdded + " schedules added");
+            System.out.println(dups + " duplicates detected");
+            System.out.println(explored + " schedules explored");
+            System.out.println("-----NEXT ITERATION-----");
+            schedulesAdded = 0;
+            dups = 0;
+            explored = 0;
+            AddToFrontier(Arrays.asList(problem.GetStartNode()));
         }
 
         return result;

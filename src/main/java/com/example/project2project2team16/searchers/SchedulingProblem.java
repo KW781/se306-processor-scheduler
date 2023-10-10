@@ -78,6 +78,15 @@ public class SchedulingProblem {
         return cost;
     }
 
+    public Integer initialiseF(ScheduleNode node) {
+        for (Node task : node.availableTasks) {
+            int cp = GetCriticalPath(task);
+            node.fValue = Math.max(node.fValue, cp);
+        }
+
+        return node.fValue;
+    }
+
     public Integer CalculateF(ScheduleNode node) {
         // The F value is defined as f(n) = g(n) + h(n)
         // g(n) is the total cost of the path from the root node to n

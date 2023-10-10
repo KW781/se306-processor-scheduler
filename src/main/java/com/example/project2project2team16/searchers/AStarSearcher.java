@@ -19,8 +19,11 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     public void InitialiseSearcher() {
-        super.InitialiseSearcher();
         ScheduleNode startNode = problem.GetStartNode();
+        problem.initialiseF(startNode);
+
+        super.InitialiseSearcher();
+
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
         helper.addNode(startNode, startNode.parent);
         helper.setStartNode(startNode);
@@ -39,6 +42,7 @@ public class AStarSearcher extends GreedySearcher {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             ScheduleNode newNode = newNodes.get(i);
             if (closed.contains(newNode) || opened.contains(newNode)) {
+                dups++;
                 continue;
             }
 
@@ -73,6 +77,7 @@ public class AStarSearcher extends GreedySearcher {
                 System.out.println(schedulesAdded + " schedules added");
                 System.out.println(dups + " duplicates detected");
                 System.out.println(explored + " schedules explored");
+                System.out.println("-------------------");
                 return nextNode;
             }
             else {
