@@ -32,6 +32,7 @@ public class SchedulingProblem {
     }
 
     private void  calculateComputationCostSum(Graph taskGraph) {
+        computationCostSum = 0;
         for (Node node : taskGraph) {
             computationCostSum += node.getAttribute("Weight", Double.class).intValue();
         }
@@ -50,15 +51,18 @@ public class SchedulingProblem {
     }
 
     public Integer getMaximumHeuristic(ScheduleNode node) {
-//        int loadBalanceHeuristic = loadBalanceHeuristic(node);
-        int bottomLevelHeuristic = bottomLevelHeuristic(node);
+        int loadBalanceHeuristic = loadBalanceHeuristic(node);
+//        int loadBalanceHeuristic = 0;
+
+        int bottomLevelHeuristic = 0;
+//        int bottomLevelHeuristic = bottomLevelHeuristic(node);
 //        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
 
-//        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
+        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
 //
 //        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
-        System.out.println("heuristic: " + bottomLevelHeuristic);
-        return bottomLevelHeuristic;
+        System.out.println("heuristic: " + maxHeuristic);
+        return maxHeuristic;
     }
     private int[] dfs(Node node) {
         // 0 = cost
@@ -170,14 +174,7 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        int idleSum = 0;
-
-        // sum all the idle times of all the processors
-        for (int i = 0; i < node.processorCount; i++) {
-            idleSum += calculateIdleTimeForProcessor(node, i);
-        }
-
-        return (computationCostSum + idleSum)/node.processorCount;
+        return (computationCostSum + node.idleTime)/node.processorCount;
     }
 
     /*

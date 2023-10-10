@@ -19,6 +19,8 @@ public class ScheduleNode {
     Integer processorCount;
     ScheduleNode parent;
     Integer fValue = 0;
+    Integer idleTime = 0;
+
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -86,6 +88,7 @@ public class ScheduleNode {
         Iterable<Edge> parents = newTask.enteringEdges().collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
+        Integer previousEndTime = earliestStartTime;
 
         for (Edge parent : parents) {
             Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
@@ -105,6 +108,7 @@ public class ScheduleNode {
         availableTasks.remove(newTask);
         lastTask = newTask;
         lastProcessor = processor;
+        idleTime += earliestStartTime - previousEndTime;
 
         AddNewTasks(newTask);
     }
@@ -151,6 +155,8 @@ public class ScheduleNode {
 
         return true;
     }
+
+
 
     @Override
     public int hashCode() {
