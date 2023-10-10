@@ -17,6 +17,7 @@ public class SchedulingProblem {
     ScheduleNode startingNode;
     Integer taskCount;
     Integer processorCount;
+    Integer computationCostSum;
 
     public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
@@ -26,6 +27,14 @@ public class SchedulingProblem {
         Set<Node> startingTasks = GenerateStartingTasks();
 
         startingNode = new ScheduleNode(processorCount, startingTasks);
+
+        calculateComputationCostSum(taskGraph);
+    }
+
+    private void  calculateComputationCostSum(Graph taskGraph) {
+        for (Node node : taskGraph) {
+            computationCostSum += node.getAttribute("Weight", Double.class).intValue();
+        }
     }
 
     public ScheduleNode GetStartNode() {
@@ -161,20 +170,14 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        int computationSum = 0;
         int idleSum = 0;
-
-        // sum all the computation times of all the nodes in the graph
-        for (Node task : taskGraph) {
-            computationSum += task.getAttribute("Weight", Double.class);
-        }
 
         // sum all the idle times of all the processors
         for (int i = 0; i < node.processorCount; i++) {
             idleSum += calculateIdleTimeForProcessor(node, i);
         }
 
-        return (computationSum + idleSum)/node.processorCount;
+        return (computationCostSum + idleSum)/node.processorCount;
     }
 
     /*
