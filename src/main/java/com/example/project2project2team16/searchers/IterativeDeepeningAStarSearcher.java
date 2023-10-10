@@ -14,6 +14,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     public void InitialiseSearcher() {
         super.InitialiseSearcher();
+        nextEvalLimit = problem.GetStartNode().fValue;
         evalLimit = problem.GetStartNode().fValue;
     }
 
@@ -34,7 +35,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
                 opened.add(newNode);
             }
             else {
-                nextEvalLimit = Math.min(nextEvalLimit, value);
+                nextEvalLimit = Math.max(nextEvalLimit, value);
             }
         }
     }
@@ -48,7 +49,6 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             closed.clear();
             opened.clear();
             evalLimit = nextEvalLimit;
-            nextEvalLimit = Integer.MAX_VALUE;
             System.out.println(schedulesAdded + " schedules added");
             System.out.println(dups + " duplicates detected");
             System.out.println(explored + " schedules explored");
