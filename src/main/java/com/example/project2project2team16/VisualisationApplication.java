@@ -47,7 +47,7 @@ public class VisualisationApplication extends Application {
     public void start(Stage stage) throws IOException {
         Scene scene = new Scene(loadFxml("main-visualisation"));
         stage.setResizable(false);
-        stage.setTitle("Hello!");
+        stage.setTitle("Parallels - Team 16");
         stage.setScene(scene);
         stage.show();
     }
