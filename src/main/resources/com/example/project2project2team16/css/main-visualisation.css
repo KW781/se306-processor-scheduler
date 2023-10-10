@@ -1,0 +1,42 @@
+.root {
+    -fx-background-color: #1D1F2E;
+}
+
+AnchorPane {
+    -fx-background-color: #272A3D;
+}
+
+Pane {
+    -fx-background-color: #272A3D;
+}
+
+.container {
+    -fx-background-color: #272A3D;
+}
+
+#startButton {
+    -fx-background-color: #181818;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-style: none;
+}
+
+.svgButton {
+    -fx-background-color: transparent;
+    -fx-border-style: none;
+}
+
+.svgButtonActive SVGPath {
+    -fx-fill: #5A57D8;
+}
+
+.svgButtonActive:hover {
+    -fx-cursor: hand;
+}
+
+.svgButton SVGPath {
+    -fx-fill: #FFFFFF;
+}
+
+.svgButton:hover {
+    -fx-cursor: hand;
+}

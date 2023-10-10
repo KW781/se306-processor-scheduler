@@ -1,0 +1,24 @@
+graph {
+    fill-color: #272A3D;
+
+}
+
+node {
+    size: 5px;
+    shape: circle;
+    fill-color: #D9D9D9;
+    stroke-mode: none;
+}
+
+node:clicked {
+    stroke-mode: plain;
+    stroke-color: black;
+    stroke-width: 4;
+}
+
+edge {
+    arrow-shape: arrow;
+    arrow-size: 8, 8;
+    shape: line;
+    size: 2px;
+}
