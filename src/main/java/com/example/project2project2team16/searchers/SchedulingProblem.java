@@ -43,9 +43,9 @@ public class SchedulingProblem {
         // 1 = num of tasks
         int[] result = new int[]{0, 0};
 
-        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
-        for (Edge edge : edges) {
-            int[] childResult = dfs(edge.getTargetNode());
+        List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
+        for (Node child : nodeChildren) {
+            int[] childResult = dfs(child);
 
             if (childResult[0] > result[0] || (childResult[0] == result[0] && childResult[1] > result[1])) {
                 result = childResult;
@@ -61,10 +61,10 @@ public class SchedulingProblem {
     private int GetCriticalPath(Node node) {
         int cost = 0;
 
-        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
+        List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
 
-        for (Edge edge : edges) {
-            int[] result = dfs(edge.getTargetNode());
+        for (Node child : nodeChildren) {
+            int[] result = dfs(child);
 
             int freeProcessors = processorCount - result[1];
 
