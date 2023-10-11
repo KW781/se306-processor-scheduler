@@ -88,7 +88,7 @@
                                 </font>
                             </Text>
                             <Text fx:id="timeElapsedText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
-                                  text="0s">
+                                  text="0s" styleClass="timeText">
                                 <font>
                                     <Font size="25.0"/>
                                 </font>
@@ -101,7 +101,7 @@
                             <StackPane>
                                 <Group id="displayCpu">
                                     <children>
-                                        <Circle fill="#ffffff00" radius="60.1" stroke="#403939" strokeWidth="7.5"/>
+                                        <Circle fill="#ffffff00" radius="60.5" stroke="#403939" strokeWidth="7.5"/>
                                         <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
                                              startAngle="90.0"
                                              stroke="#7F39FB" strokeLineCap="BUTT" strokeLineJoin="ROUND"
@@ -128,7 +128,7 @@
                             <StackPane>
                                 <Group id="displayMemory">
                                     <children>
-                                        <Circle fill="#ffffff00" radius="60.1" stroke="#403939" strokeWidth="7.5"/>
+                                        <Circle fill="#ffffff00" radius="60.5" stroke="#403939" strokeWidth="7.5"/>
                                         <Arc fx:id="memoryArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
                                              startAngle="90.0"
                                              stroke="#3700B4" strokeLineCap="BUTT" strokeLineJoin="ROUND"

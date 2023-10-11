@@ -36,6 +36,11 @@
     -fx-border-width: 0.75px;
 }
 
+.timeText {
+    -fx-font-family: "Monda";
+}
+
+
 #displayBar {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
