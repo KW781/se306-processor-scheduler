@@ -12,9 +12,9 @@ import java.util.Random;
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
     private Graph graph;
+    private ScheduleNode currentOptimal;
 
     private GraphVisualisationHelper() {
-
     }
 
     public static GraphVisualisationHelper instance() {
@@ -48,20 +48,25 @@ public class GraphVisualisationHelper {
         if (node != null) {
             return;
         }
+
         node = graph.addNode(scheduleNode.toString());
         node.setAttribute("scheduleNode", scheduleNode);
 
-        Color randomColour = generateRandomColour();
-        node.setAttribute("ui.style",
-            "fill-color: rgb(" +
-                    randomColour.getRed() + "," +
-                    randomColour.getGreen() + "," +
-                    randomColour.getBlue() + ");"
-        );
+//        Color randomColour = generateRandomColour();
+//        node.setAttribute("ui.style",
+//            "fill-color: rgb(" +
+//                    randomColour.getRed() + "," +
+//                    randomColour.getGreen() + "," +
+//                    randomColour.getBlue() + ");"
+//        );
 
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
             if (parentNode != null) {
+                addEdge(parentNode, node);
+            } else {
+                addNode(parent, parent.GetParent());
+                parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
         }
@@ -82,5 +87,17 @@ public class GraphVisualisationHelper {
         if (mainVisualisationController != null) {
             mainVisualisationController.updateShortestTime(newOptimal.GetValue());
         }
+
+        Node graphNode = graph.getNode(newOptimal.toString());
+        graphNode.setAttribute("ui.style", "fill-color: #FF0000;");
+
+        if (currentOptimal != null) {
+            Node prevOptimalNode = graph.getNode(currentOptimal.toString());
+            if (prevOptimalNode != null) {
+                prevOptimalNode.setAttribute("ui.style", "fill-color: #D9D9D9;");
+            }
+        }
+
+        currentOptimal = newOptimal;
     }
 }

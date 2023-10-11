@@ -2,10 +2,7 @@ package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /*
  * Basic Searcher producing an optional solution using DFS. Can be extended from for more advanced search algorithms.
@@ -22,7 +19,7 @@ public class DFSSearcher {
 
     public void InitialiseSearcher() {
         InitialiseFrontier();
-        AddToFrontier(Arrays.asList(problem.GetStartNode()));
+        AddToFrontier(Collections.singletonList(problem.GetStartNode()));
     }
 
     //Exhaustive search
