@@ -9,9 +9,11 @@ import java.util.Set;
 import java.util.List;
 
 public class AStarSearcher extends GreedySearcher {
-    Set<ScheduleNode> opened = new HashSet<>();
-    Set<ScheduleNode> closed = new HashSet<>();
+    Set<ScheduleNode> createdSchedules = new HashSet<>();
     int tasksVisited = 0;
+    int dups = 0;
+    int schedulesAdded = 0;
+    int schedulesExplored = 0;
 
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -31,29 +33,27 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     protected void InitialiseFrontier() {
-        frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeAStarComparator(problem));
+        frontier = new PriorityQueue<>(new ScheduleNodeAStarComparator(problem));
     }
 
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             ScheduleNode newNode = newNodes.get(i);
-            if (closed.contains(newNode) || opened.contains(newNode)) {
+            if (createdSchedules.contains(newNode)) {
+                dups++;
                 continue;
             }
 
+            schedulesAdded++;
             frontier.add(newNode);
-            opened.add(newNode);
+            createdSchedules.add(newNode);
         }
     }
 
     @Override
     protected ScheduleNode GetNextNode() {
-        ScheduleNode node = ((PriorityQueue<ScheduleNode>) frontier).poll();
-        closed.add(node);
-        opened.remove(node);
-
-        return node;
+        return ((PriorityQueue<ScheduleNode>) frontier).poll();
     }
 
     @Override
@@ -67,7 +67,11 @@ public class AStarSearcher extends GreedySearcher {
                 tasksVisited = nextNode.visited.size();
             }
 
+            schedulesExplored++;
             if (problem.IsGoal(nextNode)) {
+                System.out.println(schedulesAdded + " schedules added");
+                System.out.println(dups + " duplicates detected");
+                System.out.println(schedulesExplored + " schedules explored");
                 return nextNode;
             }
             else {

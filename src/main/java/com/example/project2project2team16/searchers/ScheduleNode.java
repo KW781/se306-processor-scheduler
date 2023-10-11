@@ -60,6 +60,10 @@ public class ScheduleNode {
         return neighbours;
     }
 
+    public int getNumTasksScheduled() {
+        return visited.size();
+    }
+
     public boolean IsComplete(Integer taskCount) {
         return (taskCount == visited.size());
     }
