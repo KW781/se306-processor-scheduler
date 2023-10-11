@@ -2,6 +2,7 @@ package com.example.project2project2team16.controllers;
 
 import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
+import com.sun.management.OperatingSystemMXBean;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,9 +30,10 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
-import java.util.EnumSet;
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import java.text.DecimalFormat;
+import java.util.EnumSet;
+
 
 public class MainVisualisationController {
     @FXML
@@ -73,6 +75,7 @@ public class MainVisualisationController {
     private Double mouseY;
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
+    static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
 
 
     @FXML
@@ -91,7 +94,7 @@ public class MainVisualisationController {
 
         dragButton.managedProperty().bind(dragButton.visibleProperty());
         dragButton.getStyleClass().clear();
-        dragButton.getStyleClass().add(INACTIVE_BUTTON );
+        dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
         autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
         autoLayoutButton.getStyleClass().clear();
@@ -103,7 +106,9 @@ public class MainVisualisationController {
                     timeElapsedText.setText(String.format("%.3fs", timeElapsed));
 
                     // Display cpu and memory usage
-                    memoryText.setText(String.valueOf(getMemoryUsage()) + "%");
+                    cpuText.setText(String.valueOf(getCPUUsage()));
+                    cpuArc.setLength((getCPUUsage() / 100) * -360);
+                    memoryText.setText(String.valueOf(getMemoryUsage()));
                     memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
 
                 }
@@ -169,8 +174,10 @@ public class MainVisualisationController {
             dragButton.getStyleClass().clear();
             dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
-            view.setOnMousePressed(pressEvent -> {});
-            view.setOnMouseDragged(dragEvent -> {});
+            view.setOnMousePressed(pressEvent -> {
+            });
+            view.setOnMouseDragged(dragEvent -> {
+            });
 
             view.setCursor(Cursor.DEFAULT);
 
@@ -215,10 +222,12 @@ public class MainVisualisationController {
                 public void init(GraphicGraph graphicGraph, View view) {
 
                 }
+
                 @Override
                 public void release() {
 
                 }
+
                 @Override
                 public EnumSet<InteractiveElement> getManagedTypes() {
                     return null;
@@ -247,7 +256,8 @@ public class MainVisualisationController {
      * @return current CPU used in percentage
      */
     public static double getCPUUsage() {
-        return 0;
+        DecimalFormat df = new DecimalFormat("#.#");
+       return Double.parseDouble(df.format(osBean.getSystemCpuLoad()*100));
     }
 
     /**

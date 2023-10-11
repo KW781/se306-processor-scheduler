@@ -96,46 +96,56 @@
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="185.0" prefWidth="150.0" styleClass="container"
                               spacing="10.0">
-                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CPU" styleClass="hardwareHeader"/>
-                            <Group id="displayCpu">
-                                <children>
-                                    <Circle fill="#ffffff00" radius="60.0" stroke="#403939" strokeWidth="7.0"/>
-                                    <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0" startAngle="90.0"
-                                         stroke="#7F39FB" strokeLineCap="BUTT" strokeLineJoin="ROUND"
-                                         strokeMiterLimit="0.0"
-                                         strokeWidth="8.0">
-                                        <effect>
-                                            <Glow level="1.0"/>
-                                        </effect>
-                                    </Arc>
-                                    <Text fx:id="cpuText" text="0%" styleClass="hardwareLabel" fill="WHITE"
-                                           layoutX="-25.0"
-                                           layoutY="7"/>
-                                    <Line layoutY="-67" endY="15" strokeWidth="2.0" stroke="WHITE"/>
-                                </children>
-                            </Group>
+                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CPU"
+                                  styleClass="hardwareHeader"/>
+                            <StackPane>
+                                <Group id="displayCpu">
+                                    <children>
+                                        <Circle fill="#ffffff00" radius="60.0" stroke="#403939" strokeWidth="7.0"/>
+                                        <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
+                                             startAngle="90.0"
+                                             stroke="#7F39FB" strokeLineCap="BUTT" strokeLineJoin="ROUND"
+                                             strokeMiterLimit="0.0"
+                                             strokeWidth="8.0">
+                                            <effect>
+                                                <Glow level="1.0"/>
+                                            </effect>
+                                        </Arc>
+                                        <Line layoutY="-67" endY="15" strokeWidth="2.0" stroke="WHITE"/>
+                                    </children>
+                                </Group>
+                                <HBox alignment="CENTER">
+                                    <Text fx:id="cpuText" text="0" styleClass="hardwareLabel" fill="WHITE"
+                                    />
+                                    <Label text="\%" styleClass="hardwareLabel" textFill="WHITE"/>
+                                </HBox>
+                            </StackPane>
                         </VBox>
                         <VBox alignment="CENTER" prefHeight="185.0" prefWidth="150.0" styleClass="container"
                               spacing="10.0">
-                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="MEMORY" styleClass="hardwareHeader"/>
-                            <Group id="displayMemory">
-                                <children>
-                                    <Circle fill="#ffffff00" radius="60.0" stroke="#403939" strokeWidth="7.0"/>
-                                    <Arc fx:id="memoryArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
-                                         startAngle="90.0"
-                                         stroke="#3700B4" strokeLineCap="BUTT" strokeLineJoin="ROUND"
-                                         strokeMiterLimit="0.0"
-                                         strokeWidth="8.0">
-                                        <effect>
-                                            <Glow level="1.0"/>
-                                        </effect>
-                                    </Arc>
-                                    <Text fx:id="memoryText" text="0%" styleClass="hardwareLabel" fill="WHITE"
-                                          layoutX="-25.0"
-                                          layoutY="7"/>
-                                    <Line layoutY="-67" endY="15" strokeWidth="2.0" stroke="WHITE"/>
-                                </children>
-                            </Group>
+                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="MEMORY"
+                                  styleClass="hardwareHeader"/>
+                            <StackPane>
+                                <Group id="displayMemory">
+                                    <children>
+                                        <Circle fill="#ffffff00" radius="60.0" stroke="#403939" strokeWidth="7.0"/>
+                                        <Arc fx:id="memoryArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
+                                             startAngle="90.0"
+                                             stroke="#3700B4" strokeLineCap="BUTT" strokeLineJoin="ROUND"
+                                             strokeMiterLimit="0.0"
+                                             strokeWidth="8.0">
+                                            <effect>
+                                                <Glow level="1.0"/>
+                                            </effect>
+                                        </Arc>
+                                        <Line layoutY="-67" endY="15" strokeWidth="2.0" stroke="WHITE"/>
+                                    </children>
+                                </Group>
+                                <HBox alignment="CENTER">
+                                    <Text fx:id="memoryText" text="0" styleClass="hardwareLabel" fill="WHITE"/>
+                                    <Label text="\%" styleClass="hardwareLabel" textFill="WHITE"/>
+                                </HBox>
+                            </StackPane>
                         </VBox>
                     </VBox>
                     <padding>
