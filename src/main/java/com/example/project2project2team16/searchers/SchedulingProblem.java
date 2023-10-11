@@ -177,36 +177,6 @@ public class SchedulingProblem {
         return (computationCostSum + node.idleTime)/node.processorCount;
     }
 
-    /*
-     * Used by the idle time heuristics to find the idle times in a single processor for a given partial schedule
-     */
-    private int calculateIdleTimeForProcessor(ScheduleNode node, int i) {
-        int idleTime = 0;
-        int currentTime = 0;
-
-        // looks at each visited task in the partial schedule and calculates the idle time between each task
-        // this is so slow right now... can we make it faster?
-        //TODO make this way faster
-        for (Map.Entry<String, Pair<Integer, Integer>> entry : node.visited.entrySet()) {
-            String taskName = entry.getKey();
-            int processor = entry.getValue().getKey();
-            int endTime = entry.getValue().getValue();
-
-            if (processor == i) {
-                int computationTime = taskGraph.getNode(taskName).getAttribute("Weight", Double.class).intValue();
-                idleTime += endTime - currentTime - computationTime;
-            }
-            currentTime = endTime;
-        }
-        int lastTaskEndTime = node.processorEndTimes.get(i);
-        if (lastTaskEndTime > currentTime) {
-            idleTime += lastTaskEndTime - currentTime;
-        }
-
-        return idleTime;
-    }
-
-
     private Set<Node> GenerateStartingTasks() {
         Set<Node> startingTasks = new HashSet<>();
 
