@@ -1,27 +1,39 @@
+@font-face {
+    font-family: "Monda";
+    src: url("../fonts/Monda-Bold.ttf");
+}
+
 .root {
     -fx-background-color: #1D1F2E;
 }
 
 .container {
     -fx-background-color: #272A3D;
-    -fx-background-radius: 7px;
+    -fx-background-radius: 10px;
+}
+
+.hardwareLabel {
+    -fx-font-family: "Monda";
+    -fx-font-size: 25px;
+}
+
+.hardwareHeader {
+    -fx-font-family: "Monda";
+    -fx-font-size: 16px;
 }
 
 #title {
+    -fx-font-family: "Monda";
     -fx-font-size: 33px;
-    -fx-font-weight: bolder;
-}
-#displayTimer {
-    -fx-background-color: #272A3D;
-    -fx-background-radius: 7px;
-    -fx-border-radius: 7px;
-    -fx-border-color: #5A57D8;
-    -fx-border-width: 0.5px;
+    -fx-font-weight: bold;
 }
 
-#displayBox {
-    -fx-background-color: #282626;
-    -fx-background-radius: 7px;
+#displayTimer {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
 }
 
 #displayBar {
@@ -29,7 +41,25 @@
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-border-color: #5A57D8;
-    -fx-border-width: 0.5px;
+    -fx-border-width: 0.75px;
+}
+
+#progressBar .track {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
+}
+
+#progressBar .bar {
+    -fx-background-color: #5A57D8;
+    -fx-background-radius: 10px;
+}
+
+#progressPercentage {
+    -fx-font-family: "Monda";
+    -fx-font-size: 12px;
 }
 
 #startButton {

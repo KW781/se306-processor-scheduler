@@ -4,6 +4,8 @@ module com.example.project2project2team16 {
     requires javafx.swing;
     requires gs.core;
     requires gs.ui.javafx;
+    requires java.management;
+    requires jdk.management;
 
 
     opens com.example.project2project2team16 to javafx.fxml;

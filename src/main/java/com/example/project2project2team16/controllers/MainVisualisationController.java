@@ -9,9 +9,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Arc;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.graphstream.graph.Graph;
@@ -27,21 +29,29 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
-
 import java.util.EnumSet;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 
 public class MainVisualisationController {
+    @FXML
+    private AnchorPane graphPane;
+    @FXML
+    private HBox graphControls;
+    @FXML
+    private VBox mainBox;
+    @FXML
+    private VBox startBox;
+    @FXML
+    private Text cpuText;
+    @FXML
+    private Text memoryText;
     @FXML
     private Text timeElapsedText;
     @FXML
     private Text currentShortestTimeText;
-    private Graph scheduleSearchGraph;
-    @FXML
-    private AnchorPane graphPane;
     @FXML
     private Button autoLayoutButton;
-    @FXML
-    private HBox graphControls;
     @FXML
     private Button startButton;
     @FXML
@@ -49,16 +59,21 @@ public class MainVisualisationController {
     @FXML
     private Button dragButton;
     @FXML
-    private VBox mainBox;
+    private ProgressBar progressBar;
     @FXML
-    private VBox startBox;
+    private Arc memoryArc;
+    @FXML
+    private Arc cpuArc;
+    @FXML
     private FxViewer viewer;
+    private Graph scheduleSearchGraph;
     private double timeElapsed = 0;
     private Timeline timeline;
     private Double mouseX;
     private Double mouseY;
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
+
 
     @FXML
     public void initialize() {
@@ -86,6 +101,11 @@ public class MainVisualisationController {
                 actionEvent -> {
                     timeElapsed += 0.001;
                     timeElapsedText.setText(String.format("%.3fs", timeElapsed));
+
+                    // Display cpu and memory usage
+                    memoryText.setText(String.valueOf(getMemoryUsage()) + "%");
+                    memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
+
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -219,5 +239,26 @@ public class MainVisualisationController {
                 view.getCamera().setViewPercent(view.getCamera().getViewPercent() - 0.1);
             }
         });
+    }
+
+    /**
+     * This function calculates the current runtime CPU used
+     *
+     * @return current CPU used in percentage
+     */
+    public static double getCPUUsage() {
+        return 0;
+    }
+
+    /**
+     * This function calculates the current runtime memory used
+     *
+     * @return current memory used in percentage
+     */
+    public static int getMemoryUsage() {
+        long memUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long totalMem = Runtime.getRuntime().totalMemory();
+        double memoryUsage = ((double) (memUsed) / totalMem) * 100;
+        return (int) Math.round(memoryUsage);
     }
 }
