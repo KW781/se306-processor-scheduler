@@ -17,12 +17,16 @@ public class ScheduleNodeAStarComparator implements Comparator<ScheduleNode> {
         int value1 = problem.CalculateF(node1);
         int value2 = problem.CalculateF(node2);
 
-        if (value1 < value2) {
+        if (value1 == value2) {
+            if (node1.getNumTasksScheduled() >= node2.getNumTasksScheduled()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else if (value1 < value2) {
             return -1;
-        } else if (value1 > value2) {
+        } else {
             return 1;
         }
-
-        return 0;
     }
 }
