@@ -34,19 +34,14 @@ public class AStarSearcher extends GreedySearcher {
         frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeAStarComparator(problem));
     }
 
-    int dups = 0;
-    int explored = 0;
-    int schedulesAdded = 0;
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             ScheduleNode newNode = newNodes.get(i);
             if (closed.contains(newNode) || opened.contains(newNode)) {
-                dups++;
                 continue;
             }
 
-            schedulesAdded++;
             frontier.add(newNode);
             opened.add(newNode);
         }
@@ -65,7 +60,6 @@ public class AStarSearcher extends GreedySearcher {
     public ScheduleNode Search() {
         while (!IsFrontierEmpty()) {
             ScheduleNode nextNode = GetNextNode();
-            explored++;
             if (nextNode.visited.size() > tasksVisited) {
                 GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
                 helper.addNode(nextNode, nextNode.parent);
@@ -74,10 +68,6 @@ public class AStarSearcher extends GreedySearcher {
             }
 
             if (problem.IsGoal(nextNode)) {
-                System.out.println(schedulesAdded + " schedules added");
-                System.out.println(dups + " duplicates detected");
-                System.out.println(explored + " schedules explored");
-                System.out.println("-------------------");
                 return nextNode;
             }
             else {

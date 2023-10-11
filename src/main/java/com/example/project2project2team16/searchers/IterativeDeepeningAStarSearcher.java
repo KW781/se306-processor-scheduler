@@ -5,7 +5,7 @@ import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     Integer evalLimit = 0;
-    Integer nextEvalLimit = Integer.MAX_VALUE;
+    Integer nextEvalLimit = 0;
 
     public IterativeDeepeningAStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -26,11 +26,9 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             if (value <= evalLimit) {
                 ScheduleNode newNode = newNodes.get(i);
                 if (closed.contains(newNode) || opened.contains(newNode)) {
-                    dups++;
                     continue;
                 }
 
-                schedulesAdded++;
                 frontier.add(newNode);
                 opened.add(newNode);
             }
@@ -49,13 +47,6 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             closed.clear();
             opened.clear();
             evalLimit = nextEvalLimit;
-            System.out.println(schedulesAdded + " schedules added");
-            System.out.println(dups + " duplicates detected");
-            System.out.println(explored + " schedules explored");
-            System.out.println("-----NEXT ITERATION-----");
-            schedulesAdded = 0;
-            dups = 0;
-            explored = 0;
             AddToFrontier(Arrays.asList(problem.GetStartNode()));
         }
 
