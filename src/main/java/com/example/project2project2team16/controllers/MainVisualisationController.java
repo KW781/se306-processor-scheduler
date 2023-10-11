@@ -267,8 +267,8 @@ public class MainVisualisationController {
      * @return current memory used in percentage
      */
     public static int getMemoryUsage() {
-        long memUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long totalMem = Runtime.getRuntime().totalMemory();
+        long memUsed = totalMem - Runtime.getRuntime().freeMemory();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
         return (int) Math.round(memoryUsage);
     }
