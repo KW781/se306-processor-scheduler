@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
@@ -47,7 +48,9 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             closed.clear();
             opened.clear();
             evalLimit = nextEvalLimit;
-            AddToFrontier(Arrays.asList(problem.GetStartNode()));
+            ScheduleNode startNode = problem.GetStartNode();
+            problem.initialiseF(startNode);
+            AddToFrontier(Collections.singletonList(startNode));
         }
 
         return result;
