@@ -30,6 +30,7 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
+
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
@@ -104,13 +105,13 @@ public class MainVisualisationController {
                 actionEvent -> {
                     timeElapsed += 0.001;
                     timeElapsedText.setText(String.format("%.3fs", timeElapsed));
-
                     // Display cpu and memory usage
-                    cpuText.setText(String.valueOf(getCPUUsage()));
-                    cpuArc.setLength((getCPUUsage() / 100) * -360);
+                    if (timeElapsed > 0.01) {
+                        cpuArc.setLength((getCPUUsage() / 100) * -360);
+                        cpuText.setText(String.valueOf(getCPUUsage()));
+                    }
                     memoryText.setText(String.valueOf(getMemoryUsage()));
                     memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
-
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -257,7 +258,7 @@ public class MainVisualisationController {
      */
     public static double getCPUUsage() {
         DecimalFormat df = new DecimalFormat("#.#");
-       return Double.parseDouble(df.format(osBean.getSystemCpuLoad()*100));
+        return Double.parseDouble(df.format(osBean.getSystemCpuLoad() * 100));
     }
 
     /**
