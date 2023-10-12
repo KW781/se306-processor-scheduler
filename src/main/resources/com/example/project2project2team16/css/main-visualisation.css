@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Monda:wght@400;700&display=swap");
-
 .root {
     -fx-background-color: #1D1F2E;
 }
@@ -10,17 +8,14 @@
 }
 
 .hardwareLabel {
-    -fx-font-family: "Monda", sans-serif;
     -fx-font-size: 25px;
 }
 
 .hardwareHeader {
-    -fx-font-family: "Monda", sans-serif;
     -fx-font-size: 16px;
 }
 
 #title {
-    -fx-font-family: "Monda", sans-serif;
     -fx-font-size: 33px;
     -fx-font-weight: bold;
 }
@@ -32,11 +27,6 @@
     -fx-border-color: #5A57D8;
     -fx-border-width: 0.75px;
 }
-
-.timeText {
-    -fx-font-family: "Monda", sans-serif;
-}
-
 
 #displayBar {
     -fx-background-color: #272A3D;
@@ -60,7 +50,6 @@
 }
 
 #progressPercentage {
-    -fx-font-family: "Monda", sans-serif;
     -fx-font-size: 12px;
 }
 
