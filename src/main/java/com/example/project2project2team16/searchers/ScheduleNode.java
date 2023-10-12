@@ -22,6 +22,8 @@ public class ScheduleNode {
     Integer idleTime = 0;
 
 
+
+
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
         this.processorCount = processorCount;
@@ -42,6 +44,8 @@ public class ScheduleNode {
         this.processorCount = copy.processorCount;
         this.parent = copy;
         this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+
+        this.idleTime = copy.idleTime;
 
         addTask(newTask, processor);
     }

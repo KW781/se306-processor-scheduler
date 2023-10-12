@@ -175,13 +175,18 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        int processorCount = 0;
-        for (int i = 0;i < node.processorCount; i++) {
-            if (node.processorEndTimes.get(i) != 0) {
-                processorCount++;
+        return (computationCostSum + node.idleTime + calculateTrailingIdleTimes(node))/processorCount;
+    }
+
+    private int calculateTrailingIdleTimes(ScheduleNode node) {
+        int maxEndTime = node.GetValue();
+        int trailingTime = 0;
+        for (int i = 0; i < node.processorCount; i++) {
+            if (node.processorEndTimes.get(i) != maxEndTime) {
+                trailingTime += maxEndTime - node.processorEndTimes.get(i);
             }
         }
-        return (computationCostSum + node.idleTime)/processorCount;
+        return trailingTime;
     }
 
     private Set<Node> GenerateStartingTasks() {
