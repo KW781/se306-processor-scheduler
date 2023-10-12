@@ -62,6 +62,7 @@ public class SchedulingProblem {
 //
 //        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
         System.out.println("heuristic: " + maxHeuristic);
+        node.fValue = maxHeuristic;
         return maxHeuristic;
     }
     private int[] dfs(Node node) {
@@ -174,7 +175,13 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        return (computationCostSum + node.idleTime)/node.processorCount;
+        int processorCount = 0;
+        for (int i = 0;i < node.processorCount; i++) {
+            if (node.processorEndTimes.get(i) != 0) {
+                processorCount++;
+            }
+        }
+        return (computationCostSum + node.idleTime)/processorCount;
     }
 
     private Set<Node> GenerateStartingTasks() {
