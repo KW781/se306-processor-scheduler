@@ -50,7 +50,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             createdSchedules.clear();
             evalLimit = nextEvalLimit;
             ScheduleNode startNode = problem.GetStartNode();
-            problem.initialiseF(startNode);
+            SchedulingProblem.initialiseF(startNode);
             AddToFrontier(Collections.singletonList(startNode));
             schedulesAdded = 0;
             dups = 0;

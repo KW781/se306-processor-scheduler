@@ -14,7 +14,6 @@ public class AStarSearcher extends GreedySearcher {
     int dups = 0;
     int schedulesAdded = 0;
     int schedulesExplored = 0;
-    public static int created = 0;
 
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -23,7 +22,7 @@ public class AStarSearcher extends GreedySearcher {
     @Override
     public void InitialiseSearcher() {
         ScheduleNode startNode = problem.GetStartNode();
-        problem.initialiseF(startNode);
+        SchedulingProblem.initialiseF(startNode);
 
         super.InitialiseSearcher();
 
@@ -50,6 +49,7 @@ public class AStarSearcher extends GreedySearcher {
             frontier.add(newNode);
             createdSchedules.add(newNode);
         }
+
     }
 
     @Override
@@ -70,10 +70,10 @@ public class AStarSearcher extends GreedySearcher {
 
             schedulesExplored++;
             if (problem.IsGoal(nextNode)) {
-                System.out.println(created + " schedules created");
                 System.out.println(schedulesAdded + " schedules added");
                 System.out.println(dups + " duplicates detected");
                 System.out.println(schedulesExplored + " schedules explored");
+                System.out.println("--------------------------------");
                 return nextNode;
             }
             else {

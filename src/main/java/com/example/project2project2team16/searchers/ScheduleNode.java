@@ -38,9 +38,10 @@ public class ScheduleNode {
         this.visited = new HashMap<>(copy.visited);
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.processorCount = copy.processorCount;
         this.parent = copy;
-        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+        this.fValue = 0;
 
         AddTask(newTask, processor);
     }
@@ -60,7 +61,6 @@ public class ScheduleNode {
 
                 if (childSchedule.fValue <= this.fValue) {
                     neighbours.add(childSchedule);
-                    AStarSearcher.created++;
                 } else {
                     minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
                 }
