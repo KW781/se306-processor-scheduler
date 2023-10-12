@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
-//    Integer evalLimit = 0;
-//    Integer nextEvalLimit = Integer.MAX_VALUE;
+    Integer evalLimit = 0;
+    Integer nextEvalLimit = Integer.MAX_VALUE;
 
     public IterativeDeepeningAStarSearcher(SchedulingProblem problem) {
         super(problem);
     }
-    int j = 0;
+
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
@@ -22,7 +22,6 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             if (value <= evalLimit) {
                 ScheduleNode newNode = newNodes.get(i);
                 if (closed.contains(newNode) || opened.contains(newNode)) {
-                    dups++;
                     continue;
                 }
 
@@ -30,7 +29,6 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
                 opened.add(newNode);
             }
             else {
-                j++;
                 nextEvalLimit = Math.min(nextEvalLimit, value);
             }
         }
