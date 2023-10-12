@@ -2,13 +2,11 @@ package com.example.project2project2team16;
 
 import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
-import com.example.project2project2team16.helper.SceneManager;
 import com.example.project2project2team16.exceptions.InvalidArgsException;
 import com.example.project2project2team16.searchers.AStarSearcher;
 import com.example.project2project2team16.utils.AppConfig;
 import com.example.project2project2team16.utils.ArgsParser;
 import com.example.project2project2team16.utils.DotFileParser;
-import com.example.project2project2team16.searchers.DFSSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -37,13 +35,7 @@ public class VisualisationApplication extends Application {
     private static Parent loadFxml(final String fxml) throws IOException {
         FXMLLoader loader = new FXMLLoader(VisualisationApplication.class.getResource("fxml/" + fxml + ".fxml"));
         Parent parent = loader.load();
-
-        switch (fxml) {
-            case "main-visualisation":
-                mainVisualisationController = loader.getController();
-                break;
-        }
-
+        mainVisualisationController = loader.getController();
         return parent;
     }
 
@@ -53,12 +45,9 @@ public class VisualisationApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        SceneManager.addUi(SceneManager.AppScene.MAIN_VISUALISATION, loadFxml("main-visualisation"));
-
-        Scene scene = new Scene(SceneManager.getUiRoot(SceneManager.AppScene.MAIN_VISUALISATION));
-
+        Scene scene = new Scene(loadFxml("main-visualisation"));
         stage.setResizable(false);
-        stage.setTitle("Hello!");
+        stage.setTitle("Parallels - Team 16");
         stage.setScene(scene);
         stage.show();
     }

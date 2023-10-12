@@ -2,16 +2,55 @@
     -fx-background-color: #1D1F2E;
 }
 
-AnchorPane {
-    -fx-background-color: #272A3D;
-}
-
-Pane {
-    -fx-background-color: #272A3D;
-}
-
 .container {
     -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+}
+
+.hardwareLabel {
+    -fx-font-size: 25px;
+}
+
+.hardwareHeader {
+    -fx-font-size: 16px;
+}
+
+#title {
+    -fx-font-size: 33px;
+    -fx-font-weight: bold;
+}
+
+#displayTimer {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
+}
+
+#displayBar {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
+}
+
+#progressBar .track {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
+}
+
+#progressBar .bar {
+    -fx-background-color: #5A57D8;
+    -fx-background-radius: 10px;
+}
+
+#progressPercentage {
+    -fx-font-size: 12px;
 }
 
 #startButton {

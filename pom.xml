@@ -26,13 +26,8 @@
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
-      <artifactId>javafx-swing</artifactId>
-      <version>13</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
-      <version>17.0.6</version>
+      <version>13</version>
       <classifier>linux</classifier>
     </dependency>
     <dependency>
