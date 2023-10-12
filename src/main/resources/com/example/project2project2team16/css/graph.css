@@ -3,7 +3,7 @@ graph {
 }
 
 node {
-    size: 5px;
+    size: 10px;
     shape: circle;
     fill-color: #D9D9D9;
     stroke-mode: none;

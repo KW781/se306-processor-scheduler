@@ -129,6 +129,10 @@ public class ScheduleNode {
         }
     }
 
+    public ScheduleNode GetParent() {
+        return parent;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
