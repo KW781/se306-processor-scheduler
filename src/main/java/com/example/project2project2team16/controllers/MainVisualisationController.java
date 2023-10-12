@@ -139,7 +139,7 @@ public class MainVisualisationController {
 
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
-        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('file://src/main/resources/com/example/project2project2team16/css/graph.css')");
+        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
         scheduleSearchGraph.setAttribute("ui.quality");
 
         viewer = new FxViewer(scheduleSearchGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
