@@ -14,8 +14,8 @@ public class ScheduleNodeAStarComparator implements Comparator<ScheduleNode> {
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-        int value1 = problem.CalculateF(node1);
-        int value2 = problem.CalculateF(node2);
+        int value1 = SchedulingProblem.CalculateF(node1);
+        int value2 = SchedulingProblem.CalculateF(node2);
 
         if (value1 == value2) {
             if (node1.getNumTasksScheduled() >= node2.getNumTasksScheduled()) {

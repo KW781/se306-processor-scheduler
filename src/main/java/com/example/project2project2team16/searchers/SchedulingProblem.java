@@ -38,7 +38,7 @@ public class SchedulingProblem {
         return node.GenerateNeighbours();
     }
 
-    private int dfs(Node node) {
+    private static int dfs(Node node) {
         int cost = 0;
 
         List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
@@ -53,18 +53,18 @@ public class SchedulingProblem {
         return cost;
     }
 
-    private int GetCriticalPath(Node node) {
+    private static int GetCriticalPath(Node node) {
         return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
     }
 
-    public void initialiseF(ScheduleNode node) {
+    public static void initialiseF(ScheduleNode node) {
         for (Node task : node.availableTasks) {
             int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
             node.fValue = Math.max(node.fValue, cp);
         }
     }
 
-    public Integer CalculateF(ScheduleNode node) {
+    public static Integer CalculateF(ScheduleNode node) {
         // The F value is defined as f(n) = g(n) + h(n)
         // g(n) is the total cost of the path from the root node to n
         // h(n) is the estimated critical computational path starting from n

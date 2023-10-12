@@ -19,6 +19,7 @@ public class ScheduleNode {
     Integer processorCount;
     ScheduleNode parent;
     Integer fValue = 0;
+    boolean unpromisingChildren = false;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -50,11 +51,25 @@ public class ScheduleNode {
 
     public List<ScheduleNode> GenerateNeighbours() {
         List<ScheduleNode> neighbours = new ArrayList<>();
+        int minUnpromising = Integer.MAX_VALUE;
 
         for (Node task : availableTasks) {
             for (int i = 0; i < processorCount; i++) {
-                neighbours.add(new ScheduleNode(this, task, i));
+                ScheduleNode childSchedule = new ScheduleNode(this, task, i);
+                SchedulingProblem.CalculateF(childSchedule);
+
+                if (childSchedule.fValue <= this.fValue) {
+                    neighbours.add(childSchedule);
+                    AStarSearcher.created++;
+                } else {
+                    minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
+                }
             }
+        }
+
+        if (minUnpromising != Integer.MAX_VALUE) {
+            unpromisingChildren = true;
+            this.fValue = minUnpromising;
         }
 
         return neighbours;
