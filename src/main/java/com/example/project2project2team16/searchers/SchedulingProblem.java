@@ -52,8 +52,8 @@ public class SchedulingProblem {
     }
 
     public Integer getMaximumHeuristic(ScheduleNode node) {
-        // int loadBalanceHeuristic = loadBalanceHeuristic(node);
-        int loadBalanceHeuristic = 0;
+         int loadBalanceHeuristic = loadBalanceHeuristic(node);
+//        int loadBalanceHeuristic = 0;
 
         //int bottomLevelHeuristic = 0;
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
@@ -62,7 +62,7 @@ public class SchedulingProblem {
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
 //
 //        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
-        System.out.println("heuristic: " + maxHeuristic);
+//        System.out.println("heuristic: " + maxHeuristic);
         node.fValue = maxHeuristic;
         return maxHeuristic;
     }
@@ -177,7 +177,7 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        return (computationCostSum + node.idleTime + calculateTrailingIdleTimes(node))/processorCount;
+        return (computationCostSum + node.idleTime)/processorCount;
     }
 
     private int calculateTrailingIdleTimes(ScheduleNode node) {
