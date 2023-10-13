@@ -96,4 +96,44 @@ public abstract class SearcherTests {
 
         assertEquals(227, RunSearch(taskGraph,4));
     }
+
+    @Order(11)
+    @Test
+    public void Nodes5ForkOrderProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_Fork_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(12)
+    @Test
+    public void Nodes5JoinOrderProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_Join_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(13)
+    @Test
+    public void Nodes5ForkNoProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_No_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(14)
+    @Test
+    public void CustomTest() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/custom.dot");
+
+        assertEquals(197, RunSearch(taskGraph,2));
+    }
+
+    @Order(15)
+    @Test
+    public void Custom1Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/custom1.dot");
+
+        assertEquals(516, RunSearch(taskGraph,2));
+    }
 }

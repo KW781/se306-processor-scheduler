@@ -14,6 +14,7 @@ public class ScheduleNode {
     Set<Node> availableTasks;
     List<Integer> processorEndTimes;
     List<Node> processorLastTasks;
+    List<Node> fixedTaskOrder;
     Node lastTask;
     Integer lastProcessor;
     Integer processorCount;
@@ -34,7 +35,8 @@ public class ScheduleNode {
         }
     }
 
-    public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor) {
+    public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor, List<Node> fixedTaskOrder) {
+        this.fixedTaskOrder = fixedTaskOrder;
         this.visited = new HashMap<>(copy.visited);
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
@@ -46,17 +48,174 @@ public class ScheduleNode {
         AddTask(newTask, processor);
     }
 
+//    public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor) {
+//        this.visited = new HashMap<>(copy.visited);
+//        this.availableTasks = new HashSet<>(copy.availableTasks);
+//        this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
+//        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+//        this.processorCount = copy.processorCount;
+//        this.parent = copy;
+//        this.fValue = 0;
+//
+//        AddTask(newTask, processor);
+//    }
+
     public Map<String, Pair<Integer, Integer>> GetVisited() {
         return visited;
+    }
+
+    private boolean SortFixedOrderTasks(List<Node> tasks) {
+        // Task sorting conditions
+        // Sort tasks by their non-decreasing data ready time
+        // DRT = Finish time of parent + weight of edge (parent -> task)
+        // With no parent, DRT = 0
+        // If DRT is equal, sort according to non-increasing out-edge costs.
+        // With no child, out-edge cost == 0
+        tasks.sort((a, b) -> {
+            int aDRT = 0;
+            int bDRT = 0;
+            try {
+                Edge incomingEdge = a.enteringEdges().findFirst().orElseThrow();
+                aDRT = visited.get(incomingEdge.getSourceNode().getId()).getValue() + incomingEdge.getAttribute("Weight", Double.class).intValue();
+
+            } catch (NoSuchElementException ignored) {}
+
+            try {
+                Edge incomingEdge = b.enteringEdges().findFirst().orElseThrow();
+                bDRT = visited.get(incomingEdge.getSourceNode().getId()).getValue() + incomingEdge.getAttribute("Weight", Double.class).intValue();
+
+            } catch (NoSuchElementException ignored) {}
+
+            if (aDRT > bDRT) {
+                return 1;
+            }
+
+            if (aDRT < bDRT) {
+                return -1;
+            }
+
+            int aOutEdgeCost = 0;
+            int bOutEdgeCost = 0;
+            try {
+                aOutEdgeCost = a.leavingEdges().findFirst().orElseThrow().getAttribute("Weight", Double.class).intValue();
+
+            } catch (NoSuchElementException ignored) {}
+
+            try {
+                bOutEdgeCost = b.leavingEdges().findFirst().orElseThrow().getAttribute("Weight", Double.class).intValue();
+
+            } catch (NoSuchElementException ignored) {}
+
+            return Integer.compare(bOutEdgeCost, aOutEdgeCost);
+        });
+
+        int prevOutEdgeCost = Integer.MAX_VALUE;
+        for (Node task : tasks) {
+            int outEdgeCost = 0;
+
+            try {
+                outEdgeCost = task.leavingEdges().findFirst().orElseThrow().getAttribute("Weight", Double.class).intValue();
+
+            } catch (NoSuchElementException ignored) {}
+
+            if (outEdgeCost > prevOutEdgeCost) {
+                return false;
+            }
+
+            prevOutEdgeCost = outEdgeCost;
+        }
+
+        return true;
+    }
+
+    private List<Node> GetFixedTaskOrder(List<Node> tasks) {
+        // Verifying Fixing order conditions
+        // 1. Each task must have at most one parent and one child
+        // 2. If a task has a child, all other tasks with a child must also have the same child
+        // 3. If a task has a parent, all other tasks' parent must be allocated to the same processor
+        String childId = null;
+        Integer parentProcessor = null;
+
+        for (Node task : tasks) {
+            if (task.getInDegree() > 1 || task.getOutDegree() > 1) {
+                return null;
+            }
+
+            try {
+                String child = task.leavingEdges().findFirst().orElseThrow().getTargetNode().getId();
+                if (childId == null) {
+                    childId = child;
+                } else if (!childId.equals(child)) {
+                    return null;
+                }
+            } catch (NoSuchElementException ignored) {}
+
+            try {
+                String parent = task.enteringEdges().findFirst().orElseThrow().getSourceNode().getId();
+                if (parentProcessor == null) {
+                    parentProcessor = visited.get(parent).getKey();
+                } else if (!parentProcessor.equals(visited.get(parent).getKey())) {
+                    return null;
+                }
+            } catch (NoSuchElementException ignored) {}
+        }
+
+        if (!SortFixedOrderTasks(tasks)) {
+            return null;
+        }
+
+        return tasks;
+    }
+
+    private List<ScheduleNode> GenerateNeighboursWithFTO() {
+        List<ScheduleNode> neighbours = new ArrayList<>();
+        int minUnpromising = Integer.MAX_VALUE;
+
+        if (fixedTaskOrder.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Node task = fixedTaskOrder.get(0);
+        List<Node> newFixedTaskOrder = fixedTaskOrder.subList(1, fixedTaskOrder.size());
+
+        for (int p = 0; p < processorCount; p++) {
+            ScheduleNode childSchedule = new ScheduleNode(this, task, p, newFixedTaskOrder);
+            SchedulingProblem.CalculateF(childSchedule);
+
+            if (childSchedule.availableTasks.size() > availableTasks.size() - 1) {
+                childSchedule.fixedTaskOrder = null;
+            }
+
+            if (childSchedule.fValue <= this.fValue) {
+                neighbours.add(childSchedule);
+            } else {
+                minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
+            }
+        }
+
+        if (minUnpromising != Integer.MAX_VALUE) {
+            unpromisingChildren = true;
+            this.fValue = minUnpromising;
+        }
+
+        return neighbours;
     }
 
     public List<ScheduleNode> GenerateNeighbours() {
         List<ScheduleNode> neighbours = new ArrayList<>();
         int minUnpromising = Integer.MAX_VALUE;
 
+        if (fixedTaskOrder == null) {
+            fixedTaskOrder = GetFixedTaskOrder(new ArrayList<>(availableTasks));
+        }
+
+        if (fixedTaskOrder != null && fixedTaskOrder.size() == 4) {
+            return GenerateNeighboursWithFTO();
+        }
+
         for (Node task : availableTasks) {
             for (int i = 0; i < processorCount; i++) {
-                ScheduleNode childSchedule = new ScheduleNode(this, task, i);
+                ScheduleNode childSchedule = new ScheduleNode(this, task, i, null);
                 SchedulingProblem.CalculateF(childSchedule);
 
                 if (childSchedule.fValue <= this.fValue) {
