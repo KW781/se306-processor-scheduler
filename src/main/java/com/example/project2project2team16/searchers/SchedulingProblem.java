@@ -4,9 +4,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SchedulingProblem {
@@ -24,6 +22,56 @@ public class SchedulingProblem {
         Set<Node> startingTasks = GenerateStartingTasks();
 
         startingNode = new ScheduleNode(processorCount, startingTasks);
+    }
+
+    private void pruneDuplicateTasks() {
+        // get nodes that have no incoming edges
+        List<Node> rootNodes = this.taskGraph.nodes().filter(node -> node.getInDegree() == 0).collect(Collectors.toList());
+        Set<Node> visited = new HashSet<>();
+        Queue<Node> nodeQueue = new ArrayDeque<>();
+        boolean allNodesVisited = false;
+
+        // run BFS to find duplicate tasks
+        nodeQueue.add(rootNodes.get(0));
+        while (!allNodesVisited) {
+            while (!nodeQueue.isEmpty()) {
+                Node currentNode = nodeQueue.peek();
+                visited.add(currentNode); // mark the current node as visited so that we don't revisit it
+                List<Node> childNodes = currentNode.leavingEdges().map(edge -> edge.getTargetNode()).collect(Collectors.toList());
+
+                // compare child nodes with each other to see if they are duplicates
+                for (Node outerChildNode : childNodes) {
+                    for (Node innerChildNode : childNodes) {
+                        // only compare the child nodes if they're not the exact same node, and at least one of them has not yet been visited
+                        if ((innerChildNode != outerChildNode) && !(visited.contains(outerChildNode) && visited.contains(innerChildNode))) {
+                            if (areTasksEquivalent(outerChildNode, innerChildNode)) {
+                                // if the tasks are equivalent, add a directed edge between the two with a weight of zero
+                                // note that the id assigned to the edge is arbitrary
+                                Edge newEdge = this.taskGraph.addEdge(outerChildNode.getId() + innerChildNode.getId(), outerChildNode, innerChildNode, true);
+                                newEdge.setAttribute("Weight", 0.0);
+                            }
+                        }
+                    }
+
+                    // add the child node to the queue if we haven't visited it
+                    if (!visited.contains(outerChildNode)) nodeQueue.add(outerChildNode);
+                }
+            }
+
+            // add any root nodes that we haven't visited so that we can perform the rooted search and completed BFS
+            allNodesVisited = true;
+            for (Node rootNode : rootNodes) {
+                if (!visited.contains(rootNode)) {
+                    allNodesVisited = false;
+                    nodeQueue.add(rootNode);
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean areTasksEquivalent(Node task1, Node task2) {
+        return true;
     }
 
     public ScheduleNode GetStartNode() {
