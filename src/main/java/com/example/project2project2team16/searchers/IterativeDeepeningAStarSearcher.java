@@ -26,7 +26,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
 
             if (value <= evalLimit) {
                 ScheduleNode newNode = newNodes.get(i);
-                if (createdSchedules.contains(newNode)) {
+                if (createdSchedules.contains(newNode) || newNode.IsEquivalent()) {
                     dups++;
                     continue;
                 }
