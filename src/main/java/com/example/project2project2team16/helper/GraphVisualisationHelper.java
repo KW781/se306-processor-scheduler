@@ -52,14 +52,6 @@ public class GraphVisualisationHelper {
         node = graph.addNode(scheduleNode.toString());
         node.setAttribute("scheduleNode", scheduleNode);
 
-//        Color randomColour = generateRandomColour();
-//        node.setAttribute("ui.style",
-//            "fill-color: rgb(" +
-//                    randomColour.getRed() + "," +
-//                    randomColour.getGreen() + "," +
-//                    randomColour.getBlue() + ");"
-//        );
-
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
             if (parentNode != null) {

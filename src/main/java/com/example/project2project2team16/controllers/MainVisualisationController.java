@@ -2,6 +2,7 @@ package com.example.project2project2team16.controllers;
 
 import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
+import com.sun.management.OperatingSystemMXBean;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,9 +10,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Arc;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.graphstream.graph.Graph;
@@ -28,20 +31,30 @@ import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import org.graphstream.ui.view.util.MouseManager;
 
+import java.lang.management.ManagementFactory;
+import java.text.DecimalFormat;
 import java.util.EnumSet;
 
+
 public class MainVisualisationController {
+    @FXML
+    private AnchorPane graphPane;
+    @FXML
+    private HBox graphControls;
+    @FXML
+    private VBox mainBox;
+    @FXML
+    private VBox startBox;
+    @FXML
+    private Text cpuText;
+    @FXML
+    private Text memoryText;
     @FXML
     private Text timeElapsedText;
     @FXML
     private Text currentShortestTimeText;
-    private Graph scheduleSearchGraph;
-    @FXML
-    private AnchorPane graphPane;
     @FXML
     private Button autoLayoutButton;
-    @FXML
-    private HBox graphControls;
     @FXML
     private Button startButton;
     @FXML
@@ -49,16 +62,22 @@ public class MainVisualisationController {
     @FXML
     private Button dragButton;
     @FXML
-    private VBox mainBox;
+    private ProgressBar progressBar;
     @FXML
-    private VBox startBox;
+    private Arc memoryArc;
+    @FXML
+    private Arc cpuArc;
+    @FXML
     private FxViewer viewer;
+    private Graph scheduleSearchGraph;
     private double timeElapsed = 0;
     private Timeline timeline;
     private Double mouseX;
     private Double mouseY;
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
+    static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+
 
     @FXML
     public void initialize() {
@@ -76,7 +95,7 @@ public class MainVisualisationController {
 
         dragButton.managedProperty().bind(dragButton.visibleProperty());
         dragButton.getStyleClass().clear();
-        dragButton.getStyleClass().add(INACTIVE_BUTTON );
+        dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
         autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
         autoLayoutButton.getStyleClass().clear();
@@ -86,6 +105,13 @@ public class MainVisualisationController {
                 actionEvent -> {
                     timeElapsed += 0.001;
                     timeElapsedText.setText(String.format("%.3fs", timeElapsed));
+                    // Display cpu and memory usage
+                    if (timeElapsed > 0.01) {
+                        cpuArc.setLength((getCPUUsage() / 100) * -360);
+                        cpuText.setText(String.valueOf(getCPUUsage()));
+                    }
+                    memoryText.setText(String.valueOf(getMemoryUsage()));
+                    memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -113,7 +139,7 @@ public class MainVisualisationController {
 
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
-        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('file://src/main/resources/com/example/project2project2team16/css/graph.css')");
+        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
         scheduleSearchGraph.setAttribute("ui.quality");
 
         viewer = new FxViewer(scheduleSearchGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -149,8 +175,10 @@ public class MainVisualisationController {
             dragButton.getStyleClass().clear();
             dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
-            view.setOnMousePressed(pressEvent -> {});
-            view.setOnMouseDragged(dragEvent -> {});
+            view.setOnMousePressed(pressEvent -> {
+            });
+            view.setOnMouseDragged(dragEvent -> {
+            });
 
             view.setCursor(Cursor.DEFAULT);
 
@@ -195,10 +223,12 @@ public class MainVisualisationController {
                 public void init(GraphicGraph graphicGraph, View view) {
 
                 }
+
                 @Override
                 public void release() {
 
                 }
+
                 @Override
                 public EnumSet<InteractiveElement> getManagedTypes() {
                     return null;
@@ -219,5 +249,27 @@ public class MainVisualisationController {
                 view.getCamera().setViewPercent(view.getCamera().getViewPercent() - 0.1);
             }
         });
+    }
+
+    /**
+     * This function calculates the current runtime CPU used
+     *
+     * @return current CPU used in percentage
+     */
+    public static double getCPUUsage() {
+        DecimalFormat df = new DecimalFormat("#.#");
+        return Double.parseDouble(df.format(osBean.getSystemCpuLoad() * 100));
+    }
+
+    /**
+     * This function calculates the current runtime memory used
+     *
+     * @return current memory used in percentage
+     */
+    public static int getMemoryUsage() {
+        long totalMem = Runtime.getRuntime().totalMemory();
+        long memUsed = totalMem - Runtime.getRuntime().freeMemory();
+        double memoryUsage = ((double) (memUsed) / totalMem) * 100;
+        return (int) Math.round(memoryUsage);
     }
 }

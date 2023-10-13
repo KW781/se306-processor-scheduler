@@ -44,6 +44,13 @@ public class AStarSearcher extends GreedySearcher {
                 continue;
             }
 
+            if (newNode.fixedTaskOrder == null) {
+                if (newNode.IsEquivalent()) {
+                    dups++;
+                    continue;
+                }
+            }
+
             schedulesAdded++;
             SchedulingProblem.CalculateF(newNode);
             frontier.add(newNode);
