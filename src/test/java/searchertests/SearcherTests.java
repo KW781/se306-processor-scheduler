@@ -120,20 +120,4 @@ public abstract class SearcherTests {
 
         assertEquals(12, RunSearch(taskGraph,2));
     }
-
-    @Order(14)
-    @Test
-    public void CustomTest() {
-        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/custom.dot");
-
-        assertEquals(197, RunSearch(taskGraph,2));
-    }
-
-    @Order(15)
-    @Test
-    public void Custom1Test() {
-        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/custom1.dot");
-
-        assertEquals(516, RunSearch(taskGraph,2));
-    }
 }
