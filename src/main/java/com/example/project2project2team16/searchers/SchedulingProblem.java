@@ -1,5 +1,6 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.exceptions.PreqrequisiteNotMetException;
 import javafx.util.Pair;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -51,17 +52,17 @@ public class SchedulingProblem {
     }
 
     public Integer getMaximumHeuristic(ScheduleNode node) {
-        int loadBalanceHeuristic = loadBalanceHeuristic(node);
+         int loadBalanceHeuristic = loadBalanceHeuristic(node);
 //        int loadBalanceHeuristic = 0;
 
-        int bottomLevelHeuristic = 0;
-//        int bottomLevelHeuristic = bottomLevelHeuristic(node);
-//        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
+        //int bottomLevelHeuristic = 0;
+        int bottomLevelHeuristic = bottomLevelHeuristic(node);
+        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
 
-        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
+        int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
 //
 //        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
-        System.out.println("heuristic: " + maxHeuristic);
+//        System.out.println("heuristic: " + maxHeuristic);
         node.fValue = maxHeuristic;
         return maxHeuristic;
     }
@@ -140,52 +141,53 @@ public class SchedulingProblem {
     }
 
     private int dataReadyTimeHeuristic(ScheduleNode node) {
-        Set<Node> freeTasks = node.availableTasks;
+        // get all unvisited nodes from the task graph
+        List<Node> freeNodes = this.taskGraph.nodes().filter(taskNode -> !node.visited.containsKey(taskNode.getId())).collect(Collectors.toList());
+        int maxDRTHeuristic = 0;
+        int minDRT; // the minimum DRT across all processors
 
-        int maxDataReadyTime = Integer.MIN_VALUE;
-
-        for (Node freeTask : freeTasks) {
-            int minDataReadyTime = calculateMinDRT(freeTask, node.processorCount, node.visited);
-            maxDataReadyTime = Math.max(maxDataReadyTime, minDataReadyTime);
+        for (Node currentNode : freeNodes) {
+            try {
+                minDRT = calculateMaxDRT(currentNode, 0, node.visited);
+                for (int i = 1; i < node.processorCount; i++) {
+                    minDRT = Math.min(minDRT, calculateMaxDRT(currentNode, i, node.visited));
+                }
+                maxDRTHeuristic = Math.max(maxDRTHeuristic, minDRT + GetCriticalPath(currentNode));
+            } catch (PreqrequisiteNotMetException e) {
+            }
         }
-        return maxDataReadyTime;
+
+        return maxDRTHeuristic;
     }
 
-    private int calculateMinDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
-        int DRT = 0;
+    private int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
+        int maxDRT = 0;
+        List<Edge> incomingEdges = taskNode.enteringEdges().collect(Collectors.toList());
+        int finishTime;
 
-        Iterable<Edge> parents = taskNode.enteringEdges().collect(Collectors.toList());
-
-        for (Edge parent : parents) {
-            Node sourceTask = parent.getSourceNode();
-            int parentProcessor = visited.get(sourceTask.getId()).getKey();
-            int communicationCost = parent.getAttribute("Weight", Double.class).intValue();
-
-            int earliestStartTime = 0;
-
-            if (parentProcessor != processor) {
-                earliestStartTime = DRT + communicationCost;
-            } else {
-                earliestStartTime = DRT;
-            }
-
-            DRT = Math.max(DRT, earliestStartTime);
+        for (Edge incomingEdge : incomingEdges) {
+            String prereqTaskId = incomingEdge.getSourceNode().getId();
+            if (!visited.containsKey(prereqTaskId)) throw new PreqrequisiteNotMetException();
+            finishTime = visited.get(prereqTaskId).getValue();
+            finishTime += visited.get(prereqTaskId).getKey() == processor ? 0 : incomingEdge.getAttribute("Weight", Double.class).intValue();
+            maxDRT = Math.max(maxDRT, finishTime);
         }
-        return DRT;
+
+        return maxDRT;
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        return (computationCostSum + node.idleTime + calculateTrailingIdleTime(node))/node.processorCount;
+        return (computationCostSum + node.idleTime)/node.processorCount;
     }
 
-    private Integer calculateTrailingIdleTime(ScheduleNode node) {
-        Integer latestTime = node.GetValue();
-        Integer trailingTime = 0;
-
-        for (int i = 0; i < processorCount; i++) {
-            trailingTime += latestTime - node.processorEndTimes.get(i);
+    private int calculateTrailingIdleTimes(ScheduleNode node) {
+        int maxEndTime = node.GetValue();
+        int trailingTime = 0;
+        for (int i = 0; i < node.processorCount; i++) {
+            if (node.processorEndTimes.get(i) != maxEndTime) {
+                trailingTime += maxEndTime - node.processorEndTimes.get(i);
+            }
         }
-
         return trailingTime;
     }
 
