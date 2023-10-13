@@ -14,11 +14,13 @@ public class ScheduleNode {
     Set<Node> availableTasks;
     List<Integer> processorEndTimes;
     List<Node> processorLastTasks;
+    List<List<Node>> processorTasks;
     Node lastTask;
     Integer lastProcessor;
     Integer processorCount;
     ScheduleNode parent;
     Integer fValue = 0;
+    boolean unpromisingChildren = false;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -26,10 +28,12 @@ public class ScheduleNode {
         visited = new HashMap<>();
         processorEndTimes = new ArrayList<>();
         processorLastTasks = new ArrayList<>();
+        processorTasks = new ArrayList<>();
 
         for (int i = 0; i < processorCount; i++) {
             processorEndTimes.add(0);
             processorLastTasks.add(null);
+            processorTasks.add(new ArrayList<>());
         }
     }
 
@@ -37,9 +41,16 @@ public class ScheduleNode {
         this.visited = new HashMap<>(copy.visited);
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.processorCount = copy.processorCount;
         this.parent = copy;
-        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+        this.fValue = 0;
+
+        this.processorTasks = new ArrayList<>();
+
+        for (List<Node> taskIds : copy.processorTasks) {
+            processorTasks.add(new ArrayList<>(taskIds));
+        }
 
         AddTask(newTask, processor);
     }
@@ -50,14 +61,31 @@ public class ScheduleNode {
 
     public List<ScheduleNode> GenerateNeighbours() {
         List<ScheduleNode> neighbours = new ArrayList<>();
+        int minUnpromising = Integer.MAX_VALUE;
 
         for (Node task : availableTasks) {
             for (int i = 0; i < processorCount; i++) {
-                neighbours.add(new ScheduleNode(this, task, i));
+                ScheduleNode childSchedule = new ScheduleNode(this, task, i);
+                SchedulingProblem.CalculateF(childSchedule);
+
+                if (childSchedule.fValue <= this.fValue) {
+                    neighbours.add(childSchedule);
+                } else {
+                    minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
+                }
             }
         }
 
+        if (minUnpromising != Integer.MAX_VALUE) {
+            unpromisingChildren = true;
+            this.fValue = minUnpromising;
+        }
+
         return neighbours;
+    }
+
+    public int getNumTasksScheduled() {
+        return visited.size();
     }
 
     public boolean IsComplete(Integer taskCount) {
@@ -101,12 +129,115 @@ public class ScheduleNode {
 
         visited.put(newTask.getId(), new Pair<>(processor, endTime));
         processorEndTimes.set(processor, endTime);
+        processorTasks.get(processor).add(newTask);
         processorLastTasks.set(processor, newTask);
         availableTasks.remove(newTask);
         lastTask = newTask;
         lastProcessor = processor;
 
         AddNewTasks(newTask);
+    }
+
+    private boolean OutgoingCommsOK(List<Pair<Node, Integer>> tasks) {
+        for (Pair<Node, Integer> taskEndTime : tasks) {
+            Node task = taskEndTime.getKey();
+            int endTime = taskEndTime.getValue();
+            if (endTime > visited.get(task.getId()).getValue()) {
+                for (Edge childEdge : task.leavingEdges().collect(Collectors.toList())) {
+                    int newDataArrivalTime = endTime + childEdge.getAttribute("Weight", Double.class).intValue();
+                    Node child = childEdge.getTargetNode();
+                    if (visited.containsKey(child.getId())) {
+                        Pair<Integer, Integer> childProcessorEndTime = visited.get(child.getId());
+                        int originalStartTime = childProcessorEndTime.getValue() - child.getAttribute("Weight", Double.class).intValue();
+                        if (originalStartTime > newDataArrivalTime && childProcessorEndTime.getKey() != lastProcessor) {
+                            return false;
+                        }
+                    } else {
+                        for (int p = 0; p < processorCount; p++) {
+                            if (p == lastProcessor) {
+                                continue;
+                            }
+
+                            boolean atLeastOneLater = false;
+                            for (Edge parentEdge : child.enteringEdges().collect(Collectors.toList())) {
+                                Node parent = parentEdge.getSourceNode();
+
+                                if (Integer.parseInt(parent.getId()) == Integer.parseInt(task.getId())) {
+                                    continue;
+                                }
+
+                                Pair<Integer, Integer> parentProcessorEndTime = visited.get(parent.getId());
+
+                                if (parentProcessorEndTime == null) {
+                                    return false;
+                                }
+
+                                int parentDataArrivalTime = parentProcessorEndTime.getValue() + parent.getAttribute("Weight", Double.class).intValue();
+                                if (parentDataArrivalTime >= newDataArrivalTime) {
+                                    atLeastOneLater = true;
+                                }
+                            }
+
+                            if (!atLeastOneLater) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return true;
+    }
+
+    public boolean IsEquivalent() {
+        if (lastTask == null || lastProcessor == null) {
+            return false;
+        }
+
+        List<Node> tasks = new ArrayList<>(processorTasks.get(lastProcessor));
+        Set<Node> lastTaskParents = lastTask.enteringEdges().map(Edge::getTargetNode).collect(Collectors.toSet());
+
+        int maxTimeToFinish = processorEndTimes.get(lastProcessor);
+        int i = tasks.size() - 2;
+        int lastTaskId = Integer.parseInt(lastTask.getId());
+
+        while (i >= 0 && lastTaskId < Integer.parseInt(tasks.get(i).getId())) {
+            List<Pair<Node, Integer>> taskEndTimes = new ArrayList<>();
+            if (lastTaskParents.contains(tasks.get(i))) {
+                return false;
+            }
+            Collections.swap(tasks, i + 1, i);
+
+            int endTime = 0;
+            for (Node task : tasks) {
+                Iterable<Edge> parents = task.enteringEdges().collect(Collectors.toList());
+
+                int earliestStartTime = endTime;
+
+                for (Edge parent : parents) {
+                    Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
+
+                    if (visited.get(parent.getSourceNode().getId()).getKey() != lastProcessor) {
+                        parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
+                    }
+
+                    earliestStartTime = Math.max(earliestStartTime, parentEndTime);
+                }
+
+                endTime = earliestStartTime + task.getAttribute("Weight", Double.class).intValue();
+                taskEndTimes.add(new Pair<>(task, endTime));
+            }
+
+            if (endTime <= maxTimeToFinish && OutgoingCommsOK(taskEndTimes)) {
+                return true;
+            }
+
+            i--;
+        }
+
+        return false;
     }
 
     private void AddNewTasks(Node newTask) {

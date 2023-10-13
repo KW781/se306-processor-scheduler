@@ -38,47 +38,33 @@ public class SchedulingProblem {
         return node.GenerateNeighbours();
     }
 
-    private int[] dfs(Node node) {
-        // 0 = cost
-        // 1 = num of tasks
-        int[] result = new int[]{0, 0};
-
-        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
-        for (Edge edge : edges) {
-            int[] childResult = dfs(edge.getTargetNode());
-
-            if (childResult[0] > result[0] || (childResult[0] == result[0] && childResult[1] > result[1])) {
-                result = childResult;
-            }
-        }
-
-        result[0] += node.getAttribute("Weight", Double.class).intValue();
-        result[1]++;
-
-        return result;
-    }
-
-    private int GetCriticalPath(Node node) {
+    private static int dfs(Node node) {
         int cost = 0;
 
-        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
+        List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
+        for (Node child : nodeChildren) {
+            int childCost = dfs(child);
 
-        for (Edge edge : edges) {
-            int[] result = dfs(edge.getTargetNode());
-
-            int freeProcessors = processorCount - result[1];
-
-            int numProcessorsToUse = freeProcessors > 0 ? processorCount - freeProcessors : processorCount;
-
-            if (result[0] / numProcessorsToUse > cost) {
-                cost = result[0];
-            }
+            cost = Math.max(cost, childCost);
         }
+
+        cost += node.getAttribute("Weight", Double.class).intValue();
 
         return cost;
     }
 
-    public Integer CalculateF(ScheduleNode node) {
+    private static int GetCriticalPath(Node node) {
+        return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
+    }
+
+    public static void initialiseF(ScheduleNode node) {
+        for (Node task : node.availableTasks) {
+            int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
+            node.fValue = Math.max(node.fValue, cp);
+        }
+    }
+
+    public static Integer CalculateF(ScheduleNode node) {
         // The F value is defined as f(n) = g(n) + h(n)
         // g(n) is the total cost of the path from the root node to n
         // h(n) is the estimated critical computational path starting from n
