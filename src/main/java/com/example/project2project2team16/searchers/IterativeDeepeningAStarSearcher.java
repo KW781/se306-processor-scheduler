@@ -22,7 +22,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
-            Integer value = SchedulingProblem.CalculateF(newNodes.get(i));
+            Integer value = problem.CalculateF(newNodes.get(i));
 
             if (value <= evalLimit) {
                 ScheduleNode newNode = newNodes.get(i);
@@ -36,7 +36,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
                 createdSchedules.add(newNode);
             }
             else {
-                nextEvalLimit = Math.max(nextEvalLimit, value);
+                nextEvalLimit = Math.min(nextEvalLimit, value);
             }
         }
     }

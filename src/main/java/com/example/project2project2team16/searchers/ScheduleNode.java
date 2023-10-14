@@ -20,6 +20,11 @@ public class ScheduleNode {
     Integer processorCount;
     ScheduleNode parent;
     Integer fValue = 0;
+    Integer idleTime = 0;
+    public Integer completedTaskDuration = 0;
+
+
+
     boolean unpromisingChildren = false;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
@@ -44,6 +49,8 @@ public class ScheduleNode {
         this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.processorCount = copy.processorCount;
         this.parent = copy;
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+        this.idleTime = copy.idleTime;
         this.fValue = 0;
 
         this.processorTasks = new ArrayList<>();
@@ -52,7 +59,9 @@ public class ScheduleNode {
             processorTasks.add(new ArrayList<>(taskIds));
         }
 
-        AddTask(newTask, processor);
+        this.completedTaskDuration = copy.completedTaskDuration;
+
+        addTask(newTask, processor);
     }
 
     public Map<String, Pair<Integer, Integer>> GetVisited() {
@@ -110,16 +119,17 @@ public class ScheduleNode {
         return processorEndTimes.get(processor);
     }
 
-    private void AddTask(Node newTask, Integer processor) {
-        Iterable<Edge> parents = newTask.enteringEdges().collect(Collectors.toList());
+    private void addTask(Node newTask, Integer processor) {
+        List<Edge> incomingEdges = newTask.enteringEdges().collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
+        Integer previousEndTime = earliestStartTime;
 
-        for (Edge parent : parents) {
-            Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
+        for (Edge incomingEdge : incomingEdges) {
+            Integer parentEndTime = visited.get(incomingEdge.getSourceNode().getId()).getValue();
 
-            if (visited.get(parent.getSourceNode().getId()).getKey() != processor) {
-                parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
+            if (visited.get(incomingEdge.getSourceNode().getId()).getKey() != processor) {
+                parentEndTime += incomingEdge.getAttribute("Weight", Double.class).intValue();
             }
 
             earliestStartTime = Math.max(earliestStartTime, parentEndTime);
@@ -134,6 +144,9 @@ public class ScheduleNode {
         availableTasks.remove(newTask);
         lastTask = newTask;
         lastProcessor = processor;
+        idleTime += earliestStartTime - previousEndTime;
+
+        completedTaskDuration += newTask.getAttribute("Weight", Double.class).intValue();
 
         AddNewTasks(newTask);
     }
@@ -286,6 +299,8 @@ public class ScheduleNode {
 
         return true;
     }
+
+
 
     @Override
     public int hashCode() {
