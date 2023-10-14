@@ -13,6 +13,7 @@ public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
     private Graph graph;
     private ScheduleNode currentOptimal;
+    private Integer currentScheduleNumber = 0;
 
     private GraphVisualisationHelper() {
     }
@@ -38,7 +39,6 @@ public class GraphVisualisationHelper {
             graph.addEdge("Edge-" + source + "-" + target, source, target, true).setAttribute("ui.min_length", 50);;
         }
     }
-
     public void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
         if (graph == null) {
             return;
@@ -49,18 +49,25 @@ public class GraphVisualisationHelper {
             return;
         }
 
-        node = graph.addNode(scheduleNode.toString());
-        node.setAttribute("ui.label", scheduleNode.GetPathCost());
-
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
             if (parentNode != null) {
+                currentScheduleNumber++;
+                node = graph.addNode(scheduleNode.toString());
+                node.setAttribute("ui.label", currentScheduleNumber);
                 addEdge(parentNode, node);
             } else {
                 addNode(parent, parent.GetParent());
+                currentScheduleNumber++;
+                node = graph.addNode(scheduleNode.toString());
+                node.setAttribute("ui.label", currentScheduleNumber);
                 parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
+        } else {
+            node = graph.addNode(scheduleNode.toString());
+            node.setAttribute("ui.label", currentScheduleNumber);
+            currentScheduleNumber++;
         }
     }
 
