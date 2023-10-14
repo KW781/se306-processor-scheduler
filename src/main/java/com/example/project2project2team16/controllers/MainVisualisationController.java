@@ -55,6 +55,10 @@ public class MainVisualisationController {
     @FXML
     private Text currentShortestTimeText;
     @FXML
+    private Text nodeLabel;
+    @FXML
+    private Text nodePathCost;
+    @FXML
     private Button autoLayoutButton;
     @FXML
     private Button startButton;
@@ -118,7 +122,7 @@ public class MainVisualisationController {
 
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
-        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('file://src/main/resources/com/example/project2project2team16/css/graph.css')");
+        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
         scheduleSearchGraph.setAttribute("ui.quality");
 
         viewer = new FxViewer(scheduleSearchGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -193,13 +197,9 @@ public class MainVisualisationController {
             dragButton.getStyleClass().clear();
             dragButton.getStyleClass().add(INACTIVE_BUTTON);
 
-            view.setOnMousePressed(clickEvent -> {
-                GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
-                if (node != null) {
-                    node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
-                }
+            setNodeClicked(view);
+            view.setOnMouseDragged(dragEvent -> {
             });
-            view.setOnMouseDragged(dragEvent -> {});
             view.setCursor(Cursor.HAND);
         }));
 
@@ -232,11 +232,21 @@ public class MainVisualisationController {
         }));
     }
 
+    /**
+     * This method handles the mouse events on a node
+     *
+     * @param view the current view of the gui graph
+     */
     public void setNodeClicked(FxViewPanel view) {
         view.setOnMousePressed(clickEvent -> {
             GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
             if (node != null) {
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
+                nodeLabel.setText(getNodeId(node.getId()));
+                nodePathCost.setText(node.getLabel());
+            } else {
+                nodeLabel.setText("----");
+                nodePathCost.setText("----");
             }
         });
 
@@ -278,5 +288,15 @@ public class MainVisualisationController {
         long memUsed = totalMem - Runtime.getRuntime().freeMemory();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
         return (int) Math.round(memoryUsage);
+    }
+
+    /**
+     * This function returns a formatted node id from a given parameter
+     *
+     * @param nodeId to be changed
+     * @return formatted node id
+     */
+    public static String getNodeId(String nodeId) {
+        return nodeId.substring(nodeId.lastIndexOf("@") + 1).trim();
     }
 }

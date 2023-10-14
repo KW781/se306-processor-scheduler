@@ -15,12 +15,7 @@
     -fx-font-size: 16px;
 }
 
-#title {
-    -fx-font-size: 33px;
-    -fx-font-weight: bold;
-}
-
-#displayTimer {
+.displayBar {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -28,7 +23,22 @@
     -fx-border-width: 0.75px;
 }
 
-#displayBar {
+.nodeInfoText {
+    -fx-font-size: 10px;
+    -fx-font-weight: 500;
+}
+
+#title {
+    -fx-font-size: 33px;
+    -fx-font-weight: bold;
+}
+
+#nodeDisplay {
+    -fx-background-color: #282626;
+    -fx-background-radius: 10px;
+}
+
+#displayTimer {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;

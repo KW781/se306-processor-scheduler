@@ -50,8 +50,7 @@ public class GraphVisualisationHelper {
         }
 
         node = graph.addNode(scheduleNode.toString());
-        //node.setAttribute("scheduleNode", scheduleNode);
-        node.setAttribute("ui.label", scheduleNode.GetValue());
+        node.setAttribute("ui.label", scheduleNode.GetPathCost());
 
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
