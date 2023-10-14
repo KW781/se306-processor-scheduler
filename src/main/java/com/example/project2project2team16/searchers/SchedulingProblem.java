@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.exceptions.PreqrequisiteNotMetException;
+import com.example.project2project2team16.searchers.enums.Heuristic;
 import javafx.util.Pair;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -20,10 +21,18 @@ public class SchedulingProblem {
     static Integer processorCount;
     static Integer computationCostSum;
 
+    static Map<Heuristic, Integer> heuristicCount;
+
     public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
         this.taskCount = taskGraph.getNodeCount();
         this.processorCount = processorCount;
+
+        // initialise the heuristic count hashmap for all heuristics available
+        this.heuristicCount = new HashMap<>();
+        for (Heuristic heuristic : Heuristic.values()) {
+            this.heuristicCount.put(heuristic, 0);
+        }
 
         Set<Node> startingTasks = GenerateStartingTasks();
 
@@ -66,6 +75,16 @@ public class SchedulingProblem {
         // dataReadyTime seems to just increase the runtime currently
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
 
+        if (maxHeuristic == loadBalanceHeuristic) {
+            heuristicCount.replace(Heuristic.IDLE_TIME, heuristicCount.get(Heuristic.IDLE_TIME) + 1);
+            node.heuristicUsed = Heuristic.IDLE_TIME;
+        } else if (maxHeuristic == dataReadyTimeHeuristic) {
+            heuristicCount.replace(Heuristic.DATA_READY, heuristicCount.get(Heuristic.DATA_READY) + 1);
+            node.heuristicUsed = Heuristic.DATA_READY;
+        } else {
+            heuristicCount.replace(Heuristic.BOTTOM_LEVEL, heuristicCount.get(Heuristic.BOTTOM_LEVEL) + 1);
+            node.heuristicUsed = Heuristic.BOTTOM_LEVEL;
+        }
 
         node.fValue = maxHeuristic;
         return maxHeuristic;
@@ -200,4 +219,29 @@ public class SchedulingProblem {
         return startingTasks;
     }
 
+    public static Pair<Heuristic, Integer> getMostUsedHeuristic() {
+        int maxHeuristicValue = 0;
+        Heuristic maxHeuristic = null;
+
+        for (Heuristic heuristic : Heuristic.values()) {
+            if (heuristicCount.get(heuristic) > maxHeuristicValue) {
+                maxHeuristicValue = heuristicCount.get(heuristic);
+                maxHeuristic = heuristic;
+            }
+        }
+
+        return new Pair<>(maxHeuristic, maxHeuristicValue);
+    }
+
+    public static int getIdleTimeUsageCount() {
+        return heuristicCount.get(Heuristic.IDLE_TIME);
+    }
+
+    public static int getDataReadyHeuristicCount() {
+        return heuristicCount.get(Heuristic.DATA_READY);
+    }
+
+    public static int getBottomLevelHeuristicCount() {
+        return heuristicCount.get(Heuristic.BOTTOM_LEVEL);
+    }
 }

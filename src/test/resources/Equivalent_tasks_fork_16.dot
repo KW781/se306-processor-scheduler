@@ -1,0 +1,33 @@
+digraph "Equivalent_tasks_fork_7" {
+	0	 [Weight=50];
+	1	 [Weight=70];
+	2	 [Weight=70];
+	3	 [Weight=70];
+	4	 [Weight=70];
+	5	 [Weight=70];
+	6	 [Weight=70];
+	7	 [Weight=70];
+	8	 [Weight=70];
+	9	 [Weight=70];
+	10	 [Weight=70];
+	11	 [Weight=70];
+	12	 [Weight=70];
+	13	 [Weight=70];
+	14	 [Weight=70];
+	15	 [Weight=70];
+	0 -> 1	 [Weight=3];
+	0 -> 2	 [Weight=3];
+	0 -> 3	 [Weight=3];
+	0 -> 4	 [Weight=3];
+	0 -> 5	 [Weight=3];
+	0 -> 6	 [Weight=3];
+	0 -> 7	 [Weight=3];
+	0 -> 8	 [Weight=3];
+	0 -> 9	 [Weight=3];
+	0 -> 10	 [Weight=3];
+	0 -> 11	 [Weight=3];
+	0 -> 12	 [Weight=3];
+	0 -> 13	 [Weight=3];
+	0 -> 14	 [Weight=3];
+	0 -> 15	 [Weight=3];
+}

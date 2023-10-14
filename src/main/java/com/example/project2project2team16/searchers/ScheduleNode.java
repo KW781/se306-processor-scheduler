@@ -1,5 +1,6 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.searchers.enums.Heuristic;
 import javafx.util.Pair;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
@@ -25,6 +26,7 @@ public class ScheduleNode {
     Integer idleTime = 0;
     public Integer completedTaskDuration = 0;
     boolean hadFixedTaskOrder = false;
+    Heuristic heuristicUsed;
     boolean unpromisingChildren = false;
     int id;
 
@@ -478,6 +480,10 @@ public class ScheduleNode {
         return true;
     }
 
+    public Heuristic getHeuristicUsed() {
+        return this.heuristicUsed;
+    }
+
 
 
     @Override
@@ -493,5 +499,10 @@ public class ScheduleNode {
         return Objects.hash(nodeEndTime);
     }
 
-
+    @Override
+    public String toString() {
+        return "ScheduleNode{" +
+                "id=" + id +
+                '}';
+    }
 }
