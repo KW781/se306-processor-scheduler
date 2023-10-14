@@ -73,10 +73,13 @@ public class SchedulingProblem {
 
         if (maxHeuristic == loadBalanceHeuristic) {
             heuristicCount.replace(Heuristic.IDLE_TIME, heuristicCount.get(Heuristic.IDLE_TIME) + 1);
+            node.heuristicUsed = Heuristic.IDLE_TIME;
         } else if (maxHeuristic == dataReadyTimeHeuristic) {
             heuristicCount.replace(Heuristic.DATA_READY, heuristicCount.get(Heuristic.DATA_READY) + 1);
+            node.heuristicUsed = Heuristic.DATA_READY;
         } else {
             heuristicCount.replace(Heuristic.BOTTOM_LEVEL, heuristicCount.get(Heuristic.BOTTOM_LEVEL) + 1);
+            node.heuristicUsed = Heuristic.BOTTOM_LEVEL;
         }
 
         node.fValue = maxHeuristic;
