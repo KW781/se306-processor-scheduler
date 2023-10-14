@@ -19,7 +19,7 @@ public class DFSSearcher {
 
     public void InitialiseSearcher() {
         InitialiseFrontier();
-        AddToFrontier(Arrays.asList(problem.GetStartNode()));
+        AddToFrontier(Collections.singletonList(problem.GetStartNode()));
     }
 
     //Exhaustive search
