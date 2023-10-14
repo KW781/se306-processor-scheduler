@@ -39,9 +39,16 @@ public class AStarSearcher extends GreedySearcher {
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (ScheduleNode newNode : newNodes) {
-            if (createdSchedules.contains(newNode) || newNode.IsEquivalent()) {
+            if (createdSchedules.contains(newNode)) {
                 dups++;
                 continue;
+            }
+
+            if (newNode.fixedTaskOrder == null) {
+                if (newNode.IsEquivalent()) {
+                    dups++;
+                    continue;
+                }
             }
 
             schedulesAdded++;
