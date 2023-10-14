@@ -96,4 +96,137 @@ public abstract class SearcherTests {
 
         assertEquals(227, RunSearch(taskGraph,4));
     }
+//    @Disabled
+    @Order(11)
+    @Test
+    public void Fork_Join_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Fork_Join_Nodes_10_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(499, RunSearch(taskGraph,2));
+    }
+    @Disabled
+    @Order(12)
+    @Test
+    public void Independent_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Independent_Nodes_21_WeightType_Random.dot");
+
+        assertEquals(66, RunSearch(taskGraph,2));
+    }
+    @Order(13)
+    @Test
+    public void InTree_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_InTree-Balanced-MaxBf-3_Nodes_10_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(222, RunSearch(taskGraph,2));
+    }
+    @Order(14)
+    @Test
+    public void Fork_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Fork_Nodes_10_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(300, RunSearch(taskGraph,2));
+    }
+    @Order(15)
+    @Test
+    public void InTreeUnBalanced_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_InTree-Unbalanced-MaxBf-3_Nodes_10_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(344, RunSearch(taskGraph,2));
+    }
+    @Order(16)
+    @Test
+    public void Pipeline_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Pipeline_Nodes_21_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(904, RunSearch(taskGraph,2));
+    }
+    @Order(17)
+    @Test
+    public void Join_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Join_Nodes_10_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(292, RunSearch(taskGraph,2));
+    }
+
+
+//    @Disabled
+    @Order(18)
+    @Test
+    public void OutTreeBalanced_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_OutTree-Balanced-MaxBf-3_Nodes_21_CCR_1.05_WeightType_Random.dot");
+
+        assertEquals(71, RunSearch(taskGraph,2));
+    }
+
+
+//    @Disabled
+    @Order(19)
+    @Test
+    public void OutTreeUnbalanced_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_OutTree-Unbalanced-MaxBf-3_Nodes_21_CCR_0.99_WeightType_Random.dot");
+
+        assertEquals(72, RunSearch(taskGraph,2));
+    }
+    @Order(20)
+    @Test
+    public void Random_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Random_Nodes_10_Density_4.50_CCR_10.00_WeightType_Random.dot");
+
+        assertEquals(66, RunSearch(taskGraph,2));
+    }
+    @Order(21)
+    @Test
+    public void SeriesParallel_Nodes_10_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_SeriesParallel-MaxBf-5_Nodes_10_CCR_9.97_WeightType_Random.dot");
+
+        assertEquals(59, RunSearch(taskGraph,2));
+    }
+
+    @Order(22)
+    @Test
+    public void Stencil_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Stencil_Nodes_21_CCR_10.03_WeightType_Random.dot");
+
+        assertEquals(134, RunSearch(taskGraph,2));
+    }
+
+    @Order(23)
+    @Test
+    public void Nodes5ForkOrderProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_Fork_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(24)
+    @Test
+    public void Nodes5JoinOrderProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_Join_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(25)
+    @Test
+    public void Nodes5ForkNoProcessor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_5_No_Order.dot");
+
+        assertEquals(12, RunSearch(taskGraph,2));
+    }
+
+    @Order(26)
+    @Test
+    public void Nodes15Edges10Processor3Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/15Nodes10Edges.dot");
+
+        assertEquals(197, RunSearch(taskGraph,3));
+    }
+
+    @Order(27)
+    @Test
+    public void Nodes15Edges80Processor2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/15Nodes80Edges.dot");
+
+        assertEquals(516, RunSearch(taskGraph,2));
+    }
 }
