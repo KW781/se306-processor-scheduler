@@ -52,5 +52,28 @@ public class AStarSearcher extends GreedySearcher {
         return node;
     }
 
-    
+    @Override
+    public ScheduleNode Search() {
+        Integer threadCount = VisualisationApplication.getThreadCount();
+        CountDownLatch allComplete = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ThreadSearch(allComplete);
+                }
+            }).start();
+        }
+
+        try {
+            allComplete.await();
+        }
+        catch (InterruptedException e) {
+            System.out.println("Thread waiting failed");
+            System.out.println(e.toString());
+        }
+
+        return currentOptimal;
+    }
 }
