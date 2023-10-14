@@ -244,12 +244,12 @@ public class MainVisualisationController {
             GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
             if (node != null) {
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
-                nodeLabel.setText((String) node.getAttribute("ui.fvalue"));
-                nodePathCost.setText((String) node.getAttribute("ui.pathcost"));
+                nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
+                nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
                 nodeWeight.setText(node.getLabel());
             } else {
-                nodeLabel.setText("----");
-                nodePathCost.setText("----");
+                nodeLabel.setText("-");
+                nodePathCost.setText("-");
                 nodeWeight.setText("");
             }
         });

@@ -3,6 +3,7 @@ package com.example.project2project2team16.helper;
 import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.searchers.ScheduleNode;
+import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
@@ -14,6 +15,9 @@ public class GraphVisualisationHelper {
     private Graph graph;
     private ScheduleNode currentOptimal;
     private Integer currentScheduleNumber = 0;
+    static final String LABEL = "ui.label";
+    static final String HEURISTIC = "ui.heuristic";
+    static final String HEURISTIC_COST = "ui.heuristicCost";
 
     private GraphVisualisationHelper() {
     }
@@ -54,25 +58,31 @@ public class GraphVisualisationHelper {
             if (parentNode != null) {
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
-                node.setAttribute("ui.label", currentScheduleNumber);
-                node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
-                node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
+
+                // Set node attributes to be displayed
+                node.setAttribute(LABEL, currentScheduleNumber);
+                node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
+                node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 addEdge(parentNode, node);
             } else {
                 addNode(parent, parent.GetParent());
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
-                node.setAttribute("ui.label", currentScheduleNumber);
-                node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
-                node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
+
+                // Set node attributes to be displayed
+                node.setAttribute(LABEL, currentScheduleNumber);
+                node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
+                node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
         } else {
             node = graph.addNode(scheduleNode.toString());
-            node.setAttribute("ui.label", currentScheduleNumber);
-            node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
-            node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
+
+            // Set node attributes to be displayed
+            node.setAttribute(LABEL, currentScheduleNumber);
+            node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
+            node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
             currentScheduleNumber++;
         }
     }
@@ -99,5 +109,19 @@ public class GraphVisualisationHelper {
         }
 
         currentOptimal = newOptimal;
+    }
+
+    public String getHeuristic(ScheduleNode node) {
+        Heuristic currentHeuristic = node.getHeuristicUsed();
+
+        switch (currentHeuristic) {
+            case BOTTOM_LEVEL:
+                return "BOTTOM-LVL";
+            case IDLE_TIME:
+                return "IDLE-TIME";
+            case DATA_READY:
+                return "DATA_READY";
+        }
+        return null;
     }
 }

@@ -33,27 +33,30 @@
                 <HBox id="topContainer" spacing="15.0">
                     <StackPane id="displayBox" maxHeight="480.0" maxWidth="700">
                         <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"/>
-                        <HBox alignment="CENTER" maxHeight="40.0" maxWidth="250"
-                              StackPane.alignment="TOP_RIGHT" styleClass="displayBar" spacing="15.0">
+                        <HBox alignment="CENTER" maxHeight="40.0" maxWidth="270"
+                              StackPane.alignment="TOP_RIGHT" styleClass="displayBar" spacing="8.0">
                             <StackPane id="displayNodeWeight">
-                                <Rectangle id="rectangle" fill="#ffffff" width="28.0" height="28.0" arcWidth="10.0" arcHeight="10.0"
-                                stroke="black" strokeWidth="2.0"/>
-                                <Text fx:id="nodeWeight" fill="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="nodeWeight"/>
+                                <Rectangle id="rectangle" fill="#ffffff" width="28.0" height="28.0" arcWidth="10.0"
+                                           arcHeight="10.0"
+                                           stroke="black" strokeWidth="2.0"/>
+                                <Text fx:id="nodeWeight" fill="BLACK" strokeType="OUTSIDE" strokeWidth="0.0"
+                                      styleClass="nodeWeight"/>
                             </StackPane>
                             <AnchorPane>
-                                <HBox spacing="4.0" layoutY="4.0">
-                                    <VBox id="nodeInfo" alignment="CENTER_LEFT" maxWidth="50">
-                                        <Label text="F cost: " textFill="WHITE" styleClass="nodeInfoText"/>
-                                        <Label text="Path Cost: " textFill="WHITE" styleClass="nodeInfoText"/>
+                                <HBox spacing="2.0" layoutY="4.0">
+                                    <VBox id="nodeInfo" alignment="CENTER_LEFT" spacing="0.2">
+                                        <Label text="Heuristic: " textFill="WHITE" styleClass="nodeInfoText"/>
+                                        <Label text="Cost: " textFill="WHITE" styleClass="nodeInfoText"/>
                                     </VBox>
-                                    <VBox id="nodeValue" alignment="CENTER" maxWidth="40.0">
+                                    <VBox id="nodeValue" alignment="CENTER" spacing="0.2">
                                         <Text fx:id="nodeLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="----" styleClass="nodeInfoText"/>
+                                              text="-" styleClass="nodeInfoText"/>
                                         <Text fx:id="nodePathCost" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="----" styleClass="nodeInfoText"/>
+                                              text="-" styleClass="nodeInfoText"/>
                                     </VBox>
+
                                 </HBox>
-                                <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="85.0"
+                                <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="115.0"
                                       layoutY="6.0">
                                     <Button fx:id="dragButton" alignment="CENTER" contentDisplay="CENTER"
                                             mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
@@ -79,7 +82,8 @@
                                         </graphic>
                                     </Button>
                                     <Button fx:id="autoLayoutButton" alignment="CENTER" contentDisplay="CENTER"
-                                            mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
+                                            mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER"
+                                            layoutX="200.0">
                                         <graphic>
                                             <Group>
                                                 <children>
@@ -117,7 +121,7 @@
                                   styleClass="hardwareHeader"/>
                             <StackPane>
                                 <Group id="displayCpu">
-                                    <Circle fill="#ffffff00" />
+                                    <Circle fill="#ffffff00"/>
                                     <Circle fill="#ffffff00" radius="60.0" stroke="#2e2d2d" strokeWidth="7.5"/>
                                     <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
                                          startAngle="90.0"
