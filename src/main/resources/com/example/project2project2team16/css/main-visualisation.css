@@ -39,7 +39,7 @@
     -fx-font-weight: bold;
 }
 
-#displayTimer {
+.displayBar {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -47,7 +47,25 @@
     -fx-border-width: 0.75px;
 }
 
-#displayBar {
+.nodeInfoText {
+    -fx-font-size: 10px;
+}
+
+#title {
+    -fx-font-size: 33px;
+    -fx-font-weight: bold;
+}
+
+#nodeDisplay {
+    -fx-background-color: #282626;
+    -fx-background-radius: 10px;
+}
+
+#nodeWeight {
+    -fx-font-weight: bold;
+}
+
+#displayTimer {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;

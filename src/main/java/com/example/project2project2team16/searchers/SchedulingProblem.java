@@ -86,7 +86,7 @@ public class SchedulingProblem {
         return maxHeuristic;
     }
 
-    private static int dfs(Node node) {
+    private static int dfs(Node node, Map<String, Integer> dfsMemo) {
         // 0 = cost
         // 1 = num of tasks
 //        int[] result = new int[]{0, 0};
@@ -104,22 +104,28 @@ public class SchedulingProblem {
 //        result[1]++;
 //
 //        return result;
+        if (dfsMemo.containsKey(node.getId())) {
+            return dfsMemo.get(node.getId());
+        }
+
         int cost = 0;
 
         List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
         for (Node child : nodeChildren) {
-            int childCost = dfs(child);
+            int childCost = dfs(child, dfsMemo);
 
             cost = Math.max(cost, childCost);
         }
 
         cost += node.getAttribute("Weight", Double.class).intValue();
+        dfsMemo.put(node.getId(), cost);
 
         return cost;
     }
 
     private static int GetCriticalPath(Node node) {
-        return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
+        Map<String, Integer> dfsMemo = new HashMap<>();
+        return dfs(node, dfsMemo) - node.getAttribute("Weight", Double.class).intValue();
     }
 
     public static void initialiseF(ScheduleNode node) {

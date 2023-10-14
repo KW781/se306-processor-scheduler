@@ -25,6 +25,7 @@ import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
 import org.graphstream.ui.fx_viewer.util.FxMouseManager;
 import org.graphstream.ui.geom.Point3;
+import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.javafx.FxGraphRenderer;
@@ -60,6 +61,12 @@ public class MainVisualisationController {
     @FXML
     private Text currentShortestTimeText;
     @FXML
+    private Text nodeLabel;
+    @FXML
+    private Text nodePathCost;
+    @FXML
+    private Text nodeWeight;
+    @FXML
     private Button autoLayoutButton;
     @FXML
     private Button startButton;
@@ -90,27 +97,15 @@ public class MainVisualisationController {
 
     @FXML
     public void initialize() {
-        graphControls.setDisable(false);
-        graphControls.setVisible(true);
+        // Initialise graph controls
+        initialiseGraphControl();
 
+        // Disable application until start has been pressed
         mainBox.setDisable(true);
-
         startBox.setDisable(false);
         startBox.setVisible(true);
 
         createPieChart();
-
-        pointerButton.managedProperty().bind(pointerButton.visibleProperty());
-        pointerButton.getStyleClass().clear();
-        pointerButton.getStyleClass().add(ACTIVE_BUTTON);
-
-        dragButton.managedProperty().bind(dragButton.visibleProperty());
-        dragButton.getStyleClass().clear();
-        dragButton.getStyleClass().add(INACTIVE_BUTTON);
-
-        autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
-        autoLayoutButton.getStyleClass().clear();
-        autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
@@ -144,16 +139,6 @@ public class MainVisualisationController {
         });
     }
 
-    public void stopTimer() {
-        timeline.stop();
-    }
-
-    public void updateShortestTime(Integer shortestTime) {
-        Platform.runLater(() -> {
-            currentShortestTimeText.setText(shortestTime.toString());
-        });
-    }
-
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
         scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
@@ -167,89 +152,12 @@ public class MainVisualisationController {
         view.setPrefWidth(graphPane.getPrefWidth());
         view.setPrefHeight(graphPane.getPrefHeight());
         view.getCamera().resetView();
+        view.setCursor(Cursor.HAND);
+        view.enableMouseOptions();
 
-        autoLayoutButton.setOnMouseClicked((mouseEvent -> {
-            if (autoLayoutButton.getStyleClass().get(0).equals(INACTIVE_BUTTON)) {
-                autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
-                viewer.enableAutoLayout();
-                view.getCamera().resetView();
-            } else {
-                autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
-                viewer.disableAutoLayout();
-            }
-        }));
-
-        pointerButton.setOnMouseClicked((mouseEvent -> {
-            if (pointerButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
-                return;
-            }
-
-            pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add(ACTIVE_BUTTON);
-
-            dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add(INACTIVE_BUTTON);
-
-            view.setOnMousePressed(pressEvent -> {
-            });
-            view.setOnMouseDragged(dragEvent -> {
-            });
-
-            view.setCursor(Cursor.DEFAULT);
-            view.setMouseManager(new FxMouseManager());
-        }));
-
-        dragButton.setOnMouseClicked((mouseEvent -> {
-            if (dragButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
-                return;
-            }
-
-            dragButton.getStyleClass().clear();
-            dragButton.getStyleClass().add(ACTIVE_BUTTON);
-
-            pointerButton.getStyleClass().clear();
-            pointerButton.getStyleClass().add(INACTIVE_BUTTON);
-
-
-            view.setOnMousePressed(pressEvent -> {
-                mouseX = pressEvent.getX();
-                mouseY = pressEvent.getY();
-            });
-
-            view.setOnMouseDragged(dragEvent -> {
-                GraphMetrics metrics = view.getCamera().getMetrics();
-
-                double deltaX = metrics.lengthToGu((dragEvent.getX() - mouseX) * 1, StyleConstants.Units.PX);
-                double deltaY = metrics.lengthToGu((dragEvent.getY() - mouseY) * 1, StyleConstants.Units.PX);
-
-                Point3 point3 = view.getCamera().getViewCenter();
-
-                view.getCamera().setViewCenter(point3.x - deltaX, point3.y + deltaY, 0);
-
-                mouseX = dragEvent.getX();
-                mouseY = dragEvent.getY();
-            });
-
-            view.setCursor(Cursor.MOVE);
-            view.setMouseManager(new MouseManager() {
-                @Override
-                public void init(GraphicGraph graphicGraph, View view) {
-
-                }
-
-                @Override
-                public void release() {
-
-                }
-
-                @Override
-                public EnumSet<InteractiveElement> getManagedTypes() {
-                    return null;
-                }
-            });
-        }));
+        // Set mouse settings
+        setNodeClicked(view);
+        setUpGraphControls(view);
 
         graphPane.getChildren().addAll(view);
         graphPane.setOnScroll(scrollEvent -> {
@@ -259,9 +167,126 @@ public class MainVisualisationController {
                 if (view.getCamera().getViewPercent() <= 0.2) {
                     return;
                 }
-
                 view.getCamera().setViewPercent(view.getCamera().getViewPercent() - 0.1);
             }
+        });
+    }
+
+    public void initialiseGraphControl() {
+        graphControls.setDisable(false);
+        graphControls.setVisible(true);
+
+        pointerButton.managedProperty().bind(pointerButton.visibleProperty());
+        pointerButton.getStyleClass().clear();
+        pointerButton.getStyleClass().add(ACTIVE_BUTTON);
+
+        dragButton.managedProperty().bind(dragButton.visibleProperty());
+        dragButton.getStyleClass().clear();
+        dragButton.getStyleClass().add(INACTIVE_BUTTON);
+
+        autoLayoutButton.managedProperty().bind(autoLayoutButton.visibleProperty());
+        autoLayoutButton.getStyleClass().clear();
+        autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
+    }
+
+    public void setUpGraphControls(FxViewPanel view) {
+        // Center graph controller
+        autoLayoutButton.setOnMousePressed((mouseEvent -> {
+            if (autoLayoutButton.getStyleClass().get(0).equals(INACTIVE_BUTTON)) {
+                autoLayoutButton.getStyleClass().clear();
+                autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
+                viewer.enableAutoLayout();
+                view.getCamera().resetView();
+            }
+        }));
+
+        autoLayoutButton.setOnMouseReleased(mouseEvent -> {
+            autoLayoutButton.getStyleClass().clear();
+            autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
+        });
+
+        // Pointer controller
+        pointerButton.setOnMouseClicked((mouseEvent -> {
+            if (pointerButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
+                return;
+            }
+
+            pointerButton.getStyleClass().clear();
+            pointerButton.getStyleClass().add(ACTIVE_BUTTON);
+            dragButton.getStyleClass().clear();
+            dragButton.getStyleClass().add(INACTIVE_BUTTON);
+
+            view.setOnMousePressed(pressEvent -> {
+            });
+            view.setOnMouseDragged(dragEvent -> {
+            });
+            view.setCursor(Cursor.HAND);
+        }));
+
+        // Drag controller
+        dragButton.setOnMouseClicked((mouseEvent -> {
+            if (dragButton.getStyleClass().get(0).equals(ACTIVE_BUTTON)) {
+                return;
+            }
+            // Enable drag button and disable pointer
+            dragButton.getStyleClass().clear();
+            dragButton.getStyleClass().add(ACTIVE_BUTTON);
+            pointerButton.getStyleClass().clear();
+            pointerButton.getStyleClass().add(INACTIVE_BUTTON);
+
+            view.setOnMousePressed(pressEvent -> {
+                mouseX = pressEvent.getX();
+                mouseY = pressEvent.getY();
+            });
+
+            view.setOnMouseDragged(dragEvent -> {
+                GraphMetrics metrics = view.getCamera().getMetrics();
+                double deltaX = metrics.lengthToGu((dragEvent.getX() - mouseX) * 1, StyleConstants.Units.PX);
+                double deltaY = metrics.lengthToGu((dragEvent.getY() - mouseY) * 1, StyleConstants.Units.PX);
+                Point3 point3 = view.getCamera().getViewCenter();
+                view.getCamera().setViewCenter(point3.x - deltaX, point3.y + deltaY, 0);
+                mouseX = dragEvent.getX();
+                mouseY = dragEvent.getY();
+            });
+            view.setCursor(Cursor.MOVE);
+        }));
+    }
+
+    /**
+     * This method handles the mouse events on a node
+     *
+     * @param view the current view of the gui graph
+     */
+    public void setNodeClicked(FxViewPanel view) {
+        view.setOnMousePressed(clickEvent -> {
+            GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
+            if (node != null) {
+                node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
+                nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
+                nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
+                nodeWeight.setText(node.getLabel());
+            } else {
+                nodeLabel.setText("-");
+                nodePathCost.setText("-");
+                nodeWeight.setText("");
+            }
+        });
+
+        view.setOnMouseReleased(clickEvent -> {
+            GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
+            if (node != null) {
+                node.setAttribute("ui.style", "stroke-mode: none; size: 15px;");
+            }
+        });
+    }
+
+    public void stopTimer() {
+        timeline.stop();
+    }
+
+    public void updateShortestTime(Integer shortestTime) {
+        Platform.runLater(() -> {
+            currentShortestTimeText.setText(shortestTime.toString());
         });
     }
 
