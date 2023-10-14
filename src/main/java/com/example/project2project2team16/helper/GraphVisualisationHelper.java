@@ -56,6 +56,7 @@ public class GraphVisualisationHelper {
                 node = graph.addNode(scheduleNode.toString());
                 node.setAttribute("ui.label", currentScheduleNumber);
                 node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
+                node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
                 addEdge(parentNode, node);
             } else {
                 addNode(parent, parent.GetParent());
@@ -63,6 +64,7 @@ public class GraphVisualisationHelper {
                 node = graph.addNode(scheduleNode.toString());
                 node.setAttribute("ui.label", currentScheduleNumber);
                 node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
+                node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
                 parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
@@ -70,6 +72,7 @@ public class GraphVisualisationHelper {
             node = graph.addNode(scheduleNode.toString());
             node.setAttribute("ui.label", currentScheduleNumber);
             node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
+            node.setAttribute("ui.fvalue", scheduleNode.getfValue().toString());
             currentScheduleNumber++;
         }
     }

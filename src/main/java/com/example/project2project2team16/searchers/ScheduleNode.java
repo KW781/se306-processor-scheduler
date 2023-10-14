@@ -248,6 +248,10 @@ public class ScheduleNode {
         return (taskCount == visited.size());
     }
 
+    public Integer getfValue() {
+        return this.fValue;
+    }
+
     public Integer GetValue() {
         int result = 0;
 

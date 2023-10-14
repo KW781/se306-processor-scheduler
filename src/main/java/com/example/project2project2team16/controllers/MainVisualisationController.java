@@ -59,6 +59,8 @@ public class MainVisualisationController {
     @FXML
     private Text nodePathCost;
     @FXML
+    private Text nodeWeight;
+    @FXML
     private Button autoLayoutButton;
     @FXML
     private Button startButton;
@@ -242,11 +244,13 @@ public class MainVisualisationController {
             GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
             if (node != null) {
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
-                nodeLabel.setText(getNodeId(node.getId()));
+                nodeLabel.setText((String) node.getAttribute("ui.fvalue"));
                 nodePathCost.setText((String) node.getAttribute("ui.pathcost"));
+                nodeWeight.setText(node.getLabel());
             } else {
                 nodeLabel.setText("----");
                 nodePathCost.setText("----");
+                nodeWeight.setText("");
             }
         });
 
@@ -288,15 +292,5 @@ public class MainVisualisationController {
         long memUsed = totalMem - Runtime.getRuntime().freeMemory();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
         return (int) Math.round(memoryUsage);
-    }
-
-    /**
-     * This function returns a formatted node id from a given parameter
-     *
-     * @param nodeId to be changed
-     * @return formatted node id
-     */
-    public static String getNodeId(String nodeId) {
-        return nodeId.substring(nodeId.lastIndexOf("@") + 1).trim();
     }
 }

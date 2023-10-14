@@ -38,6 +38,10 @@
     -fx-background-radius: 10px;
 }
 
+#nodeWeight {
+    -fx-font-weight: bold;
+}
+
 #displayTimer {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;

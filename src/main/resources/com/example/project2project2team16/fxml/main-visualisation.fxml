@@ -19,6 +19,7 @@
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
       prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
@@ -32,12 +33,17 @@
                 <HBox id="topContainer" spacing="15.0">
                     <StackPane id="displayBox" maxHeight="480.0" maxWidth="700">
                         <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"/>
-                        <HBox alignment="CENTER" maxHeight="40.0" maxWidth="220"
+                        <HBox alignment="CENTER" maxHeight="40.0" maxWidth="250"
                               StackPane.alignment="TOP_RIGHT" styleClass="displayBar" spacing="15.0">
+                            <StackPane id="displayNodeWeight">
+                                <Rectangle id="rectangle" fill="#ffffff" width="28.0" height="28.0" arcWidth="10.0" arcHeight="10.0"
+                                stroke="black" strokeWidth="2.0"/>
+                                <Text fx:id="nodeWeight" fill="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="nodeWeight"/>
+                            </StackPane>
                             <AnchorPane>
                                 <HBox spacing="4.0" layoutY="4.0">
                                     <VBox id="nodeInfo" alignment="CENTER_LEFT" maxWidth="50">
-                                        <Label text="Node ID: " textFill="WHITE" styleClass="nodeInfoText"/>
+                                        <Label text="F cost: " textFill="WHITE" styleClass="nodeInfoText"/>
                                         <Label text="Path Cost: " textFill="WHITE" styleClass="nodeInfoText"/>
                                     </VBox>
                                     <VBox id="nodeValue" alignment="CENTER" maxWidth="40.0">
@@ -47,7 +53,7 @@
                                               text="----" styleClass="nodeInfoText"/>
                                     </VBox>
                                 </HBox>
-                                <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="80.0"
+                                <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="85.0"
                                       layoutY="6.0">
                                     <Button fx:id="dragButton" alignment="CENTER" contentDisplay="CENTER"
                                             mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
@@ -111,7 +117,7 @@
                                   styleClass="hardwareHeader"/>
                             <StackPane>
                                 <Group id="displayCpu">
-                                    <Circle fill="#ffffff00" radius="65"/>
+                                    <Circle fill="#ffffff00" />
                                     <Circle fill="#ffffff00" radius="60.0" stroke="#2e2d2d" strokeWidth="7.5"/>
                                     <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
                                          startAngle="90.0"
