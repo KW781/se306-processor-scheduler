@@ -148,6 +148,7 @@ public abstract class SearcherTests {
         assertEquals(292, RunSearch(taskGraph,2));
     }
 
+
 //    @Disabled
     @Order(18)
     @Test
@@ -156,6 +157,7 @@ public abstract class SearcherTests {
 
         assertEquals(71, RunSearch(taskGraph,2));
     }
+
 
 //    @Disabled
     @Order(19)
@@ -180,14 +182,13 @@ public abstract class SearcherTests {
         assertEquals(59, RunSearch(taskGraph,2));
     }
 
-//    @Disabled
-//    @Order(22)
-//    @Test
-//    public void Stencil_Nodes_21_2Proc() {
-//        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Stencil_Nodes_21_CCR_10.03_WeightType_Random.dot");
-//
-//        assertEquals(134, RunSearch(taskGraph,2));
-//    }
+    @Order(22)
+    @Test
+    public void Stencil_Nodes_21_2Proc() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_Stencil_Nodes_21_CCR_10.03_WeightType_Random.dot");
+
+        assertEquals(134, RunSearch(taskGraph,2));
+    }
 
     @Order(23)
     @Test
