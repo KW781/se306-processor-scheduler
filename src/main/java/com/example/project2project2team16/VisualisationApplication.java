@@ -83,4 +83,12 @@ public class VisualisationApplication extends Application {
             startSearch();
         }
     }
+
+    public static void setAppConfig(AppConfig config) {
+        appConfig = config;
+    }
+
+    public static Integer getThreadCount() {
+        return appConfig.getNumCores();
+    }
 }
