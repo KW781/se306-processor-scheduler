@@ -50,7 +50,8 @@ public class GraphVisualisationHelper {
         }
 
         node = graph.addNode(scheduleNode.toString());
-        node.setAttribute("scheduleNode", scheduleNode);
+        //node.setAttribute("scheduleNode", scheduleNode);
+        node.setAttribute("ui.label", scheduleNode.GetValue());
 
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
@@ -62,11 +63,6 @@ public class GraphVisualisationHelper {
                 addEdge(parentNode, node);
             }
         }
-    }
-
-    private Color generateRandomColour() {
-        Random random = new Random();
-        return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
     public void setStartNode(ScheduleNode node) {
