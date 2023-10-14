@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScheduleNode {
+    static int numCreated = 0;
 
     //Task Id as key, data is pair of processor run on and end time.
     Map<String, Pair<Integer, Integer>> visited;
@@ -23,10 +24,9 @@ public class ScheduleNode {
     Integer fValue = 0;
     Integer idleTime = 0;
     public Integer completedTaskDuration = 0;
-
-
-
+    boolean hadFixedTaskOrder = false;
     boolean unpromisingChildren = false;
+    int id;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -41,17 +41,20 @@ public class ScheduleNode {
             processorLastTasks.add(null);
             processorTasks.add(new ArrayList<>());
         }
+
+        id = numCreated;
+        numCreated++;
     }
 
     public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor, List<Node> fixedTaskOrder) {
         this.fixedTaskOrder = fixedTaskOrder;
+        this.hadFixedTaskOrder = fixedTaskOrder != null || copy.hadFixedTaskOrder;
         this.visited = new HashMap<>(copy.visited);
         this.availableTasks = new HashSet<>(copy.availableTasks);
         this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
         this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.processorCount = copy.processorCount;
         this.parent = copy;
-        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.idleTime = copy.idleTime;
         this.fValue = 0;
 
@@ -64,6 +67,9 @@ public class ScheduleNode {
         this.completedTaskDuration = copy.completedTaskDuration;
 
         addTask(newTask, processor);
+
+        id = numCreated;
+        numCreated++;
     }
 
     public Map<String, Pair<Integer, Integer>> GetVisited() {
@@ -298,7 +304,33 @@ public class ScheduleNode {
         AddNewTasks(newTask);
     }
 
-    private boolean OutgoingCommsOK(List<Pair<Node, Integer>> tasks) {
+    private int estimateParentDataArrivalTime(Node node, int time, int newProcessorEndTime) {
+        int minTime = Integer.MAX_VALUE;
+
+        if (visited.containsKey(node.getId())) {
+            return time + visited.get(node.getId()).getValue();
+        }
+
+        for (Node parent : node.enteringEdges().map(Edge::getSourceNode).collect(Collectors.toList())) {
+            minTime = Math.min(estimateParentDataArrivalTime(parent, node.getAttribute("Weight", Double.class).intValue() + time, newProcessorEndTime), minTime);
+        }
+
+        // If still equal, it means current node is not scheduled and has no parent
+        if (minTime == Integer.MAX_VALUE) {
+            for (int i = 0; i < processorCount; i++) {
+                if (i == lastProcessor) {
+                    minTime = Math.min(newProcessorEndTime, minTime);;
+                }
+
+                minTime = Math.min(processorEndTimes.get(i), minTime);
+            }
+            minTime = minTime + node.getAttribute("Weight", Double.class).intValue();
+        }
+
+        return minTime;
+    }
+
+    private boolean OutgoingCommsOK(List<Pair<Node, Integer>> tasks, int newProcessorEndTime) {
         for (Pair<Node, Integer> taskEndTime : tasks) {
             Node task = taskEndTime.getKey();
             int endTime = taskEndTime.getValue();
@@ -318,7 +350,6 @@ public class ScheduleNode {
                                 continue;
                             }
 
-                            boolean atLeastOneLater = false;
                             for (Edge parentEdge : child.enteringEdges().collect(Collectors.toList())) {
                                 Node parent = parentEdge.getSourceNode();
 
@@ -328,24 +359,24 @@ public class ScheduleNode {
 
                                 Pair<Integer, Integer> parentProcessorEndTime = visited.get(parent.getId());
 
+                                int parentDataArrivalTime;
                                 if (parentProcessorEndTime == null) {
-                                    return false;
+                                    // Gets best case data arrival time estimate
+                                    parentDataArrivalTime = estimateParentDataArrivalTime(parent, 0, newProcessorEndTime);
+                                } else {
+                                    parentDataArrivalTime = parentProcessorEndTime.getValue() + parent.getAttribute("Weight", Double.class).intValue();
                                 }
 
-                                int parentDataArrivalTime = parentProcessorEndTime.getValue() + parent.getAttribute("Weight", Double.class).intValue();
                                 if (parentDataArrivalTime >= newDataArrivalTime) {
-                                    atLeastOneLater = true;
+                                    return true;
                                 }
                             }
 
-                            if (!atLeastOneLater) {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                 }
             }
-
         }
 
         return true;
@@ -361,6 +392,7 @@ public class ScheduleNode {
 
         int maxTimeToFinish = processorEndTimes.get(lastProcessor);
         int i = tasks.size() - 2;
+        //TODO change to getIndex()
         int lastTaskId = Integer.parseInt(lastTask.getId());
 
         while (i >= 0 && lastTaskId < Integer.parseInt(tasks.get(i).getId())) {
@@ -390,7 +422,7 @@ public class ScheduleNode {
                 taskEndTimes.add(new Pair<>(task, endTime));
             }
 
-            if (endTime <= maxTimeToFinish && OutgoingCommsOK(taskEndTimes)) {
+            if (endTime <= maxTimeToFinish && OutgoingCommsOK(taskEndTimes, endTime)) {
                 return true;
             }
 
@@ -461,4 +493,6 @@ public class ScheduleNode {
 
         return Objects.hash(nodeEndTime);
     }
+
+
 }

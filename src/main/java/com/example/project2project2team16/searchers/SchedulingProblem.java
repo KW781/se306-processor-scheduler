@@ -52,12 +52,16 @@ public class SchedulingProblem {
     }
 
     public static Integer CalculateF(ScheduleNode node) {
-        int loadBalanceHeuristic = loadBalanceHeuristic(node);
-//        int loadBalanceHeuristic = 0;
+        if (node.fValue != 0) {
+            return node.fValue;
+        }
 
-        //int bottomLevelHeuristic = 0;
+//        int loadBalanceHeuristic = 0;
+        int dataReadyTimeHeuristic = 0;
+//        int bottomLevelHeuristic = 0;
+        int loadBalanceHeuristic = loadBalanceHeuristic(node);
+//        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
-        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
 
         // dataReadyTime seems to just increase the runtime currently
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
@@ -68,23 +72,6 @@ public class SchedulingProblem {
     }
 
     private static int dfs(Node node) {
-        // 0 = cost
-        // 1 = num of tasks
-//        int[] result = new int[]{0, 0};
-//
-//        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
-//        for (Edge edge : edges) {
-//            int[] childResult = dfs(edge.getTargetNode());
-//
-//            if (childResult[0] > result[0] || (childResult[0] == result[0] && childResult[1] > result[1])) {
-//                result = childResult;
-//            }
-//        }
-//
-//        result[0] += node.getAttribute("Weight", Double.class).intValue();
-//        result[1]++;
-//
-//        return result;
         int cost = 0;
 
         List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
