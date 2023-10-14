@@ -228,4 +228,11 @@ public abstract class SearcherTests {
 
         assertEquals(516, RunSearch(taskGraph,2));
     }
+
+    @Order(28)
+    @Test
+    public void equivalent_nodes_1_test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/equivalent_weights_1.dot");
+        assertEquals(78, RunSearch(taskGraph, 2));
+    }
 }

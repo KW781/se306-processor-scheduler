@@ -48,23 +48,39 @@ public class SchedulingProblem {
         Queue<Node> nodeQueue = new ArrayDeque<>();
         boolean allNodesVisited = false;
 
+        // check for equivalent tasks between root nodes
+        for (int i = 0; i < rootNodes.size(); i++) {
+            Node outerNode = rootNodes.get(i);
+            for (int j = i + 1; j < rootNodes.size(); j++) {
+                Node innerNode = rootNodes.get(j);
+                if (areTasksEquivalent(outerNode, innerNode)) {
+                    // if the tasks are equivalent, add a directed edge between the two with a weight of zero
+                    // note that the id assigned to the edge is arbitrary
+                    Edge newEdge = this.taskGraph.addEdge(outerNode.getId() + innerNode.getId() + "virtual", outerNode, innerNode, true);
+                    newEdge.setAttribute("Weight", 0.0);
+                }
+            }
+        }
+
         // run BFS to find duplicate tasks
         nodeQueue.add(rootNodes.get(0));
         while (!allNodesVisited) {
             while (!nodeQueue.isEmpty()) {
                 Node currentNode = nodeQueue.remove();
                 visited.add(currentNode); // mark the current node as visited so that we don't revisit it
-                List<Node> childNodes = currentNode.leavingEdges().map(edge -> edge.getTargetNode()).collect(Collectors.toList());
+                List<Node> childNodes = currentNode.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(edge -> edge.getTargetNode()).collect(Collectors.toList());
 
                 // compare child nodes with each other to see if they are duplicates
-                for (Node outerChildNode : childNodes) {
-                    for (Node innerChildNode : childNodes) {
-                        // only compare the child nodes if they're not the exact same node, and at least one of them has not yet been visited
-                        if ((innerChildNode != outerChildNode) && !(visited.contains(outerChildNode) && visited.contains(innerChildNode))) {
+                for (int i = 0; i < childNodes.size(); i++) {
+                    Node outerChildNode = childNodes.get(i);
+                    for (int j = i + 1; j < childNodes.size(); j++) {
+                        Node innerChildNode = childNodes.get(j);
+                        // only compare the child nodes if at least one of them has not yet been visited
+                        if (!(visited.contains(outerChildNode) && visited.contains(innerChildNode))) {
                             if (areTasksEquivalent(outerChildNode, innerChildNode)) {
                                 // if the tasks are equivalent, add a directed edge between the two with a weight of zero
                                 // note that the id assigned to the edge is arbitrary
-                                Edge newEdge = this.taskGraph.addEdge(outerChildNode.getId() + innerChildNode.getId(), outerChildNode, innerChildNode, true);
+                                Edge newEdge = this.taskGraph.addEdge(outerChildNode.getId() + innerChildNode.getId() + "virtual", outerChildNode, innerChildNode, true);
                                 newEdge.setAttribute("Weight", 0.0);
                             }
                         }
@@ -95,8 +111,8 @@ public class SchedulingProblem {
 
 
         // check that the parents of the tasks are the same, and that edges from the parents to the tasks have the same weight
-        List<Edge> task1IncomingEdges = task1.enteringEdges().collect(Collectors.toList());
-        List<Edge> task2IncomingEdges = task2.enteringEdges().collect(Collectors.toList());
+        List<Edge> task1IncomingEdges = task1.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        List<Edge> task2IncomingEdges = task2.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
         if (task1IncomingEdges.size() != task2IncomingEdges.size()) return false;
 
         boolean sameEdgeAndParentFound;
@@ -118,8 +134,8 @@ public class SchedulingProblem {
 
 
         // check that the children of the tasks are the same and that the edges from the tasks to the children have the same weight
-        List<Edge> task1OutgoingEdges = task1.leavingEdges().collect(Collectors.toList());
-        List<Edge> task2OutgoingEdges = task2.leavingEdges().collect(Collectors.toList());
+        List<Edge> task1OutgoingEdges = task1.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        List<Edge> task2OutgoingEdges = task2.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
         if (task1OutgoingEdges.size() != task2OutgoingEdges.size()) return false;
 
         boolean sameEdgeAndChildFound;
