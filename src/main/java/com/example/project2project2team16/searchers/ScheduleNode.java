@@ -21,6 +21,7 @@ public class ScheduleNode {
     ScheduleNode parent;
     Integer fValue = 0;
     Integer idleTime = 0;
+    public Integer completedTaskDuration = 0;
 
 
 
@@ -48,6 +49,8 @@ public class ScheduleNode {
         this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
         this.processorCount = copy.processorCount;
         this.parent = copy;
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+        this.idleTime = copy.idleTime;
         this.fValue = 0;
 
         this.processorTasks = new ArrayList<>();
@@ -56,7 +59,7 @@ public class ScheduleNode {
             processorTasks.add(new ArrayList<>(taskIds));
         }
 
-        this.idleTime = copy.idleTime;
+        this.completedTaskDuration = copy.completedTaskDuration;
 
         addTask(newTask, processor);
     }
@@ -142,6 +145,8 @@ public class ScheduleNode {
         lastTask = newTask;
         lastProcessor = processor;
         idleTime += earliestStartTime - previousEndTime;
+
+        completedTaskDuration += newTask.getAttribute("Weight", Double.class).intValue();
 
         AddNewTasks(newTask);
     }
@@ -294,6 +299,8 @@ public class ScheduleNode {
 
         return true;
     }
+
+
 
     @Override
     public int hashCode() {

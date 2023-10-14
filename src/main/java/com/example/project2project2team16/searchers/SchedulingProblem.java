@@ -59,10 +59,10 @@ public class SchedulingProblem {
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
         int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
 
+        // dataReadyTime seems to just increase the runtime currently
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
-//
-//        return Math.max(maxHeuristic, dataReadyTimeHeuristic);;
-//        System.out.println("heuristic: " + maxHeuristic);
+
+
         node.fValue = maxHeuristic;
         return maxHeuristic;
     }
@@ -181,17 +181,23 @@ public class SchedulingProblem {
     }
 
     private static int loadBalanceHeuristic(ScheduleNode node) {
-        return (computationCostSum + node.idleTime)/processorCount;
+        return (computationCostSum + node.idleTime + calculateTrailingIdleTimes(node))/processorCount;
     }
 
-    private int calculateTrailingIdleTimes(ScheduleNode node) {
-        int maxEndTime = node.GetValue();
+    //Makes the idle time heuristic work on its own but increases runtime when paired with bottom level
+    private static int calculateTrailingIdleTimes(ScheduleNode node) {
         int trailingTime = 0;
-        for (int i = 0; i < node.processorCount; i++) {
-            if (node.processorEndTimes.get(i) != maxEndTime) {
-                trailingTime += maxEndTime - node.processorEndTimes.get(i);
-            }
+        int completedDuration = node.completedTaskDuration;
+        int remainingTaskDuration = computationCostSum - completedDuration;
+
+        int endTime = node.GetValue();
+
+        for (int i = 0; i < processorCount; i++) {
+            trailingTime += endTime - node.processorEndTimes.get(i);
         }
+
+        trailingTime = Math.max(0, trailingTime - remainingTaskDuration);
+
         return trailingTime;
     }
 
