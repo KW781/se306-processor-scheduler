@@ -1,17 +1,21 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
+import com.example.project2project2team16.utils.AppConfig;
+import javafx.util.Pair;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class AStarSearcher extends GreedySearcher {
-    Set<ScheduleNode> opened = new HashSet<>();
-    Set<ScheduleNode> closed = new HashSet<>();
+    Set<ScheduleNode> opened = ConcurrentHashMap.newKeySet();
+    Set<ScheduleNode> closed = ConcurrentHashMap.newKeySet();
+    ScheduleNode currentOptimal = null;
+    Object lock = new Object();
 
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -19,7 +23,7 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     protected void InitialiseFrontier() {
-        frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeAStarComparator(problem));
+        frontier = new PriorityBlockingQueue<ScheduleNode>(100000, new ScheduleNodeAStarComparator(problem));
     }
 
     @Override
@@ -37,26 +41,16 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     protected ScheduleNode GetNextNode() {
-        ScheduleNode node = ((PriorityQueue<ScheduleNode>) frontier).poll();
+        ScheduleNode node = ((PriorityBlockingQueue<ScheduleNode>) frontier).poll();
         closed.add(node);
         opened.remove(node);
+
+        if (currentOptimal != null && node.GetValue() > currentOptimal.GetValue()) {
+            return null;
+        }
 
         return node;
     }
 
-    @Override
-    public ScheduleNode Search() {
-        while (!IsFrontierEmpty()) {
-            ScheduleNode nextNode = GetNextNode();
-
-            if (problem.IsGoal(nextNode)) {
-                return nextNode;
-            }
-            else {
-                AddToFrontier(problem.GetNeighbourStates(nextNode));
-            }
-        }
-
-        return null;
-    }
+    
 }
