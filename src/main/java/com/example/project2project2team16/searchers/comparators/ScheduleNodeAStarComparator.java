@@ -14,17 +14,19 @@ public class ScheduleNodeAStarComparator implements Comparator<ScheduleNode> {
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-//        int value1 = problem.getMaximumHeuristic(node1) + node1.GetPathCost();
-//        int value2 = problem.getMaximumHeuristic(node2) + node2.GetPathCost();
-        int value1 = problem.getMaximumHeuristic(node1);
-        int value2 = problem.getMaximumHeuristic(node2);
+        int value1 = SchedulingProblem.CalculateF(node1);
+        int value2 = SchedulingProblem.CalculateF(node2);
 
-        if (value1 < value2) {
+        if (value1 == value2) {
+            if (node1.getNumTasksScheduled() >= node2.getNumTasksScheduled()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else if (value1 < value2) {
             return -1;
-        } else if (value1 > value2) {
+        } else {
             return 1;
         }
-
-        return 0;
     }
 }
