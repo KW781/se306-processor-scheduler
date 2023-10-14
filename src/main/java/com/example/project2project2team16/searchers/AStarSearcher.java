@@ -45,7 +45,7 @@ public class AStarSearcher extends GreedySearcher {
             }
 
             schedulesAdded++;
-            SchedulingProblem.CalculateF(newNode);
+            problem.CalculateF(newNode);
             frontier.add(newNode);
             createdSchedules.add(newNode);
         }

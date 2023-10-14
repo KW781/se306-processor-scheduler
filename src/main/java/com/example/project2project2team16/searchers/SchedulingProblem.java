@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 public class SchedulingProblem {
 
-    Graph taskGraph;
+    static Graph taskGraph;
     ScheduleNode startingNode;
     Integer taskCount;
-    Integer processorCount;
-    Integer computationCostSum;
+    static Integer processorCount;
+    static Integer computationCostSum;
 
     public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
@@ -51,13 +51,13 @@ public class SchedulingProblem {
         return node.GenerateNeighbours();
     }
 
-    public Integer CalculateF(ScheduleNode node) {
+    public static Integer CalculateF(ScheduleNode node) {
         int loadBalanceHeuristic = loadBalanceHeuristic(node);
 //        int loadBalanceHeuristic = 0;
 
         //int bottomLevelHeuristic = 0;
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
-        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
+        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
 
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
 //
@@ -110,7 +110,7 @@ public class SchedulingProblem {
         }
     }
 
-    public Integer bottomLevelHeuristic(ScheduleNode node) {
+    public static Integer bottomLevelHeuristic(ScheduleNode node) {
         // The F value is defined as f(n) = g(n) + h(n)
         // g(n) is the total cost of the path from the root node to n
         // h(n) is the estimated critical computational path starting from n
@@ -144,9 +144,9 @@ public class SchedulingProblem {
         return node.fValue;
     }
 
-    private int dataReadyTimeHeuristic(ScheduleNode node) {
+    private static int dataReadyTimeHeuristic(ScheduleNode node, Graph taskGraph) {
         // get all unvisited nodes from the task graph
-        List<Node> freeNodes = this.taskGraph.nodes().filter(taskNode -> !node.visited.containsKey(taskNode.getId())).collect(Collectors.toList());
+        List<Node> freeNodes = taskGraph.nodes().filter(taskNode -> !node.visited.containsKey(taskNode.getId())).collect(Collectors.toList());
         int maxDRTHeuristic = 0;
         int minDRT; // the minimum DRT across all processors
 
@@ -157,14 +157,14 @@ public class SchedulingProblem {
                     minDRT = Math.min(minDRT, calculateMaxDRT(currentNode, i, node.visited));
                 }
                 maxDRTHeuristic = Math.max(maxDRTHeuristic, minDRT + GetCriticalPath(currentNode));
-            } catch (PreqrequisiteNotMetException e) {
+            } catch (PreqrequisiteNotMetException ignored) {
             }
         }
 
         return maxDRTHeuristic;
     }
 
-    private int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
+    private static int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
         int maxDRT = 0;
         List<Edge> incomingEdges = taskNode.enteringEdges().collect(Collectors.toList());
         int finishTime;
@@ -180,7 +180,7 @@ public class SchedulingProblem {
         return maxDRT;
     }
 
-    private int loadBalanceHeuristic(ScheduleNode node) {
+    private static int loadBalanceHeuristic(ScheduleNode node) {
         return (computationCostSum + node.idleTime)/processorCount;
     }
 
