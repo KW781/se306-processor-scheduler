@@ -37,7 +37,7 @@ public class SchedulingProblem {
         nodeQueue.add(rootNodes.get(0));
         while (!allNodesVisited) {
             while (!nodeQueue.isEmpty()) {
-                Node currentNode = nodeQueue.peek();
+                Node currentNode = nodeQueue.remove();
                 visited.add(currentNode); // mark the current node as visited so that we don't revisit it
                 List<Node> childNodes = currentNode.leavingEdges().map(edge -> edge.getTargetNode()).collect(Collectors.toList());
 
