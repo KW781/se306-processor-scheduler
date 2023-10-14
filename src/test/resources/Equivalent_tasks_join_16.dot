@@ -1,0 +1,33 @@
+digraph "Equivalent_tasks_join_7" {
+	0	 [Weight=50];
+	1	 [Weight=70];
+	2	 [Weight=70];
+	3	 [Weight=70];
+	4	 [Weight=70];
+	5	 [Weight=70];
+	6	 [Weight=70];
+	7	 [Weight=70];
+	8	 [Weight=70];
+	9	 [Weight=70];
+	10	 [Weight=70];
+	11	 [Weight=70];
+	12	 [Weight=70];
+	13	 [Weight=70];
+	14	 [Weight=70];
+	15	 [Weight=70];
+	1 -> 0	 [Weight=3];
+	2 -> 0	 [Weight=3];
+	3 -> 0	 [Weight=3];
+	4 -> 0	 [Weight=3];
+	5 -> 0	 [Weight=3];
+	6 -> 0	 [Weight=3];
+	7 -> 0	 [Weight=3];
+	8 -> 0	 [Weight=3];
+	9 -> 0	 [Weight=3];
+	10 -> 0	 [Weight=3];
+	11 -> 0	 [Weight=3];
+	12 -> 0	 [Weight=3];
+	13 -> 0	 [Weight=3];
+	14 -> 0	 [Weight=3];
+	15 -> 0	 [Weight=3];
+}
