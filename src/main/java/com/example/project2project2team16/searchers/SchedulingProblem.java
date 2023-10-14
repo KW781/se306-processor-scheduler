@@ -174,7 +174,7 @@ public class SchedulingProblem {
     }
 
     private int loadBalanceHeuristic(ScheduleNode node) {
-        return (computationCostSum + node.idleTime)/node.processorCount;
+        return (computationCostSum + node.idleTime + calculateTrailingIdleTimes(node))/node.processorCount;
     }
 
     //Makes the idle time heuristic work on its own but increases runtime when paired with bottom level
