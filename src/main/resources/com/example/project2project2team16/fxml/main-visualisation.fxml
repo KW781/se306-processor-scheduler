@@ -19,6 +19,7 @@
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.chart.PieChart?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
       prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
@@ -159,33 +160,37 @@
                             <Font size="24.0"/>
                         </font>
                     </Text>
-
                 </StackPane>
                 <HBox maxWidth="900.0" spacing="15.0">
-                    <VBox prefWidth="350.0" styleClass="container">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE">
-                            <font>
-                                <Font size="24.0"/>
-                            </font>
-                        </Text>
+                    <VBox prefWidth="350.0" prefHeight="185.0" styleClass="container">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE" styleClass="bottomHeaders"/>
                     </VBox>
-                    <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT SHORTEST TIME">
-                            <font>
-                                <Font size="24.0"/>
-                            </font>
-                        </Text>
+                    <VBox prefWidth="350.0" styleClass="container">
+                        <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE" styleClass="bottomHeaders"/>
+                        <HBox alignment="CENTER">
+                            <VBox alignment="CENTER" spacing="5.0">
+                                <HBox spacing="4.0">
+                                    <Circle fill="#5A57D8" radius="10.0" stroke="black" strokeWidth="0.5"/>
+                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Idle-Time"/>
+                                </HBox>
+                                <HBox spacing="4.0">
+                                    <Circle fill="#3700B4" radius="10.0" stroke="black" strokeWidth="0.5"/>
+                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Data-Ready"/>
+                                </HBox>
+                                <HBox spacing="4.0">
+                                    <Circle fill="#7F39FB" radius="10.0" stroke="black" strokeWidth="0.5"/>
+                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Bottom-Level"/>
+                                </HBox>
+                            </VBox>
+                            <PieChart fx:id="heuristicPieChart" prefWidth="100.0" prefHeight="100.0"/>
+                        </HBox>
+                    </VBox>
+                    <VBox minWidth="152.0" styleClass="container">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="STATS" styleClass="bottomHeaders"/>
                         <Text fx:id="currentShortestTimeText" fill="WHITE" strokeType="OUTSIDE"
                               strokeWidth="0.0" text="0" textAlignment="CENTER">
                             <font>
-                                <Font size="110.0"/>
-                            </font>
-                        </Text>
-                    </VBox>
-                    <VBox minWidth="152.0" styleClass="container">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Heuristics">
-                            <font>
-                                <Font size="24.0"/>
+                                <Font size="20.0"/>
                             </font>
                         </Text>
                     </VBox>

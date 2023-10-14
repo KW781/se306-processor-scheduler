@@ -7,8 +7,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -34,6 +37,9 @@ import org.graphstream.ui.view.util.MouseManager;
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainVisualisationController {
@@ -68,6 +74,8 @@ public class MainVisualisationController {
     @FXML
     private Arc cpuArc;
     @FXML
+    private PieChart heuristicPieChart;
+    @FXML
     private FxViewer viewer;
     private Graph scheduleSearchGraph;
     private double timeElapsed = 0;
@@ -77,6 +85,7 @@ public class MainVisualisationController {
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+    private ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
 
     @FXML
@@ -88,6 +97,8 @@ public class MainVisualisationController {
 
         startBox.setDisable(false);
         startBox.setVisible(true);
+
+        createPieChart();
 
         pointerButton.managedProperty().bind(pointerButton.visibleProperty());
         pointerButton.getStyleClass().clear();
@@ -120,6 +131,12 @@ public class MainVisualisationController {
             startBox.setDisable(true);
             startBox.setVisible(false);
             mainBox.setDisable(false);
+
+            ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+            scheduledExecutorService.scheduleAtFixedRate(() -> {
+                // Update the chart
+
+            }, 0, 10, TimeUnit.MILLISECONDS);
 
             setGraphAndDisplay(GraphVisualisationHelper.instance().getGraph());
             timeline.play();
@@ -181,7 +198,6 @@ public class MainVisualisationController {
             });
 
             view.setCursor(Cursor.DEFAULT);
-
             view.setMouseManager(new FxMouseManager());
         }));
 
@@ -217,7 +233,6 @@ public class MainVisualisationController {
             });
 
             view.setCursor(Cursor.MOVE);
-
             view.setMouseManager(new MouseManager() {
                 @Override
                 public void init(GraphicGraph graphicGraph, View view) {
@@ -237,7 +252,6 @@ public class MainVisualisationController {
         }));
 
         graphPane.getChildren().addAll(view);
-
         graphPane.setOnScroll(scrollEvent -> {
             if (scrollEvent.getDeltaY() < 0) {
                 view.getCamera().setViewPercent(view.getCamera().getViewPercent() + 0.1);
@@ -249,6 +263,21 @@ public class MainVisualisationController {
                 view.getCamera().setViewPercent(view.getCamera().getViewPercent() - 0.1);
             }
         });
+    }
+
+    private void createPieChart() {
+        pieChartData.add(new PieChart.Data("Idle-Time Count", 1));
+        pieChartData.add(new PieChart.Data("Data-Ready Count", 1));
+        pieChartData.add(new PieChart.Data("Bottom-Level Count", 1));
+        heuristicPieChart.setData(pieChartData);
+        //heuristicPieChart.setLegendVisible(false);
+        //heuristicPieChart.setLabelsVisible(false);
+    }
+
+    private void updatePieChart(int idleTimeUsageCount, int dataReadyHeuristicCount, int bottomLevelHeuristicCount) {
+        pieChartData.get(0).setPieValue(idleTimeUsageCount);
+        pieChartData.get(1).setPieValue(dataReadyHeuristicCount);
+        pieChartData.get(2).setPieValue(bottomLevelHeuristicCount);
     }
 
     /**

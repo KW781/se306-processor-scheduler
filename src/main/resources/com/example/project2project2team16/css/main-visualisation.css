@@ -15,6 +15,25 @@
     -fx-font-size: 16px;
 }
 
+.bottomHeaders {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.chart-pie {
+    -fx-border-color: derive(-fx-pie-color, -40%);
+    -fx-border-width: 1.5px;
+}
+
+.chart-pie-label {
+    -fx-fill: #ffffff;
+    -fx-font-size: 12px;
+}
+
+.data0.chart-pie { -fx-pie-color: #5A57D8; }
+.data1.chart-pie { -fx-pie-color: #3700B4; }
+.data2.chart-pie { -fx-pie-color: #7F39FB; }
+
 #title {
     -fx-font-size: 33px;
     -fx-font-weight: bold;
