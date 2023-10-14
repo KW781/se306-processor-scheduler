@@ -3,21 +3,19 @@ graph {
 }
 
 node {
-    size: 10px;
+    size: 15px;
     shape: circle;
     fill-color: #D9D9D9;
     stroke-mode: none;
-}
-
-node:clicked {
-    stroke-mode: plain;
-    stroke-color: black;
-    stroke-width: 4;
+    text-mode: normal;
+    text-size: 9px;
+    text-color: #ffffff;
+    text-offset: -13px;
 }
 
 edge {
     arrow-shape: arrow;
-    arrow-size: 8, 8;
+    arrow-size: 5, 5;
     shape: line;
     size: 2px;
 }

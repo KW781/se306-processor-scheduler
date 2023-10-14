@@ -19,6 +19,7 @@
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
       prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.project2project2team16.controllers.MainVisualisationController">
@@ -32,50 +33,71 @@
                 <HBox id="topContainer" spacing="15.0">
                     <StackPane id="displayBox" maxHeight="480.0" maxWidth="700">
                         <AnchorPane id="graphPane" fx:id="graphPane" prefHeight="480.0" prefWidth="700"/>
-                        <HBox id="displayBar" alignment="CENTER" maxHeight="35.0" maxWidth="150"
-                              StackPane.alignment="TOP_RIGHT">
-                            <HBox fx:id="graphControls" spacing="15.0">
-                                <Button fx:id="dragButton" alignment="CENTER" contentDisplay="CENTER"
-                                        mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
-                                    <graphic>
-                                        <Group>
-                                            <children>
-                                                <SVGPath
-                                                        content="M480-80 310-250l57-57 73 73v-166h80l-1 165 73-73 58 58L480-80ZM250-310 80-480l169-169 57 57-72 72h166v80H235l73 72-58 58Zm460 0-57-57 73-73H560v-80l165 1-73-73 58-58 170 170-170 170ZM440-560v-166l-73 73-57-57 170-170 170 170-57 57-73-73v166h-80Z"
-                                                        fill="WHITE" scaleX="0.03" scaleY="0.03"/>
-                                            </children>
-                                        </Group>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="pointerButton" alignment="CENTER" contentDisplay="CENTER"
-                                        mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
-                                    <graphic>
-                                        <Group>
-                                            <children>
-                                                <SVGPath content="M516-120 402-402 120-516v-56l720-268-268 720h-56Z"
-                                                         fill="WHITE" scaleX="0.032" scaleY="0.032"/>
-                                            </children>
-                                        </Group>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="autoLayoutButton" alignment="CENTER" contentDisplay="CENTER"
-                                        mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
-                                    <graphic>
-                                        <Group>
-                                            <children>
-                                                <SVGPath
-                                                        content="M204-318q-22-38-33-78t-11-82q0-134 93-228t227-94h7l-64-64 56-56 160 160-160 160-56-56 64-64h-7q-100 0-170 70.5T240-478q0 26 6 51t18 49l-60 60ZM481-40 321-200l160-160 56 56-64 64h7q100 0 170-70.5T720-482q0-26-6-51t-18-49l60-60q22 38 33 78t11 82q0 134-93 228t-227 94h-7l64 64-56 56Z"
-                                                        fill="WHITE" scaleX="0.033" scaleY="0.03"/>
-                                            </children>
-                                        </Group>
-                                    </graphic>
-                                </Button>
-                                <HBox.margin>
-                                    <Insets top="5.0"/>
-                                </HBox.margin>
-                            </HBox>
+                        <HBox alignment="CENTER" maxHeight="40.0" maxWidth="270"
+                              StackPane.alignment="TOP_RIGHT" styleClass="displayBar" spacing="8.0">
+                            <StackPane id="displayNodeWeight">
+                                <Rectangle id="rectangle" fill="#ffffff" width="28.0" height="28.0" arcWidth="10.0"
+                                           arcHeight="10.0"
+                                           stroke="black" strokeWidth="2.0"/>
+                                <Text fx:id="nodeWeight" fill="BLACK" strokeType="OUTSIDE" strokeWidth="0.0"
+                                      styleClass="nodeWeight"/>
+                            </StackPane>
+                            <AnchorPane>
+                                <HBox spacing="2.0" layoutY="4.0">
+                                    <VBox id="nodeInfo" alignment="CENTER_LEFT" spacing="0.2">
+                                        <Label text="Heuristic: " textFill="WHITE" styleClass="nodeInfoText"/>
+                                        <Label text="Cost: " textFill="WHITE" styleClass="nodeInfoText"/>
+                                    </VBox>
+                                    <VBox id="nodeValue" alignment="CENTER" spacing="0.2">
+                                        <Text fx:id="nodeLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
+                                              text="-" styleClass="nodeInfoText"/>
+                                        <Text fx:id="nodePathCost" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
+                                              text="-" styleClass="nodeInfoText"/>
+                                    </VBox>
+
+                                </HBox>
+                                <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="115.0"
+                                      layoutY="6.0">
+                                    <Button fx:id="dragButton" alignment="CENTER" contentDisplay="CENTER"
+                                            mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
+                                        <graphic>
+                                            <Group>
+                                                <children>
+                                                    <SVGPath
+                                                            content="M480-80 310-250l57-57 73 73v-166h80l-1 165 73-73 58 58L480-80ZM250-310 80-480l169-169 57 57-72 72h166v80H235l73 72-58 58Zm460 0-57-57 73-73H560v-80l165 1-73-73 58-58 170 170-170 170ZM440-560v-166l-73 73-57-57 170-170 170 170-57 57-73-73v166h-80Z"
+                                                            fill="WHITE" scaleX="0.03" scaleY="0.03"/>
+                                                </children>
+                                            </Group>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="pointerButton" alignment="CENTER" contentDisplay="CENTER"
+                                            mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER">
+                                        <graphic>
+                                            <Group>
+                                                <children>
+                                                    <SVGPath content="M516-120 402-402 120-516v-56l720-268-268 720h-56Z"
+                                                             fill="WHITE" scaleX="0.032" scaleY="0.032"/>
+                                                </children>
+                                            </Group>
+                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="autoLayoutButton" alignment="CENTER" contentDisplay="CENTER"
+                                            mnemonicParsing="false" styleClass="svgButton" textAlignment="CENTER"
+                                            layoutX="200.0">
+                                        <graphic>
+                                            <Group>
+                                                <children>
+                                                    <SVGPath
+                                                            content="M204-318q-22-38-33-78t-11-82q0-134 93-228t227-94h7l-64-64 56-56 160 160-160 160-56-56 64-64h-7q-100 0-170 70.5T240-478q0 26 6 51t18 49l-60 60ZM481-40 321-200l160-160 56 56-64 64h7q100 0 170-70.5T720-482q0-26-6-51t-18-49l60-60q22 38 33 78t11 82q0 134-93 228t-227 94h-7l64 64-56 56Z"
+                                                            fill="WHITE" scaleX="0.032" scaleY="0.028"/>
+                                                </children>
+                                            </Group>
+                                        </graphic>
+                                    </Button>
+                                </HBox>
+                            </AnchorPane>
                             <StackPane.margin>
-                                <Insets top="7.0" right="7.0"/>
+                                <Insets top="6.0" right="6.0"/>
                             </StackPane.margin>
                         </HBox>
                     </StackPane>
@@ -87,7 +109,7 @@
                                 </font>
                             </Text>
                             <Text fx:id="timeElapsedText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
-                                  text="0s" styleClass="timeText">
+                                  text="0s">
                                 <font>
                                     <Font size="25.0"/>
                                 </font>
@@ -99,7 +121,7 @@
                                   styleClass="hardwareHeader"/>
                             <StackPane>
                                 <Group id="displayCpu">
-                                    <Circle fill="#ffffff00" radius="65"/>
+                                    <Circle fill="#ffffff00"/>
                                     <Circle fill="#ffffff00" radius="60.0" stroke="#2e2d2d" strokeWidth="7.5"/>
                                     <Arc fx:id="cpuArc" fill="#1f93ff00" radiusX="60.0" radiusY="60.0"
                                          startAngle="90.0"
