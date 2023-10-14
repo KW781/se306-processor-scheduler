@@ -76,4 +76,27 @@ public class AStarSearcher extends GreedySearcher {
 
         return currentOptimal;
     }
+
+    private void ThreadSearch(CountDownLatch complete) {
+        while (!IsFrontierEmpty()) {
+            ScheduleNode nextNode = GetNextNode();
+
+            if (nextNode == null) {
+                break;
+            }
+
+            if (problem.IsGoal(nextNode)) {
+                synchronized (lock) {
+                    if (currentOptimal == null || nextNode.GetValue() < currentOptimal.GetValue()) {
+                        currentOptimal = nextNode;
+                    }
+                }
+            }
+            else {
+                AddToFrontier(problem.GetNeighbourStates(nextNode));
+            }
+        }
+
+        complete.countDown();
+    }
 }
