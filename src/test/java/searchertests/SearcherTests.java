@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class SearcherTests {
     public abstract Integer RunSearch(Graph taskGraph, Integer processorNum);
+    public abstract Integer RunSearch(Graph taskGraph, Integer processorNum, Integer ThreadCount);
 
     @BeforeEach
     public void setup() {
@@ -95,5 +96,37 @@ public abstract class SearcherTests {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
 
         assertEquals(227, RunSearch(taskGraph,4));
+    }
+
+    @Order(11)
+    @Test
+    public void Nodes11Processor2MultiCore2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
+
+        assertEquals(350, RunSearch(taskGraph,2, 2));
+    }
+
+    @Order(12)
+    @Test
+    public void Nodes11Processor4MultiCore2Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
+
+        assertEquals(227, RunSearch(taskGraph,4,2));
+    }
+
+    @Order(13)
+    @Test
+    public void Nodes11Processor2MultiCore4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
+
+        assertEquals(350, RunSearch(taskGraph,2,4));
+    }
+
+    @Order(14)
+    @Test
+    public void Nodes11Processor4MultiCore4Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
+
+        assertEquals(227, RunSearch(taskGraph,4,4));
     }
 }
