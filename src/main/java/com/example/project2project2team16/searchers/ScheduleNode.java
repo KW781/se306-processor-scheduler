@@ -353,7 +353,7 @@ public class ScheduleNode {
                             for (Edge parentEdge : child.enteringEdges().collect(Collectors.toList())) {
                                 Node parent = parentEdge.getSourceNode();
 
-                                if (Integer.parseInt(parent.getId()) == Integer.parseInt(task.getId())) {
+                                if (parent.getIndex() == task.getIndex()) {
                                     continue;
                                 }
 
@@ -392,10 +392,9 @@ public class ScheduleNode {
 
         int maxTimeToFinish = processorEndTimes.get(lastProcessor);
         int i = tasks.size() - 2;
-        //TODO change to getIndex()
-        int lastTaskId = Integer.parseInt(lastTask.getId());
+        int lastTaskId = lastTask.getIndex();
 
-        while (i >= 0 && lastTaskId < Integer.parseInt(tasks.get(i).getId())) {
+        while (i >= 0 && lastTaskId < tasks.get(i).getIndex()) {
             List<Pair<Node, Integer>> taskEndTimes = new ArrayList<>();
             if (lastTaskParents.contains(tasks.get(i))) {
                 return false;
