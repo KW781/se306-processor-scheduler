@@ -243,7 +243,7 @@ public class MainVisualisationController {
             if (node != null) {
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
                 nodeLabel.setText(getNodeId(node.getId()));
-                nodePathCost.setText(node.getLabel());
+                nodePathCost.setText((String) node.getAttribute("ui.pathcost"));
             } else {
                 nodeLabel.setText("----");
                 nodePathCost.setText("----");

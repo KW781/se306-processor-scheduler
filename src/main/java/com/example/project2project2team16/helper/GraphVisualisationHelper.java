@@ -55,18 +55,21 @@ public class GraphVisualisationHelper {
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
                 node.setAttribute("ui.label", currentScheduleNumber);
+                node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
                 addEdge(parentNode, node);
             } else {
                 addNode(parent, parent.GetParent());
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
                 node.setAttribute("ui.label", currentScheduleNumber);
+                node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
                 parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
         } else {
             node = graph.addNode(scheduleNode.toString());
             node.setAttribute("ui.label", currentScheduleNumber);
+            node.setAttribute("ui.pathcost", scheduleNode.GetValue().toString());
             currentScheduleNumber++;
         }
     }
