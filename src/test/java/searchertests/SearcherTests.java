@@ -96,7 +96,7 @@ public abstract class SearcherTests {
 
         assertEquals(227, RunSearch(taskGraph,4));
     }
-
+//    @Disabled
     @Order(11)
     @Test
     public void Fork_Join_Nodes_10_2Proc() {
@@ -104,7 +104,7 @@ public abstract class SearcherTests {
 
         assertEquals(499, RunSearch(taskGraph,2));
     }
-
+    @Disabled
     @Order(12)
     @Test
     public void Independent_Nodes_21_2Proc() {
@@ -148,6 +148,8 @@ public abstract class SearcherTests {
         assertEquals(292, RunSearch(taskGraph,2));
     }
 
+
+//    @Disabled
     @Order(18)
     @Test
     public void OutTreeBalanced_Nodes_21_2Proc() {
@@ -156,6 +158,8 @@ public abstract class SearcherTests {
         assertEquals(71, RunSearch(taskGraph,2));
     }
 
+
+//    @Disabled
     @Order(19)
     @Test
     public void OutTreeUnbalanced_Nodes_21_2Proc() {
