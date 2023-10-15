@@ -59,8 +59,8 @@ public class VisualisationApplication extends Application {
             Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
             SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
             AStarSearcher searcher = new AStarSearcher(problem);
-            searcher.InitialiseSearcher();
-            DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
+            searcher.initialiseSearcher();
+            DotFileParser.outputDotFile(searcher.search(), taskGraph, appConfig.getOutputFileName());
             mainVisualisationController.stopTimer();
         });
 

@@ -295,7 +295,7 @@ public class MainVisualisationController {
             rows[i] = new XYChart.Series();
         }
 
-        for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.GetVisited().entrySet()) {
+        for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.getVisited().entrySet()) {
             String taskId = entry.getKey();
             Integer taskProcessor = entry.getValue().getKey();
             Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();

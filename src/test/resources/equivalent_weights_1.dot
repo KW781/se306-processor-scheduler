@@ -1,4 +1,4 @@
-digraph equivalent_weights_1 {
+digraph "equivalent_weights_1" {
 	1	 [Weight=6];
 	2	 [Weight=6];
 	3	 [Weight=6];

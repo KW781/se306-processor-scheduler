@@ -14,8 +14,8 @@ public class ScheduleNodeUniformCostComparator  implements Comparator<ScheduleNo
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-        Integer value1 = node1.GetPathCost();
-        Integer value2 = node2.GetPathCost();
+        Integer value1 = node1.getPathCost();
+        Integer value2 = node2.getPathCost();
 
         if (value1 < value2) {
             return -1;

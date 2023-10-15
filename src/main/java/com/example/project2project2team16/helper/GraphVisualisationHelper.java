@@ -4,7 +4,6 @@ import com.example.project2project2team16.searchers.ScheduleNode;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +85,7 @@ public class GraphVisualisationHelper {
                 node.setAttribute(SCHEDULE, scheduleNode.toString());
                 addEdge(parentNode, node);
             } else {
-                addNode(parent, parent.GetParent());
+                addNode(parent, parent.getParent());
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
 
@@ -149,6 +148,4 @@ public class GraphVisualisationHelper {
         }
         return null;
     }
-
-
 }
