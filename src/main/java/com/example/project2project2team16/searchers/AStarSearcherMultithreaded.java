@@ -189,6 +189,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 if (nextNode.visited.size() > tasksVisited) {
                     synchronized (visLock) {
                         if (nextNode.visited.size() > tasksVisited) {
+                            nextNode.setThreadId(threadIndex);
                             GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
                             helper.addNode(nextNode, nextNode.parent);
                             helper.updateOptimalNode(nextNode);

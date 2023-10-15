@@ -29,6 +29,7 @@ public class ScheduleNode {
     Heuristic heuristicUsed;
     boolean unpromisingChildren = false;
     int id;
+    int threadId = 0;
 
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
         this.availableTasks = startingTasks;
@@ -497,5 +498,9 @@ public class ScheduleNode {
         return "ScheduleNode{" +
                 "id=" + id +
                 '}';
+    }
+
+    public void setThreadId(int threadId) {
+        this.threadId = threadId;
     }
 }
