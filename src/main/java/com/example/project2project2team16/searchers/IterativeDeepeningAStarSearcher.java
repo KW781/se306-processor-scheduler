@@ -22,13 +22,19 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
-            Integer value = problem.CalculateF(newNodes.get(i));
+            ScheduleNode newNode = newNodes.get(i);
 
-            if (value <= evalLimit) {
-                ScheduleNode newNode = newNodes.get(i);
-                if (createdSchedules.contains(newNode) || newNode.IsEquivalent()) {
+            if (newNode.fValue <= evalLimit) {
+                if (createdSchedules.contains(newNode)) {
                     dups++;
                     continue;
+                }
+
+                if (!newNode.hadFixedTaskOrder) {
+                    if (newNode.IsEquivalent()) {
+                        dups++;
+                        continue;
+                    }
                 }
 
                 schedulesAdded++;
@@ -36,7 +42,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
                 createdSchedules.add(newNode);
             }
             else {
-                nextEvalLimit = Math.min(nextEvalLimit, value);
+                nextEvalLimit = Math.min(nextEvalLimit, newNode.fValue);
             }
         }
     }
@@ -49,6 +55,7 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             result = super.Search();
             createdSchedules.clear();
             evalLimit = nextEvalLimit;
+            nextEvalLimit = Integer.MAX_VALUE;
             ScheduleNode startNode = problem.GetStartNode();
             SchedulingProblem.initialiseF(startNode);
             AddToFrontier(Collections.singletonList(startNode));
