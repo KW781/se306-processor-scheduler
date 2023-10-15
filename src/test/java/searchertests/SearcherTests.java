@@ -145,7 +145,6 @@ public abstract class SearcherTests {
 
         assertEquals(499, RunSearch(taskGraph,2));
     }
-    @Disabled
     @Order(12)
     @Test
     public void Independent_Nodes_21_2Proc() {
@@ -190,7 +189,7 @@ public abstract class SearcherTests {
     }
 
 
-    @Order(18)
+    @Order(17)
     @Test
     public void OutTreeBalanced_Nodes_21_2Proc() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_OutTree-Balanced-MaxBf-3_Nodes_21_CCR_1.05_WeightType_Random.dot");
@@ -198,8 +197,23 @@ public abstract class SearcherTests {
         assertEquals(71, RunSearch(taskGraph,2));
     }
 
+    @Order(18)
+    @Test
+    public void OutTreeBalanced_Nodes_21_2Proc2Core() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_OutTree-Balanced-MaxBf-3_Nodes_21_CCR_1.05_WeightType_Random.dot");
 
-    @Disabled
+        assertEquals(71, RunSearch(taskGraph,2, 2));
+    }
+
+    @Order(17)
+    @Test
+    public void OutTreeBalanced_Nodes_21_2Proc4Core() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_OutTree-Balanced-MaxBf-3_Nodes_21_CCR_1.05_WeightType_Random.dot");
+
+        assertEquals(71, RunSearch(taskGraph,2, 4));
+    }
+
+
     @Order(19)
     @Test
     public void OutTreeUnbalanced_Nodes_21_2Proc() {
