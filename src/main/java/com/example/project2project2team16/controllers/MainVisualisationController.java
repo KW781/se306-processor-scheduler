@@ -312,18 +312,23 @@ public class MainVisualisationController {
             rows[i] = new XYChart.Series();
         }
 
-        for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.getVisited().entrySet()) {
-            String taskId = entry.getKey();
-            Integer taskProcessor = entry.getValue().getKey();
-            Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
-            Integer taskStartTime = entry.getValue().getValue() - taskWeight;
-            int processorIdDisplay = taskProcessor + 1;
-            int styleCode = taskProcessor % 5;
+        // Tries to update graph before the schedule has been loaded.
+        // So we catch and ignore the exception.
+        try {
+            for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.getVisited().entrySet()) {
+                String taskId = entry.getKey();
+                Integer taskProcessor = entry.getValue().getKey();
+                Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
+                Integer taskStartTime = entry.getValue().getValue() - taskWeight;
+                int processorIdDisplay = taskProcessor + 1;
+                int styleCode = taskProcessor % 5;
 
-            GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart" + styleCode);
-            XYChart.Data data = new XYChart.Data(taskStartTime, "P" + processorIdDisplay, taskData);
-            rows[taskProcessor].getData().add(data);
-        }
+                GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart" + styleCode);
+                XYChart.Data data = new XYChart.Data(taskStartTime, "P" + processorIdDisplay, taskData);
+                rows[taskProcessor].getData().add(data);
+            }
+        } catch (NullPointerException ignored) {}
+
 
         ganttChart.getData().clear();
         for (int i = 0; i < numProcessors; i++) {
