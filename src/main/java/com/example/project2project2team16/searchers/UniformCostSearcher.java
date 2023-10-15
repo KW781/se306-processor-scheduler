@@ -1,6 +1,5 @@
 package com.example.project2project2team16.searchers;
 
-import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeUniformCostComparator;
 
 import java.util.PriorityQueue;
