@@ -174,4 +174,26 @@ public class AStarSearcher extends GreedySearcher {
 
         return null;
     }
+
+    private void stealWork(Integer threadIndex) {
+        System.out.println("STEAL  " + threadIndex);
+
+        while (true) {
+            for (int i = 0; i < frontiers.size(); i++) {
+                ScheduleNode node = frontiers.get(i).poll();
+
+                if (node != null) {
+                    frontiers.get(threadIndex).add(node);
+                    return;
+                }
+            }
+
+            if (currentOptimal != null) {
+                return;
+            }
+        }
+
+
+
+    }
 }
