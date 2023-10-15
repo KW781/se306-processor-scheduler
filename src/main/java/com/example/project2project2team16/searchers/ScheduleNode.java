@@ -106,7 +106,7 @@ public class ScheduleNode {
     /**
      * @return Tasks visited by this ScheduleNode
      */
-    public Map<String, Pair<Integer, Integer>> GetVisited() {
+    public Map<String, Pair<Integer, Integer>> getVisited() {
         return visited;
     }
 
@@ -116,7 +116,7 @@ public class ScheduleNode {
      * @param tasks The tasks to sort.
      * @return true if the tasks were successfully sorted, false otherwise.
      */
-    private boolean SortFixedOrderTasks(List<Node> tasks) {
+    private boolean sortFixedOrderTasks(List<Node> tasks) {
         tasks.sort((a, b) -> {
             // Sort tasks by their non-decreasing data ready time
             // DRT = Finish time of parent + weight of edge (parent -> task)
@@ -177,7 +177,7 @@ public class ScheduleNode {
      * @param tasks The tasks to generate a fixed order with.
      * @return The fixed order. null if not possible.
      */
-    private List<Node> GetFixedTaskOrder(List<Node> tasks) {
+    private List<Node> getFixedTaskOrder(List<Node> tasks) {
         String childId = null;
         Integer parentProcessor = null;
 
@@ -210,7 +210,7 @@ public class ScheduleNode {
             } catch (NoSuchElementException ignored) {}
         }
 
-        if (!SortFixedOrderTasks(tasks)) {
+        if (!sortFixedOrderTasks(tasks)) {
             return null;
         }
 
@@ -224,7 +224,7 @@ public class ScheduleNode {
      *
      * @return A list the expanded ScheduleNodes.
      */
-    private List<ScheduleNode> GenerateNeighboursWithFTO() {
+    private List<ScheduleNode> generateNeighboursWithFTO() {
         List<ScheduleNode> neighbours = new ArrayList<>();
         int minUnpromising = Integer.MAX_VALUE;
 
@@ -239,7 +239,7 @@ public class ScheduleNode {
 
         for (int p = 0; p < processorCount; p++) {
             ScheduleNode childSchedule = new ScheduleNode(this, task, p, newFixedTaskOrder);
-            SchedulingProblem.CalculateF(childSchedule);
+            SchedulingProblem.calculateF(childSchedule);
 
             // Checks if fixed task order is still possible without recalculations.
             // If the Child Schedule has added new tasks to availableTasks, then a recalculation is required.
@@ -274,24 +274,24 @@ public class ScheduleNode {
      *
      * @return A list the expanded ScheduleNodes.
      */
-    public List<ScheduleNode> GenerateNeighbours() {
+    public List<ScheduleNode> generateNeighbours() {
         List<ScheduleNode> neighbours = new ArrayList<>();
         int minUnpromising = Integer.MAX_VALUE;
 
         // Checks and expands via Fixed Task Ordering if possible.
         if (fixedTaskOrder == null) {
-            fixedTaskOrder = GetFixedTaskOrder(new ArrayList<>(availableTasks));
+            fixedTaskOrder = getFixedTaskOrder(new ArrayList<>(availableTasks));
         }
 
         if (fixedTaskOrder != null) {
-            return GenerateNeighboursWithFTO();
+            return generateNeighboursWithFTO();
         }
 
         // Expands normally using Partial Expansion.
         for (Node task : availableTasks) {
             for (int i = 0; i < processorCount; i++) {
                 ScheduleNode childSchedule = new ScheduleNode(this, task, i, null);
-                SchedulingProblem.CalculateF(childSchedule);
+                SchedulingProblem.calculateF(childSchedule);
 
                 // Adds the Child Schedule if it's F value is <= the current F value
                 // Otherwise, stores the minimum F value of the unpromising children.
@@ -325,7 +325,7 @@ public class ScheduleNode {
      * @param taskCount The total number of tasks we must visit to complete.
      * @return
      */
-    public boolean IsComplete(Integer taskCount) {
+    public boolean isComplete(Integer taskCount) {
         return (taskCount == visited.size());
     }
 
@@ -340,7 +340,7 @@ public class ScheduleNode {
     /**
      * @return The latest processor end time of this ScheduleNode
      */
-    public Integer GetValue() {
+    public Integer getValue() {
         int result = 0;
 
         for (int i = 0; i < processorEndTimes.size(); i++) {
@@ -353,15 +353,15 @@ public class ScheduleNode {
     /**
      * @return The highest cost path of this ScheduleNode
      */
-    public Integer GetPathCost() {
-        return GetValue();
+    public Integer getPathCost() {
+        return getValue();
     }
 
     /**
      * @param processor The processor you want the path cost of.
      * @return The path cost of the specified processor.
      */
-    public Integer GetProcessorPathCost(Integer processor) {
+    public Integer getProcessorPathCost(Integer processor) {
         return processorEndTimes.get(processor);
     }
 
@@ -401,7 +401,7 @@ public class ScheduleNode {
 
         completedTaskDuration += newTask.getAttribute("Weight", Double.class).intValue();
 
-        AddNewTasks(newTask);
+        addNewTasks(newTask);
     }
 
     /**
@@ -449,7 +449,7 @@ public class ScheduleNode {
      * @param newProcessorEndTime The processor end time associated with the changed task ordering
      * @return True if no delay, otherwise false
      */
-    private boolean OutgoingCommsOK(List<Pair<Node, Integer>> tasks, int newProcessorEndTime) {
+    private boolean outgoingCommsOK(List<Pair<Node, Integer>> tasks, int newProcessorEndTime) {
         for (Pair<Node, Integer> taskEndTime : tasks) {
             Node task = taskEndTime.getKey();
             int endTime = taskEndTime.getValue();
@@ -518,7 +518,7 @@ public class ScheduleNode {
      *
      * @return true if possible, otherwise false.
      */
-    public boolean IsEquivalent() {
+    public boolean isEquivalent() {
         // If no task has been scheduled, then return false.
         if (lastTask == null || lastProcessor == null) {
             return false;
@@ -568,7 +568,7 @@ public class ScheduleNode {
 
             // New end time must be <= the original end time.
             // New task order must not delay the start of any child task in the current list of tasks
-            if (endTime <= maxTimeToFinish && OutgoingCommsOK(taskEndTimes, endTime)) {
+            if (endTime <= maxTimeToFinish && outgoingCommsOK(taskEndTimes, endTime)) {
                 return true;
             }
 
@@ -583,7 +583,7 @@ public class ScheduleNode {
      *
      * @param newTask The newly scheduled task.
      */
-    private void AddNewTasks(Node newTask) {
+    private void addNewTasks(Node newTask) {
         Iterable<Edge> children = newTask.leavingEdges().collect(Collectors.toList());
 
         for (Edge child : children) {
@@ -607,7 +607,7 @@ public class ScheduleNode {
     /**
      * @return The parent ScheduleNode
      */
-    public ScheduleNode GetParent() {
+    public ScheduleNode getParent() {
         return parent;
     }
 

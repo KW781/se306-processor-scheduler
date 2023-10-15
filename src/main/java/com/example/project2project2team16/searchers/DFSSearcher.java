@@ -25,25 +25,25 @@ public class DFSSearcher {
     /**
      * Initialises variables required for the search
      */
-    public void InitialiseSearcher() {
-        InitialiseFrontier();
-        AddToFrontier(Collections.singletonList(problem.GetStartNode()));
+    public void initialiseSearcher() {
+        initialiseFrontier();
+        addToFrontier(Collections.singletonList(problem.getStartNode()));
     }
 
     /**
      * Performs an exhaustive search on the provided SchedulingProblem.
      * @return The most optimal solution
      */
-    public ScheduleNode Search() {
+    public ScheduleNode search() {
 
-        while (!IsFrontierEmpty()) {
-            ScheduleNode nextNode = GetNextNode();
+        while (!isFrontierEmpty()) {
+            ScheduleNode nextNode = getNextNode();
 
-            if (problem.IsGoal(nextNode)) {
-                UpdateOptimal(nextNode);
+            if (problem.isGoal(nextNode)) {
+                updateOptimal(nextNode);
             }
             else {
-                AddToFrontier(problem.GetNeighbourStates(nextNode));
+                addToFrontier(problem.getNeighbourStates(nextNode));
             }
         }
 
@@ -53,7 +53,7 @@ public class DFSSearcher {
     /**
      * @return The next Schedule Node to expand.
      */
-    protected ScheduleNode GetNextNode() {
+    protected ScheduleNode getNextNode() {
         ScheduleNode nextNode = ((Stack<ScheduleNode>) frontier).peek();
         ((Stack<ScheduleNode>) frontier).pop();
 
@@ -63,14 +63,14 @@ public class DFSSearcher {
     /**
      * Initialises the frontier to prepare for searching.
      */
-    protected void InitialiseFrontier() {
+    protected void initialiseFrontier() {
         frontier = new Stack<ScheduleNode>();
     }
 
     /**
      * @return True if frontier is empty, false otherwise.
      */
-    protected boolean IsFrontierEmpty() {
+    protected boolean isFrontierEmpty() {
         return frontier.isEmpty();
     }
 
@@ -78,9 +78,9 @@ public class DFSSearcher {
      * Adds a list of ScheduleNodes to the frontier.
      * @param newNodes The list of new ScheduleNodes.
      */
-    protected void AddToFrontier(List<ScheduleNode> newNodes) {
+    protected void addToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
-            if (optimal == null || newNodes.get(i).GetValue() < currentOptimalTime) {
+            if (optimal == null || newNodes.get(i).getValue() < currentOptimalTime) {
                 frontier.add(newNodes.get(i));
             }
         }
@@ -91,8 +91,8 @@ public class DFSSearcher {
      * Updates the most optimal if true, otherwise does nothing.
      * @param newSolution A completed solution.
      */
-    private void UpdateOptimal(ScheduleNode newSolution) {
-        Integer newSolutionTime = newSolution.GetValue();
+    private void updateOptimal(ScheduleNode newSolution) {
+        Integer newSolutionTime = newSolution.getValue();
 
         if (optimal == null || newSolutionTime < currentOptimalTime) {
             GraphVisualisationHelper helper = GraphVisualisationHelper.instance();

@@ -41,7 +41,7 @@ public class SchedulingProblem {
             this.heuristicCount.put(heuristic, 0);
         }
 
-        Set<Node> startingTasks = GenerateStartingTasks();
+        Set<Node> startingTasks = generateStartingTasks();
 
         startingNode = new ScheduleNode(processorCount, startingTasks);
 
@@ -188,7 +188,7 @@ public class SchedulingProblem {
         return true;
     }
 
-    public ScheduleNode GetStartNode() {
+    public ScheduleNode getStartNode() {
         return startingNode;
     }
 
@@ -197,8 +197,8 @@ public class SchedulingProblem {
      * @param node ScheduleNode to check
      * @return true if goal, false otherwise
      */
-    public boolean IsGoal(ScheduleNode node) {
-        return node.IsComplete(taskCount);
+    public boolean isGoal(ScheduleNode node) {
+        return node.isComplete(taskCount);
     }
 
     /**
@@ -209,8 +209,8 @@ public class SchedulingProblem {
      * @param node the ScheduleNode to expand
      * @return list of all relevant neighbouring states
      */
-    public List<ScheduleNode> GetNeighbourStates(ScheduleNode node) {
-        return node.GenerateNeighbours();
+    public List<ScheduleNode> getNeighbourStates(ScheduleNode node) {
+        return node.generateNeighbours();
     }
 
     /**
@@ -220,7 +220,7 @@ public class SchedulingProblem {
      * @param node The ScheduleNode to calculate for.
      * @return the F value of the ScheduleNode.
      */
-    public static Integer CalculateF(ScheduleNode node) {
+    public static Integer calculateF(ScheduleNode node) {
         // If F value already calculated, no need to recalculate
         if (node.fValue != 0) {
             return node.fValue;
@@ -228,11 +228,11 @@ public class SchedulingProblem {
 
         // DRT heuristic is currently commented out as it is not improving runtimes
         int loadBalanceHeuristic = loadBalanceHeuristic(node);
-//        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
+        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
 
-//        int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
-        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
+        int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
+//        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
 
         // Updating which heuristic is used for visualisation information
         if (maxHeuristic == loadBalanceHeuristic) {
@@ -287,7 +287,7 @@ public class SchedulingProblem {
      * @param node The node to calculate for.
      * @return Critical Computational Path cost excl. node cost.
      */
-    private static int GetCriticalPath(Node node) {
+    private static int getCriticalPath(Node node) {
         return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
     }
 
@@ -298,7 +298,7 @@ public class SchedulingProblem {
     public static void initialiseF(ScheduleNode node) {
         int bottomLevelHeuristic = 0;
         for (Node task : node.availableTasks) {
-            int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
+            int cp = getCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
             bottomLevelHeuristic = Math.max(bottomLevelHeuristic, cp);
         }
 
@@ -320,8 +320,8 @@ public class SchedulingProblem {
             return node.fValue;
         }
 
-        if (node.IsComplete(taskGraph.getNodeCount())) {
-            return node.GetValue();
+        if (node.isComplete(taskGraph.getNodeCount())) {
+            return node.getValue();
         }
 
         int cost = 0;
@@ -330,9 +330,9 @@ public class SchedulingProblem {
         // Only recalculate for the last task added.
         if (node.parent != null) {
             if (node.parent.fValue != 0) {
-                int cp = GetCriticalPath(node.lastTask);
+                int cp = getCriticalPath(node.lastTask);
 
-                cost = Math.max(node.parent.fValue, cp + node.GetProcessorPathCost(node.lastProcessor));
+                cost = Math.max(node.parent.fValue, cp + node.getProcessorPathCost(node.lastProcessor));
 
                 return cost;
             }
@@ -349,7 +349,7 @@ public class SchedulingProblem {
                 continue;
             }
 
-            int cp = GetCriticalPath(n) + processorEndTimes.get(i);
+            int cp = getCriticalPath(n) + processorEndTimes.get(i);
             cost = Math.max(cost, cp);
         }
 
@@ -371,7 +371,7 @@ public class SchedulingProblem {
                 for (int i = 1; i < node.processorCount; i++) {
                     minDRT = Math.min(minDRT, calculateMaxDRT(currentNode, i, node.visited));
                 }
-                maxDRTHeuristic = Math.max(maxDRTHeuristic, minDRT + GetCriticalPath(currentNode));
+                maxDRTHeuristic = Math.max(maxDRTHeuristic, minDRT + getCriticalPath(currentNode));
             } catch (PreqrequisiteNotMetException ignored) {
             }
         }
@@ -421,7 +421,7 @@ public class SchedulingProblem {
         int completedDuration = node.completedTaskDuration;
         int remainingTaskDuration = computationCostSum - completedDuration;
 
-        int endTime = node.GetValue();
+        int endTime = node.getValue();
 
         for (int i = 0; i < processorCount; i++) {
             trailingTime += endTime - node.processorEndTimes.get(i);
@@ -436,7 +436,7 @@ public class SchedulingProblem {
      * Generates the starting tasks for a given task graph.
      * @return a Set of the starting tasks.
      */
-    private Set<Node> GenerateStartingTasks() {
+    private Set<Node> generateStartingTasks() {
         Set<Node> startingTasks = new HashSet<>();
 
         for (Node taskNode : taskGraph) {
