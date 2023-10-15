@@ -421,7 +421,6 @@ public class MainVisualisationController {
         long totalMem = memBean.getHeapMemoryUsage().getMax();
         long memUsed = memBean.getHeapMemoryUsage().getUsed();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
-
         if (memoryUsage > 100) {
             memoryUsage = 100;
         }
