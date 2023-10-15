@@ -60,7 +60,7 @@ public class GraphVisualisationHelper {
                 node = graph.addNode(scheduleNode.toString());
 
                 // Set node attributes to be displayed
-                node.setAttribute(LABEL, currentScheduleNumber);
+                node.setAttribute(LABEL, currentScheduleNumber - 1);
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 addEdge(parentNode, node);
@@ -70,7 +70,7 @@ public class GraphVisualisationHelper {
                 node = graph.addNode(scheduleNode.toString());
 
                 // Set node attributes to be displayed
-                node.setAttribute(LABEL, currentScheduleNumber);
+                node.setAttribute(LABEL, currentScheduleNumber - 1);
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 parentNode = graph.getNode(parent.toString());
@@ -93,11 +93,6 @@ public class GraphVisualisationHelper {
     }
 
     public void updateOptimalNode(ScheduleNode newOptimal) {
-        MainVisualisationController mainVisualisationController = VisualisationApplication.getMainVisualisationController();
-        if (mainVisualisationController != null) {
-            mainVisualisationController.updateShortestTime(newOptimal.GetValue());
-        }
-
         Node graphNode = graph.getNode(newOptimal.toString());
         graphNode.setAttribute("ui.style", "fill-color: #FF0000;");
 

@@ -15,6 +15,30 @@
     -fx-font-size: 16px;
 }
 
+.bottomHeaders {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.chart-pie {
+    -fx-border-color: derive(-fx-pie-color, -40%);
+    -fx-border-width: 1.5px;
+}
+
+.chart-pie-label {
+    -fx-fill: #ffffff;
+    -fx-font-size: 12px;
+}
+
+.data0.chart-pie { -fx-pie-color: #d15ffa; }
+.data1.chart-pie { -fx-pie-color: #3700B4; }
+.data2.chart-pie { -fx-pie-color: #7F39FB; }
+
+#title {
+    -fx-font-size: 33px;
+    -fx-font-weight: bold;
+}
+
 .displayBar {
     -fx-background-color: #272A3D;
     -fx-background-radius: 10px;
@@ -25,6 +49,14 @@
 
 .nodeInfoText {
     -fx-font-size: 10px;
+}
+
+.pieInfoBox {
+    -fx-background-color: #272A3D;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #5A57D8;
+    -fx-border-width: 0.75px;
 }
 
 #title {
