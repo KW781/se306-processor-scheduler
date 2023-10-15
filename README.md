@@ -10,7 +10,30 @@ You can find out more about us [here](https://github.com/UOASOFTENG306/project-2
 
 ## 📝 Running The Project
 
-// TODO
+The project is run as a JAR file. Download the `scheduler.jar` file from either the "Milestone 1" or "Final" release depending on which one you want to run. Then in the directory where your JAR file is stored, run the JAR from the terminal like so:
+
+```
+java -jar scheduler.jar COMMAND_LINE_PARAMS
+```
+Note that `COMMAND_LINE_PARAMS` is a series of command line parameters that specify the configuration for the app to be run with:
+* `INPUT.dot` - The input dot file that you would like the search to be performed on, `INPUT` is the file name (Compulsory).
+* `NUM_PROCESSORS` - The number of processors that the tasks in the task graph need to be scheduled on (Compulsory).
+* `-p NUM_CORES` - This flag specifies the number of cores that the searching needs to be performed with, `NUM-CORES` is the number of cores (Optional).
+* `-o OUTPUT.dot` - The name of the output dot file for the optimal schedule that you would like it to be, `OUTPUT` is the file name (Optional).
+* `-v` - If this flag is added, then the app runs with the visualisation, otherwise it doesn't (Optional).
+
+For example, let's suppose I wanted to run the app with the following conditions:
+* The input file name is `input_graph.dot`
+* The number of processors that the tasks should be scheduled on is 2
+* The scheduling should be performed with 2 cores
+* The name of the output file should be `output_graph.dot`
+* The visualisation should be run
+
+Then I would run the following in the terminal:
+```
+java -jar scheduler.jar input_graph.dot 2 -p 2 -o output_graph -v
+```
+
 
 ## 💾 Technology Stack
 
