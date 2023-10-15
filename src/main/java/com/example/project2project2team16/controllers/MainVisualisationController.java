@@ -97,7 +97,6 @@ public class MainVisualisationController {
     @FXML
     private FxViewer viewer;
     private Graph scheduleSearchGraph;
-    private Graph taskGraph;
     private double timeElapsed = 0;
     private Timeline timeline;
     private Double mouseX;
@@ -268,15 +267,12 @@ public class MainVisualisationController {
     public void createGanttChart() {
         NumberAxis xAxis = new NumberAxis();
         CategoryAxis yAxis = new CategoryAxis();
-        xAxis.setAnimated(false); // axis animations are removed
-        yAxis.setAnimated(false); // axis animations are removed
+        xAxis.setAnimated(false);
+        yAxis.setAnimated(false);
 
         ganttChart = new GanttChart<>(xAxis, yAxis);
         ganttPane.setCenter(ganttChart);
         ganttChart.setLegendVisible(false);
-
-        //live adjust gantt chart based on window size
-        ganttChart.heightProperty().addListener((observable, oldValue, newValue) -> ganttChart.setBlockHeight(newValue.doubleValue()*0.70/(4))); // replace '4' with number of cores to be used
     }
 
 
@@ -331,10 +327,12 @@ public class MainVisualisationController {
                 nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
                 nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
                 nodeWeight.setText(node.getLabel());
+                updateGanttChart(GraphVisualisationHelper.instance().getScheduleNode((String) node.getAttribute("ui.schedule")), GraphVisualisationHelper.instance().getProcessorCount());
             } else {
                 nodeLabel.setText("-");
                 nodePathCost.setText("-");
                 nodeWeight.setText("");
+                updateGanttChart(GraphVisualisationHelper.instance().getCurrentOptimal(), GraphVisualisationHelper.instance().getProcessorCount());
             }
         });
 

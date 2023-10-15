@@ -5,6 +5,9 @@ import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
@@ -13,9 +16,12 @@ public class GraphVisualisationHelper {
     private ScheduleNode currentOptimal;
     private Integer currentScheduleNumber = 0;
     private Integer processorCount;
+    private Map<String, ScheduleNode> createdSchedules = new HashMap<>();
     static final String LABEL = "ui.label";
     static final String HEURISTIC = "ui.heuristic";
     static final String HEURISTIC_COST = "ui.heuristicCost";
+    static final String SCHEDULE = "ui.schedule";
+
 
     private GraphVisualisationHelper() {
     }
@@ -56,6 +62,7 @@ public class GraphVisualisationHelper {
         }
     }
     public void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
+        createdSchedules.put(scheduleNode.toString(), scheduleNode);
         if (graph == null) {
             return;
         }
@@ -67,6 +74,7 @@ public class GraphVisualisationHelper {
 
         if (parent != null) {
             Node parentNode = graph.getNode(parent.toString());
+            createdSchedules.put(scheduleNode.toString(), scheduleNode);
             if (parentNode != null) {
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
@@ -75,6 +83,7 @@ public class GraphVisualisationHelper {
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
+                node.setAttribute(SCHEDULE, scheduleNode.toString());
                 addEdge(parentNode, node);
             } else {
                 addNode(parent, parent.GetParent());
@@ -85,6 +94,7 @@ public class GraphVisualisationHelper {
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
+                node.setAttribute(SCHEDULE, scheduleNode.toString());
                 parentNode = graph.getNode(parent.toString());
                 addEdge(parentNode, node);
             }
@@ -97,6 +107,10 @@ public class GraphVisualisationHelper {
             node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
             currentScheduleNumber++;
         }
+    }
+
+    public ScheduleNode getScheduleNode(String schedule) {
+        return createdSchedules.get(schedule);
     }
 
     public void setStartNode(ScheduleNode node) {
