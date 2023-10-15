@@ -1,35 +1,34 @@
-
 .ganttchart0 {
-    -fx-background-color: #00239E;
-    -fx-opacity: 60%;
-    -fx-border-color: #f4f4f4;
+    -fx-background-color: #d15ffa;
+    -fx-opacity: 80%;
+    -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }
 
 .ganttchart1 {
     -fx-background-color: #005C9E;
-    -fx-opacity: 60%;
-    -fx-border-color: #f4f4f4;
+    -fx-opacity: 80%;
+    -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }
 
 .ganttchart2 {
     -fx-background-color: #06B5C0;
-    -fx-opacity: 60%;
-    -fx-border-color: #f4f4f4;
+    -fx-opacity: 80%;
+    -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }
 
 .ganttchart3 {
-    -fx-background-color: #01AB3B;
-    -fx-opacity: 60%;
-    -fx-border-color: #f4f4f4;
+    -fx-background-color: #fa5f93;
+    -fx-opacity: 80%;
+    -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }
 
 .ganttchart4 {
-    -fx-background-color: #8FC001;
-    -fx-opacity: 60%;
-    -fx-border-color: #f4f4f4;
+    -fx-background-color: #7F39FB;
+    -fx-opacity: 80%;
+    -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }

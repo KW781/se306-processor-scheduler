@@ -108,6 +108,7 @@ public class MainVisualisationController {
     static final String ACTIVE_BUTTON = "svgButtonActive";
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
     private ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+    private boolean selectedNode = false;
 
     @FXML
     public void initialize() {
@@ -132,11 +133,15 @@ public class MainVisualisationController {
                         if (timeElapsed > 0.01) {
                             cpuArc.setLength((getCPUUsage() / 100) * -360);
                             cpuText.setText(String.valueOf(getCPUUsage()));
+                            memoryText.setText(String.valueOf(getMemoryUsage()));
+                            memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
+
+                            if (!selectedNode) {
+                                updateGanttChart(GraphVisualisationHelper.instance().getCurrentOptimal(), GraphVisualisationHelper.instance().getProcessorCount());
+                            }
+
+                            updatePieChart(SchedulingProblem.getIdleTimeUsageCount(), SchedulingProblem.getDataReadyHeuristicCount(), SchedulingProblem.getBottomLevelHeuristicCount());
                         }
-                        memoryText.setText(String.valueOf(getMemoryUsage()));
-                        memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
-                        updateGanttChart(GraphVisualisationHelper.instance().getCurrentOptimal(), GraphVisualisationHelper.instance().getProcessorCount());
-                        updatePieChart(SchedulingProblem.getIdleTimeUsageCount(), SchedulingProblem.getDataReadyHeuristicCount(), SchedulingProblem.getBottomLevelHeuristicCount());
                     });
                 }
         ));
@@ -155,7 +160,7 @@ public class MainVisualisationController {
 
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
-        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('file://src/main/resources/com/example/project2project2team16/css/graph.css')");
+        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
         scheduleSearchGraph.setAttribute("ui.quality");
 
         viewer = new FxViewer(scheduleSearchGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -278,8 +283,8 @@ public class MainVisualisationController {
 
 
     public void updateGanttChart(ScheduleNode scheduleNode, int numProcessors) {
-        int blockHeight = 150/numProcessors;
-        if(blockHeight > 50) {
+        int blockHeight = 150 / numProcessors;
+        if (blockHeight > 50) {
             blockHeight = 50;
         }
 
@@ -290,16 +295,16 @@ public class MainVisualisationController {
             rows[i] = new XYChart.Series();
         }
 
-        for (Map.Entry<String, Pair<Integer,Integer>> entry : scheduleNode.GetVisited().entrySet()) {
+        for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.GetVisited().entrySet()) {
             String taskId = entry.getKey();
             Integer taskProcessor = entry.getValue().getKey();
             Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
             Integer taskStartTime = entry.getValue().getValue() - taskWeight;
-            int processorIdDisplay = taskProcessor+1;
+            int processorIdDisplay = taskProcessor + 1;
             int styleCode = taskProcessor % 5;
 
-            GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart"+styleCode);
-            XYChart.Data data = new XYChart.Data(taskStartTime, "Processor " + processorIdDisplay, taskData);
+            GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart" + styleCode);
+            XYChart.Data data = new XYChart.Data(taskStartTime, "P" + processorIdDisplay, taskData);
             rows[taskProcessor].getData().add(data);
         }
 
@@ -308,6 +313,7 @@ public class MainVisualisationController {
             ganttChart.getData().add(rows[i]);
         }
     }
+
     /**
      * This method handles the mouse events on a node
      *
@@ -316,7 +322,8 @@ public class MainVisualisationController {
     public void setNodeClicked(FxViewPanel view) {
         view.setOnMousePressed(clickEvent -> {
             GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
-            if (node != null && !node.getLabel().equals("0")){
+            if (node != null && !node.getLabel().equals("0")) {
+                selectedNode = true;
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
                 nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
                 nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
@@ -324,6 +331,7 @@ public class MainVisualisationController {
                 ganttChartLabel.setText("SCHEDULE FOR NODE:  " + node.getLabel());
                 updateGanttChart(GraphVisualisationHelper.instance().getScheduleNode((String) node.getAttribute("ui.schedule")), GraphVisualisationHelper.instance().getProcessorCount());
             } else {
+                selectedNode = false;
                 ganttChartLabel.setText("CURRENT BEST SCHEDULE");
                 nodeLabel.setText("-");
                 nodePathCost.setText("-");
@@ -365,7 +373,7 @@ public class MainVisualisationController {
         // Calculate percentages
         idlePerc = Double.parseDouble(df.format((((double) (idleTimeUsageCount) / total) * 100)));
         idlePercText.setText(idlePerc + "%");
-        dataPerc =  Double.parseDouble(df.format((((double) (dataReadyHeuristicCount) / total) * 100)));
+        dataPerc = Double.parseDouble(df.format((((double) (dataReadyHeuristicCount) / total) * 100)));
         dataPercText.setText(dataPerc + "%");
         bottomPerc = Double.parseDouble(df.format((((double) (bottomLevelHeuristicCount) / total) * 100)));
         bottomPercText.setText(bottomPerc + "%");

@@ -184,7 +184,7 @@
                     </Text>
                 </StackPane>
                 <HBox maxWidth="900.0" spacing="15.0">
-                    <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container">
+                    <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container" alignment="CENTER">
                         <Text fx:id="ganttChartLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
                               styleClass="bottomHeaders"/>
                         <BorderPane fx:id="ganttPane" prefHeight="250.0"/>
@@ -192,7 +192,7 @@
                     <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
                         <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE"
                               styleClass="bottomHeaders"/>
-                        <VBox spacing="15.0" alignment="CENTER">
+                        <VBox spacing="10.0" alignment="CENTER">
                             <HBox alignment="CENTER">
                                 <VBox maxWidth="175" spacing="10.0" alignment="CENTER">
                                     <HBox spacing="6.0" alignment="CENTER_LEFT">
@@ -229,7 +229,7 @@
                                 <PieChart fx:id="heuristicPieChart" maxWidth="160.0" maxHeight="160.0"/>
                             </HBox>
                             <VBox.margin>
-                                <Insets top="5.0" left="38.0"/>
+                                <Insets top="2.0" left="38.0"/>
                             </VBox.margin>
                         </VBox>
                     </VBox>
