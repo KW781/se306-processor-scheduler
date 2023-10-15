@@ -55,7 +55,6 @@ public class AStarSearcher extends GreedySearcher {
             frontier.add(newNode);
             createdSchedules.add(newNode);
         }
-
     }
 
     @Override
