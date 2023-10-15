@@ -61,12 +61,16 @@ public class SchedulingProblem {
     }
 
     public static Integer CalculateF(ScheduleNode node) {
-        int loadBalanceHeuristic = loadBalanceHeuristic(node);
-//        int loadBalanceHeuristic = 0;
+        if (node.fValue != 0) {
+            return node.fValue;
+        }
 
-        //int bottomLevelHeuristic = 0;
+//        int loadBalanceHeuristic = 0;
+        int dataReadyTimeHeuristic = 0;
+//        int bottomLevelHeuristic = 0;
+        int loadBalanceHeuristic = loadBalanceHeuristic(node);
+//        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
-        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
 
         // dataReadyTime seems to just increase the runtime currently
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
@@ -87,23 +91,6 @@ public class SchedulingProblem {
     }
 
     private static int dfs(Node node, Map<String, Integer> dfsMemo) {
-        // 0 = cost
-        // 1 = num of tasks
-//        int[] result = new int[]{0, 0};
-//
-//        List<Edge> edges = node.leavingEdges().collect(Collectors.toList());
-//        for (Edge edge : edges) {
-//            int[] childResult = dfs(edge.getTargetNode());
-//
-//            if (childResult[0] > result[0] || (childResult[0] == result[0] && childResult[1] > result[1])) {
-//                result = childResult;
-//            }
-//        }
-//
-//        result[0] += node.getAttribute("Weight", Double.class).intValue();
-//        result[1]++;
-//
-//        return result;
         if (dfsMemo.containsKey(node.getId())) {
             return dfsMemo.get(node.getId());
         }
@@ -133,6 +120,7 @@ public class SchedulingProblem {
             int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
             node.fValue = Math.max(node.fValue, cp);
         }
+        node.heuristicUsed = Heuristic.BOTTOM_LEVEL;
     }
 
     public static Integer bottomLevelHeuristic(ScheduleNode node) {
@@ -142,14 +130,48 @@ public class SchedulingProblem {
         if (node.fValue != 0) {
             return node.fValue;
         }
+        int cost = 0;
+
+        boolean noMoreChildren = true;
+        for (int i = 0; i < processorCount; i++) {
+            Node task = node.processorLastTasks.get(i);
+            if (task != null && task.getOutDegree() > 0) {
+                noMoreChildren = false;
+                break;
+            }
+        }
+
+        if (noMoreChildren) {
+            // If the last tasks of each processor have no more children, we calculate bottom level as
+            // Max(available task's critical path + last end time of task's parent)
+            // Otherwise, bottom level calculations would stagnate and become useless
+            for (Node task : node.availableTasks) {
+                int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
+
+                int lastParentEndTime = 0;
+                for (Node parent : task.enteringEdges().map(Edge::getSourceNode).collect(Collectors.toList())) {
+                    lastParentEndTime = Math.max(lastParentEndTime, node.processorEndTimes.get(node.visited.get(parent.getId()).getKey()));
+                }
+
+                cost = Math.max(cost, cp + lastParentEndTime);
+            }
+
+            if (node.parent != null) {
+                if (node.parent.fValue != 0) {
+                    cost = Math.max(node.parent.fValue, cost);
+                }
+            }
+
+            return cost;
+        }
 
         if (node.parent != null) {
             if (node.parent.fValue != 0) {
                 int cp = GetCriticalPath(node.lastTask);
 
-                node.fValue = Math.max(node.parent.fValue, cp + node.GetProcessorPathCost(node.lastProcessor));
+                cost = Math.max(node.parent.fValue, cp + node.GetProcessorPathCost(node.lastProcessor));
 
-                return node.fValue;
+                return cost;
             }
         }
 
@@ -163,10 +185,10 @@ public class SchedulingProblem {
             }
 
             int cp = GetCriticalPath(n) + processorEndTimes.get(i);
-            node.fValue = Math.max(node.fValue, cp);
+            cost = Math.max(cost, cp);
         }
 
-        return node.fValue;
+        return cost;
     }
 
     private static int dataReadyTimeHeuristic(ScheduleNode node, Graph taskGraph) {
@@ -189,7 +211,7 @@ public class SchedulingProblem {
         return maxDRTHeuristic;
     }
 
-    private static int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
+    public static int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
         int maxDRT = 0;
         List<Edge> incomingEdges = taskNode.enteringEdges().collect(Collectors.toList());
         int finishTime;

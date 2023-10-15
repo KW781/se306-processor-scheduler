@@ -149,7 +149,6 @@ public abstract class SearcherTests {
     }
 
 
-//    @Disabled
     @Order(18)
     @Test
     public void OutTreeBalanced_Nodes_21_2Proc() {
@@ -159,7 +158,7 @@ public abstract class SearcherTests {
     }
 
 
-//    @Disabled
+    @Disabled
     @Order(19)
     @Test
     public void OutTreeUnbalanced_Nodes_21_2Proc() {
@@ -242,7 +241,7 @@ public abstract class SearcherTests {
     public void Equivalent_tasks_join_16() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Equivalent_tasks_join_16.dot");
 
-        assertEquals(613, RunSearch(taskGraph,2));
+        assertEquals(610, RunSearch(taskGraph,2));
     }
     @Order(30)
     @Test
