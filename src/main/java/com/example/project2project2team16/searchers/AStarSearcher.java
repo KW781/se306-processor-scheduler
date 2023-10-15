@@ -12,11 +12,11 @@ import java.util.List;
  * A searcher which utilises the A* searching algorithm
  */
 public class AStarSearcher extends GreedySearcher {
-    Set<ScheduleNode> createdSchedules = new HashSet<>();
-    int tasksVisited = 0;
-    int dups = 0;
-    int schedulesAdded = 0;
-    int schedulesExplored = 0;
+    private Set<ScheduleNode> createdSchedules = new HashSet<>();
+    private int tasksVisited = 0;
+    private int dups = 0;
+    private int schedulesAdded = 0;
+    private int schedulesExplored = 0;
 
     /**
      * Constructor which sets problem for the search
@@ -30,20 +30,20 @@ public class AStarSearcher extends GreedySearcher {
     @Override
     public void initialiseSearcher() {
         // Initialises the F value for the starting node
-        ScheduleNode startNode = problem.getStartNode();
+        ScheduleNode startNode = getProblem().getStartNode();
         SchedulingProblem.initialiseF(startNode);
 
         super.initialiseSearcher();
 
         // Adds the first node to the GUI if visualisation is enabled
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-        helper.addNode(startNode, startNode.parent);
+        helper.addNode(startNode, startNode.getParent());
         helper.setStartNode(startNode);
     }
 
     @Override
     protected void initialiseFrontier() {
-        frontier = new PriorityQueue<>(new ScheduleNodeAStarComparator(problem));
+        setFrontier(new PriorityQueue<>(new ScheduleNodeAStarComparator(getProblem())));
     }
 
     /**
@@ -53,24 +53,24 @@ public class AStarSearcher extends GreedySearcher {
      */
     protected void pruneOrAdd(ScheduleNode node) {
         // Tries to prune using Processor Normalisation technique
-        if (createdSchedules.contains(node)) {
-            dups++;
+        if (getCreatedSchedules().contains(node)) {
+            setDups(getDups() + 1);
             return;
         }
 
         // Tries to prune using Equivalent Schedule technique
         // If the ScheduleNode had a fixed task order at any point,
         // then Equivalent Schedule pruning is disabled.
-        if (!node.hadFixedTaskOrder) {
+        if (!node.isHadFixedTaskOrder()) {
             if (node.isEquivalent()) {
-                dups++;
+                setDups(getDups() + 1);
                 return;
             }
         }
 
-        schedulesAdded++;
-        frontier.add(node);
-        createdSchedules.add(node);
+        setSchedulesAdded(getSchedulesAdded() + 1);
+        getFrontier().add(node);
+        getCreatedSchedules().add(node);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AStarSearcher extends GreedySearcher {
 
     @Override
     protected ScheduleNode getNextNode() {
-        return ((PriorityQueue<ScheduleNode>) frontier).poll();
+        return ((PriorityQueue<ScheduleNode>) getFrontier()).poll();
     }
 
     /**
@@ -96,30 +96,70 @@ public class AStarSearcher extends GreedySearcher {
             // Checks if the ScheduleNode has visited more tasks than the previous maximum tasks visited
             // If true, it is considered the next best partial schedule
             // Therefore it is added to the GUI for visualisation
-            if (nextNode.visited.size() > tasksVisited) {
+            if (nextNode.getVisited().size() > getTasksVisited()) {
                 GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-                helper.addNode(nextNode, nextNode.parent);
+                helper.addNode(nextNode, nextNode.getParent());
                 helper.updateOptimalNode(nextNode);
-                tasksVisited = nextNode.visited.size();
+                setTasksVisited(nextNode.getVisited().size());
             }
 
-            schedulesExplored++;
+            setSchedulesExplored(getSchedulesExplored() + 1);
             // If the ScheduleNode has visited all the tasks, immediately return as it is optimal.
-            if (problem.isGoal(nextNode)) {
+            if (getProblem().isGoal(nextNode)) {
                 return nextNode;
             }
             else {
                 // Expanding and adding the neighbour states to the frontier.
                 // If the ScheduleNode expands any unpromising children,
                 // it is added back to the frontier. (Partial Expansion)
-                addToFrontier(problem.getNeighbourStates(nextNode));
-                if (nextNode.unpromisingChildren) {
-                    frontier.add(nextNode);
-                    nextNode.unpromisingChildren = false;
+                addToFrontier(getProblem().getNeighbourStates(nextNode));
+                if (nextNode.isUnpromisingChildren()) {
+                    getFrontier().add(nextNode);
+                    nextNode.setUnpromisingChildren(false);
                 }
             }
         }
 
         return null;
+    }
+
+    public Set<ScheduleNode> getCreatedSchedules() {
+        return createdSchedules;
+    }
+
+    public void setCreatedSchedules(Set<ScheduleNode> createdSchedules) {
+        this.createdSchedules = createdSchedules;
+    }
+
+    public int getTasksVisited() {
+        return tasksVisited;
+    }
+
+    public void setTasksVisited(int tasksVisited) {
+        this.tasksVisited = tasksVisited;
+    }
+
+    public int getDups() {
+        return dups;
+    }
+
+    public void setDups(int dups) {
+        this.dups = dups;
+    }
+
+    public int getSchedulesAdded() {
+        return schedulesAdded;
+    }
+
+    public void setSchedulesAdded(int schedulesAdded) {
+        this.schedulesAdded = schedulesAdded;
+    }
+
+    public int getSchedulesExplored() {
+        return schedulesExplored;
+    }
+
+    public void setSchedulesExplored(int schedulesExplored) {
+        this.schedulesExplored = schedulesExplored;
     }
 }

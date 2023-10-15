@@ -20,11 +20,11 @@ public class GreedySearcher extends DFSSearcher {
 
     @Override
     protected void initialiseFrontier() {
-        frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeGreedyComparator(problem));
+        setFrontier(new PriorityQueue<ScheduleNode>(new ScheduleNodeGreedyComparator(getProblem())));
     }
 
     @Override
     protected ScheduleNode getNextNode() {
-        return ((PriorityQueue<ScheduleNode>) frontier).poll();
+        return ((PriorityQueue<ScheduleNode>) getFrontier()).poll();
     }
 }
