@@ -53,6 +53,8 @@ public class MainVisualisationController {
     @FXML
     public BorderPane ganttPane;
     @FXML
+    public Text ganttChartLabel;
+    @FXML
     private AnchorPane graphPane;
     @FXML
     private HBox graphControls;
@@ -327,8 +329,10 @@ public class MainVisualisationController {
                 nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
                 nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
                 nodeWeight.setText(node.getLabel());
+                ganttChartLabel.setText("SCHEDULE FOR NODE:  " + node.getLabel());
                 updateGanttChart(GraphVisualisationHelper.instance().getScheduleNode((String) node.getAttribute("ui.schedule")), GraphVisualisationHelper.instance().getProcessorCount());
             } else {
+                ganttChartLabel.setText("CURRENT BEST SCHEDULE");
                 nodeLabel.setText("-");
                 nodePathCost.setText("-");
                 nodeWeight.setText("");

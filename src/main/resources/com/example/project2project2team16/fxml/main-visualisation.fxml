@@ -185,7 +185,7 @@
                 </StackPane>
                 <HBox maxWidth="900.0" spacing="15.0">
                     <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
+                        <Text fx:id="ganttChartLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
                               styleClass="bottomHeaders"/>
                         <BorderPane fx:id="ganttPane" prefHeight="250.0"/>
                     </VBox>
