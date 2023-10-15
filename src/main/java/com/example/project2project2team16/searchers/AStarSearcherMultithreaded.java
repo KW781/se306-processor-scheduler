@@ -1,10 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.VisualisationApplication;
-import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
-import com.example.project2project2team16.utils.AppConfig;
-import javafx.util.Pair;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AStarSearcher extends GreedySearcher {
+public class AStarSearcherMultithreaded extends GreedySearcher {
     Set<ScheduleNode> opened = ConcurrentHashMap.newKeySet();
     Set<ScheduleNode> closed = ConcurrentHashMap.newKeySet();
     ScheduleNode currentOptimal = null;
@@ -20,7 +17,7 @@ public class AStarSearcher extends GreedySearcher {
     List<PriorityBlockingQueue<ScheduleNode>> frontiers = new ArrayList<>();
     AtomicInteger doneThreads = new AtomicInteger();
 
-    public AStarSearcher(SchedulingProblem problem) {
+    public AStarSearcherMultithreaded(SchedulingProblem problem) {
         super(problem);
     }
 
