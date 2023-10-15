@@ -129,4 +129,12 @@ public abstract class SearcherTests {
 
         assertEquals(227, RunSearch(taskGraph,4,4));
     }
+
+    @Order(15)
+    @Test
+    public void Nodes11Processor2MultiCore6Test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Nodes_11_OutTree.dot");
+
+        assertEquals(350, RunSearch(taskGraph,2,6));
+    }
 }
