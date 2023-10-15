@@ -193,44 +193,6 @@ public class SchedulingProblem {
 
         int cost = 0;
 
-        // Checks if the last tasks of each processor have any children tasks.
-        boolean noMoreChildren = true;
-        int minProcessorEndTime = Integer.MAX_VALUE;
-        for (int i = 0; i < processorCount; i++) {
-            Node task = node.processorLastTasks.get(i);
-            if (task != null && task.getOutDegree() > 0) {
-                noMoreChildren = false;
-                break;
-            }
-            minProcessorEndTime = Math.min(minProcessorEndTime, node.processorEndTimes.get(i));
-        }
-
-        if (noMoreChildren) {
-            // If the last tasks of each processor have no more children, we calculate bottom level as
-            // Max(available task's critical path + last end time of task's parent's processor)
-            // Otherwise, bottom level calculations would stagnate and become useless
-            for (Node task : node.availableTasks) {
-                int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
-
-                int lastParentEndTime = 0;
-                for (Node parent : task.enteringEdges().map(Edge::getSourceNode).collect(Collectors.toList())) {
-                    lastParentEndTime = Math.max(lastParentEndTime, node.visited.get(parent.getId()).getValue());
-                }
-
-                int earliestStartTime = Math.max(lastParentEndTime, minProcessorEndTime);
-
-                cost = Math.max(cost, cp + earliestStartTime);
-            }
-
-            if (node.parent != null) {
-                if (node.parent.fValue != 0) {
-                    cost = Math.max(node.parent.fValue, cost);
-                }
-            }
-
-            return cost;
-        }
-
         // If parent is not null, no need to recalculate bottom level for all tasks
         // Only recalculate for the last task added.
         if (node.parent != null) {
