@@ -4,9 +4,12 @@ import com.example.project2project2team16.searchers.ScheduleNode;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.Random;
 
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
@@ -16,11 +19,12 @@ public class GraphVisualisationHelper {
     private Integer currentScheduleNumber = 0;
     private Integer processorCount;
     private Map<String, ScheduleNode> createdSchedules = new HashMap<>();
+    private Map<Integer, String> nodeColours = new HashMap<>();
     static final String LABEL = "ui.label";
     static final String HEURISTIC = "ui.heuristic";
     static final String HEURISTIC_COST = "ui.heuristicCost";
     static final String SCHEDULE = "ui.schedule";
-
+    static final String COLOR = "ui.color";
 
     private GraphVisualisationHelper() {
     }
@@ -60,6 +64,25 @@ public class GraphVisualisationHelper {
             graph.addEdge("Edge-" + source + "-" + target, source, target, true).setAttribute("ui.min_length", 50);;
         }
     }
+    private Color generateRandomColour() {
+        Random random = new Random();
+        return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+    }
+
+    private String getColour(int threadId) {
+        if (nodeColours.containsKey(threadId)) {
+            return nodeColours.get(threadId);
+        } else {
+            Color randomColour = generateRandomColour();
+            String colorCode = "rgb(" +
+                    randomColour.getRed() + "," +
+                    randomColour.getGreen() + "," +
+                    randomColour.getBlue() + ")";
+
+            nodeColours.put(threadId, colorCode);
+            return colorCode;
+        }
+    }
     public void addNode(ScheduleNode scheduleNode, ScheduleNode parent) {
         createdSchedules.put(scheduleNode.toString(), scheduleNode);
         if (graph == null) {
@@ -77,9 +100,9 @@ public class GraphVisualisationHelper {
             if (parentNode != null) {
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
-
                 // Set node attributes to be displayed
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
+                node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 node.setAttribute(SCHEDULE, scheduleNode.toString());
@@ -91,6 +114,7 @@ public class GraphVisualisationHelper {
 
                 // Set node attributes to be displayed
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
+                node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 node.setAttribute(SCHEDULE, scheduleNode.toString());
@@ -102,6 +126,7 @@ public class GraphVisualisationHelper {
 
             // Set node attributes to be displayed
             node.setAttribute(LABEL, currentScheduleNumber);
+            node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
             node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
             node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
             currentScheduleNumber++;
@@ -127,12 +152,13 @@ public class GraphVisualisationHelper {
         }
 
         Node graphNode = graph.getNode(newOptimal.toString());
+        graphNode.setAttribute("ui.prevcolor", graphNode.getAttribute("ui.style"));
         graphNode.setAttribute("ui.style", "fill-color: #FF0000;");
 
         if (currentOptimal != null) {
             Node prevOptimalNode = graph.getNode(currentOptimal.toString());
             if (prevOptimalNode != null) {
-                prevOptimalNode.setAttribute("ui.style", "fill-color: #D9D9D9;");
+                prevOptimalNode.setAttribute("ui.style", prevOptimalNode.getAttribute("ui.prevcolor"));
             }
         }
 
