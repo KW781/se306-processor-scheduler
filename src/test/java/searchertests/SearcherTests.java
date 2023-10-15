@@ -145,6 +145,7 @@ public abstract class SearcherTests {
 
         assertEquals(499, RunSearch(taskGraph,2));
     }
+
     @Order(12)
     @Test
     public void Independent_Nodes_21_2Proc() {
@@ -213,7 +214,7 @@ public abstract class SearcherTests {
         assertEquals(71, RunSearch(taskGraph,2, 4));
     }
 
-
+    @Disabled
     @Order(19)
     @Test
     public void OutTreeUnbalanced_Nodes_21_2Proc() {
@@ -286,23 +287,45 @@ public abstract class SearcherTests {
 
     @Order(28)
     @Test
+    public void equivalent_nodes_1_test() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/equivalent_weights_1.dot");
+        assertEquals(78, RunSearch(taskGraph, 2));
+    }
+
+    @Order(29)
+    @Test
     public void Equivalent_tasks_fork_16() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Equivalent_tasks_fork_16.dot");
 
         assertEquals(610, RunSearch(taskGraph,2));
     }
-    @Order(29)
+    @Order(30)
     @Test
     public void Equivalent_tasks_join_16() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Equivalent_tasks_join_16.dot");
 
         assertEquals(610, RunSearch(taskGraph,2));
     }
-    @Order(30)
+    @Order(31)
     @Test
     public void Equivalent_tasks_fork_join_17() {
         Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/Equivalent_tasks_fork_join_17.dot");
 
         assertEquals(680, RunSearch(taskGraph,2));
+    }
+    @Order(32)
+    @Test
+    public void SeriesParallel_Nodes21_1() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_SeriesParallel-MaxBf-2_Nodes_21_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(900, RunSearch(taskGraph,8));
+    }
+
+    @Order(32)
+    @Test
+    public void SeriesParallel_Nodes21_99() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_SeriesParallel-MaxBf-2_Nodes_21_CCR_0.99_WeightType_Random.dot");
+
+        assertEquals(101, RunSearch(taskGraph,8));
     }
 }

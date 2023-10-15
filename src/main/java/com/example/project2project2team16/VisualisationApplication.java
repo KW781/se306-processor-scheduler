@@ -60,8 +60,8 @@ public class VisualisationApplication extends Application {
             Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
             SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
             AStarSearcherMultithreaded searcher = new AStarSearcherMultithreaded(problem);
-            searcher.InitialiseSearcher();
-            DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
+            searcher.initialiseSearcher();
+            DotFileParser.outputDotFile(searcher.search(), taskGraph, appConfig.getOutputFileName());
             mainVisualisationController.stopTimer();
         });
 
@@ -75,8 +75,8 @@ public class VisualisationApplication extends Application {
             Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
             SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
             AStarSearcher searcher = new AStarSearcher(problem);
-            searcher.InitialiseSearcher();
-            DotFileParser.outputDotFile(searcher.Search(), taskGraph, appConfig.getOutputFileName());
+            searcher.initialiseSearcher();
+            DotFileParser.outputDotFile(searcher.search(), taskGraph, appConfig.getOutputFileName());
             mainVisualisationController.stopTimer();
         });
 
@@ -91,6 +91,8 @@ public class VisualisationApplication extends Application {
             System.exit(1);
         }
 
+        GraphVisualisationHelper.instance().setTaskGraph(DotFileParser.parseDotFile(appConfig.getInputFilePath()));
+        GraphVisualisationHelper.instance().setProcessorCount(appConfig.getNumProcessors());
         GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");

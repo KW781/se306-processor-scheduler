@@ -14,9 +14,9 @@ public class OutputParseTests {
     private ScheduleNode RunSearch(Graph taskGraph, Integer processorNum) {
         SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
         DFSSearcher searcher = new DFSSearcher(problem);
-        searcher.InitialiseSearcher();
+        searcher.initialiseSearcher();
 
-        return searcher.Search();
+        return searcher.search();
     }
 
     // TODO Maybe don't need to do this?

@@ -12,7 +12,7 @@ public class UniformCostSearcher extends AStarSearcher {
     }
 
     @Override
-    protected void InitialiseFrontier() {
+    protected void initialiseFrontier() {
         frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeUniformCostComparator(problem));
     }
 }
