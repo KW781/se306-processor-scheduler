@@ -405,7 +405,11 @@ public class MainVisualisationController {
      */
     public static double getCPUUsage() {
         DecimalFormat df = new DecimalFormat("#.#");
-        return Double.parseDouble(df.format((osBean.getSystemLoadAverage() * 100) / osBean.getAvailableProcessors()));
+        double cpuUsage = ((osBean.getSystemLoadAverage() * 100) / osBean.getAvailableProcessors());
+        if (cpuUsage > 100) {
+            cpuUsage = 100.0;
+        }
+        return Double.parseDouble(df.format(cpuUsage));
     }
 
     /**
@@ -417,6 +421,10 @@ public class MainVisualisationController {
         long totalMem = memBean.getHeapMemoryUsage().getMax();
         long memUsed = memBean.getHeapMemoryUsage().getUsed();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
+
+        if (memoryUsage > 100) {
+            memoryUsage = 100;
+        }
         return (int) Math.round(memoryUsage);
     }
 }

@@ -1,12 +1,12 @@
 .ganttchart0 {
-    -fx-background-color: #d15ffa;
+    -fx-background-color: #005C9E;
     -fx-opacity: 80%;
     -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
 }
 
 .ganttchart1 {
-    -fx-background-color: #005C9E;
+    -fx-background-color: #d15ffa;
     -fx-opacity: 80%;
     -fx-border-color: #f2f2f2;
     -fx-border-width: 1px;
