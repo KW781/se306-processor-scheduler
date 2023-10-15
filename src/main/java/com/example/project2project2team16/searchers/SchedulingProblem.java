@@ -31,6 +31,8 @@ public class SchedulingProblem {
         this.taskCount = taskGraph.getNodeCount();
         this.processorCount = processorCount;
 
+        this.pruneDuplicateTasks();
+
         // initialise the heuristic count hashmap for all heuristics available
         this.heuristicCount = new HashMap<>();
         for (Heuristic heuristic : Heuristic.values()) {
@@ -53,6 +55,135 @@ public class SchedulingProblem {
         for (Node node : taskGraph) {
             computationCostSum += node.getAttribute("Weight", Double.class).intValue();
         }
+    }
+
+    private void addVirtualEdge(Node node1, Node node2) {
+        if (node1.getIndex() < node2.getIndex()) {
+            Edge newEdge = taskGraph.addEdge(node1.getIndex() + "virtual"  + node2.getIndex(), node1, node2, true);
+            newEdge.setAttribute("Weight", 0.0);
+        } else {
+            Edge newEdge = taskGraph.addEdge(node2.getIndex() + "virtual" + node1.getIndex(), node1, node2, true);
+            newEdge.setAttribute("Weight", 0.0);
+        }
+    }
+
+    /**
+     * Searches for duplicate tasks in the task graph and prunes them by enforcing a fixed order in which they are explored.
+     */
+    private void pruneDuplicateTasks() {
+        // get nodes that have no incoming edges
+        List<Node> rootNodes = this.taskGraph.nodes().filter(node -> node.getInDegree() == 0).collect(Collectors.toList());
+        Set<Node> visited = new HashSet<>();
+        Queue<Node> nodeQueue = new ArrayDeque<>();
+        boolean allNodesVisited = false;
+
+        Map<Node, List<Node>> equivalentNodesMap = new HashMap<>();
+        // check for equivalent tasks between root nodes
+        for (int i = 0; i < rootNodes.size(); i++) {
+            Node outerNode = rootNodes.get(i);
+            for (int j = i + 1; j < rootNodes.size(); j++) {
+                Node innerNode = rootNodes.get(j);
+                if (areTasksEquivalent(outerNode, innerNode)) {
+                    // if the tasks are equivalent, add a directed edge between the two with a weight of zero
+                    // the edges are formed in ascending index order to not conflict with equivalent schedule pruning
+                    addVirtualEdge(outerNode, innerNode);
+                }
+            }
+        }
+
+        // run BFS to find duplicate tasks
+        nodeQueue.add(rootNodes.get(0));
+        while (!allNodesVisited) {
+            while (!nodeQueue.isEmpty()) {
+                Node currentNode = nodeQueue.remove();
+                visited.add(currentNode); // mark the current node as visited so that we don't revisit it
+                List<Node> childNodes = currentNode.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(edge -> edge.getTargetNode()).collect(Collectors.toList());
+
+                // compare child nodes with each other to see if they are duplicates
+                for (int i = 0; i < childNodes.size(); i++) {
+                    Node outerChildNode = childNodes.get(i);
+                    for (int j = i + 1; j < childNodes.size(); j++) {
+                        Node innerChildNode = childNodes.get(j);
+                        // only compare the child nodes if at least one of them has not yet been visited
+                        if (!(visited.contains(outerChildNode) && visited.contains(innerChildNode))) {
+                            if (areTasksEquivalent(outerChildNode, innerChildNode)) {
+                                // if the tasks are equivalent, add a directed edge between the two with a weight of zero
+                                // the edges are formed in ascending index order to not conflict with equivalent schedule pruning
+                                addVirtualEdge(outerChildNode, innerChildNode);
+                            }
+                        }
+                    }
+
+                    // add the child node to the queue if we haven't visited it
+                    if (!visited.contains(outerChildNode)) nodeQueue.add(outerChildNode);
+                }
+            }
+
+            // add any root nodes that we haven't visited so that we can perform the rooted search and completed BFS
+            allNodesVisited = true;
+            for (Node rootNode : rootNodes) {
+                if (!visited.contains(rootNode)) {
+                    allNodesVisited = false;
+                    nodeQueue.add(rootNode);
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean areTasksEquivalent(Node task1, Node task2) {
+        // check that the weights of the tasks are the same
+        if (task1.getAttribute("Weight", Double.class).intValue() != task2.getAttribute("Weight", Double.class).intValue()) {
+            return false;
+        }
+
+
+        // check that the parents of the tasks are the same, and that edges from the parents to the tasks have the same weight
+        List<Edge> task1IncomingEdges = task1.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        List<Edge> task2IncomingEdges = task2.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        if (task1IncomingEdges.size() != task2IncomingEdges.size()) return false;
+
+        boolean sameEdgeAndParentFound;
+        for (Edge task1IncomingEdge : task1IncomingEdges) {
+            sameEdgeAndParentFound = false;
+            for (Edge task2IncomingEdge : task2IncomingEdges) {
+                sameEdgeAndParentFound = true;
+                if (task1IncomingEdge.getAttribute("Weight", Double.class).intValue() != task2IncomingEdge.getAttribute("Weight", Double.class).intValue()) {
+                    sameEdgeAndParentFound = false;
+                    continue;
+                }
+                if (task1IncomingEdge.getSourceNode() != task2IncomingEdge.getSourceNode()) {
+                    sameEdgeAndParentFound = false;
+                }
+            }
+            // tasks are not equivalent if we cannot find an equivalent edge for task 1 in task 2
+            if (!sameEdgeAndParentFound) return false;
+        }
+
+
+        // check that the children of the tasks are the same and that the edges from the tasks to the children have the same weight
+        List<Edge> task1OutgoingEdges = task1.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        List<Edge> task2OutgoingEdges = task2.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
+        if (task1OutgoingEdges.size() != task2OutgoingEdges.size()) return false;
+
+        boolean sameEdgeAndChildFound;
+        for (Edge task1OutgoingEdge : task1OutgoingEdges) {
+            sameEdgeAndChildFound = false;
+            for (Edge task2OutgoingEdge : task2OutgoingEdges) {
+                sameEdgeAndChildFound = true;
+                if (task1OutgoingEdge.getAttribute("Weight", Double.class).intValue() != task2OutgoingEdge.getAttribute("Weight", Double.class).intValue()) {
+                    sameEdgeAndChildFound = false;
+                    continue;
+                }
+                if (task1OutgoingEdge.getTargetNode() != task2OutgoingEdge.getTargetNode()) {
+                    sameEdgeAndChildFound = false;
+                }
+            }
+            // tasks are not equivalent if we cannot find an equivalent edge for task 1 in task 2
+            if (!sameEdgeAndChildFound) return false;
+        }
+
+        return true;
     }
 
     public ScheduleNode GetStartNode() {
@@ -132,7 +263,9 @@ public class SchedulingProblem {
         int cost = 0;
 
         // For each child, calculate the maximum computational path cost and store the maximum
-        List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
+        // We ignore the "Virtual" edges as they are only used when deciding whether to add the task to availableTasks
+        // and not for anything else
+        List<Node> nodeChildren = node.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(Edge::getTargetNode).collect(Collectors.toList());
         for (Node child : nodeChildren) {
             int childCost = dfs(child, dfsMemo);
 
@@ -259,7 +392,7 @@ public class SchedulingProblem {
      */
     public static int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
         int maxDRT = 0;
-        List<Edge> incomingEdges = taskNode.enteringEdges().collect(Collectors.toList());
+        List<Edge> incomingEdges = taskNode.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
         int finishTime;
 
         // For each parent, we check if the prerequisite has been met.

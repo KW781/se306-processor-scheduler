@@ -183,7 +183,9 @@ public class ScheduleNode {
 
         for (Node task : tasks) {
             // Each task must have at most one parent and one child
-            if (task.getInDegree() > 1 || task.getOutDegree() > 1) {
+            int inDegree = (int) task.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).count();
+            int outDegree = (int) task.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).count();
+            if (inDegree > 1 || outDegree > 1) {
                 return null;
             }
 
@@ -369,7 +371,7 @@ public class ScheduleNode {
      * @param processor The processor to schedule on.
      */
     private void addTask(Node newTask, Integer processor) {
-        List<Edge> incomingEdges = newTask.enteringEdges().collect(Collectors.toList());
+        List<Edge> incomingEdges = newTask.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
         Integer previousEndTime = earliestStartTime;
