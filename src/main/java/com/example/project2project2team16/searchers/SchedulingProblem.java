@@ -22,11 +22,13 @@ public class SchedulingProblem {
     static Integer computationCostSum;
 
     static Map<Heuristic, Integer> heuristicCount;
+    static Map<String, Integer> dfsMemo;
 
     public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
         this.taskCount = taskGraph.getNodeCount();
         this.processorCount = processorCount;
+        dfsMemo = new HashMap<>();
 
         this.pruneDuplicateTasks();
 
@@ -209,7 +211,7 @@ public class SchedulingProblem {
         return maxHeuristic;
     }
 
-    private static int dfs(Node node, Map<String, Integer> dfsMemo) {
+    private static int dfs(Node node) {
         if (dfsMemo.containsKey(node.getId())) {
             return dfsMemo.get(node.getId());
         }
@@ -218,7 +220,7 @@ public class SchedulingProblem {
 
         List<Node> nodeChildren = node.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(Edge::getTargetNode).collect(Collectors.toList());
         for (Node child : nodeChildren) {
-            int childCost = dfs(child, dfsMemo);
+            int childCost = dfs(child);
 
             cost = Math.max(cost, childCost);
         }
@@ -230,8 +232,7 @@ public class SchedulingProblem {
     }
 
     private static int GetCriticalPath(Node node) {
-        Map<String, Integer> dfsMemo = new HashMap<>();
-        return dfs(node, dfsMemo) - node.getAttribute("Weight", Double.class).intValue();
+        return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
     }
 
     public static void initialiseF(ScheduleNode node) {
