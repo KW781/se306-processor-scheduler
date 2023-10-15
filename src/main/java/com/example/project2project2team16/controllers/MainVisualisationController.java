@@ -2,13 +2,17 @@ package com.example.project2project2team16.controllers;
 
 import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
+import com.example.project2project2team16.searchers.SchedulingProblem;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -35,6 +39,9 @@ import org.graphstream.ui.view.util.MouseManager;
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainVisualisationController {
@@ -53,13 +60,17 @@ public class MainVisualisationController {
     @FXML
     private Text timeElapsedText;
     @FXML
-    private Text currentShortestTimeText;
-    @FXML
     private Text nodeLabel;
     @FXML
     private Text nodePathCost;
     @FXML
     private Text nodeWeight;
+    @FXML
+    private Text idlePercText;
+    @FXML
+    private Text dataPercText;
+    @FXML
+    private Text bottomPercText;
     @FXML
     private Button autoLayoutButton;
     @FXML
@@ -75,6 +86,8 @@ public class MainVisualisationController {
     @FXML
     private Arc cpuArc;
     @FXML
+    private PieChart heuristicPieChart;
+    @FXML
     private FxViewer viewer;
     private Graph scheduleSearchGraph;
     private double timeElapsed = 0;
@@ -84,6 +97,7 @@ public class MainVisualisationController {
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+    private ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
 
     @FXML
@@ -96,17 +110,22 @@ public class MainVisualisationController {
         startBox.setDisable(false);
         startBox.setVisible(true);
 
+        createPieChart();
+
         timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
                     timeElapsed += 0.001;
-                    timeElapsedText.setText(String.format("%.3fs", timeElapsed));
-                    // Display cpu and memory usage
-                    if (timeElapsed > 0.01) {
-                        cpuArc.setLength((getCPUUsage() / 100) * -360);
-                        cpuText.setText(String.valueOf(getCPUUsage()));
-                    }
-                    memoryText.setText(String.valueOf(getMemoryUsage()));
-                    memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
+                    Platform.runLater(() -> {
+                        timeElapsedText.setText(String.format("%.3fs", timeElapsed));
+                        // Display cpu and memory usage
+                        if (timeElapsed > 0.01) {
+                            cpuArc.setLength((getCPUUsage() / 100) * -360);
+                            cpuText.setText(String.valueOf(getCPUUsage()));
+                        }
+                        memoryText.setText(String.valueOf(getMemoryUsage()));
+                        memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
+                        updatePieChart(SchedulingProblem.getIdleTimeUsageCount(), SchedulingProblem.getDataReadyHeuristicCount(), SchedulingProblem.getBottomLevelHeuristicCount());
+                    });
                 }
         ));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -266,10 +285,31 @@ public class MainVisualisationController {
         timeline.stop();
     }
 
-    public void updateShortestTime(Integer shortestTime) {
-        Platform.runLater(() -> {
-            currentShortestTimeText.setText(shortestTime.toString());
-        });
+    private void createPieChart() {
+        pieChartData.add(new PieChart.Data("Idle-Time Count", 1));
+        pieChartData.add(new PieChart.Data("Data-Ready Count", 1));
+        pieChartData.add(new PieChart.Data("Bottom-Level Count", 1));
+        heuristicPieChart.setLabelsVisible(false);
+        heuristicPieChart.setLegendVisible(false);
+        heuristicPieChart.setData(pieChartData);
+    }
+
+    private void updatePieChart(int idleTimeUsageCount, int dataReadyHeuristicCount, int bottomLevelHeuristicCount) {
+        double idlePerc, dataPerc, bottomPerc = 0;
+        int total = idleTimeUsageCount + dataReadyHeuristicCount + bottomLevelHeuristicCount;
+        DecimalFormat df = new DecimalFormat("#.#");
+
+        pieChartData.get(0).setPieValue(idleTimeUsageCount);
+        pieChartData.get(1).setPieValue(dataReadyHeuristicCount);
+        pieChartData.get(2).setPieValue(bottomLevelHeuristicCount);
+
+        // Calculate percentages
+        idlePerc = Double.parseDouble(df.format((((double) (idleTimeUsageCount) / total) * 100)));
+        idlePercText.setText(idlePerc + "%");
+        dataPerc =  Double.parseDouble(df.format((((double) (dataReadyHeuristicCount) / total) * 100)));
+        dataPercText.setText(dataPerc + "%");
+        bottomPerc = Double.parseDouble(df.format((((double) (bottomLevelHeuristicCount) / total) * 100)));
+        bottomPercText.setText(bottomPerc + "%");
     }
 
     /**

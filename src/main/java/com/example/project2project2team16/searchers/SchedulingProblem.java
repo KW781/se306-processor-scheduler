@@ -394,14 +394,26 @@ public class SchedulingProblem {
     }
 
     public static int getIdleTimeUsageCount() {
-        return heuristicCount.get(Heuristic.IDLE_TIME);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.IDLE_TIME);
+        } else {
+            return 0;
+        }
     }
 
     public static int getDataReadyHeuristicCount() {
-        return heuristicCount.get(Heuristic.DATA_READY);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.DATA_READY);
+        } else {
+            return 0;
+        }
     }
 
     public static int getBottomLevelHeuristicCount() {
-        return heuristicCount.get(Heuristic.BOTTOM_LEVEL);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.BOTTOM_LEVEL);
+        } else {
+            return 0;
+        }
     }
 }
