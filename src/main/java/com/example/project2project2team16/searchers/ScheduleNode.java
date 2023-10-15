@@ -86,19 +86,8 @@ public class ScheduleNode {
         // If DRT is equal, sort according to non-increasing out-edge costs.
         // With no child, out-edge cost == 0
         tasks.sort((a, b) -> {
-            int aDRT = 0;
-            int bDRT = 0;
-            try {
-                Edge incomingEdge = a.enteringEdges().findFirst().orElseThrow();
-                aDRT = visited.get(incomingEdge.getSourceNode().getId()).getValue() + incomingEdge.getAttribute("Weight", Double.class).intValue();
-
-            } catch (NoSuchElementException ignored) {}
-
-            try {
-                Edge incomingEdge = b.enteringEdges().findFirst().orElseThrow();
-                bDRT = visited.get(incomingEdge.getSourceNode().getId()).getValue() + incomingEdge.getAttribute("Weight", Double.class).intValue();
-
-            } catch (NoSuchElementException ignored) {}
+            int aDRT = SchedulingProblem.calculateMaxDRT(a, -1, visited);
+            int bDRT = SchedulingProblem.calculateMaxDRT(b, -1, visited);
 
             if (aDRT > bDRT) {
                 return 1;
@@ -254,6 +243,10 @@ public class ScheduleNode {
 
     public boolean IsComplete(Integer taskCount) {
         return (taskCount == visited.size());
+    }
+
+    public Integer getfValue() {
+        return this.fValue;
     }
 
     public Integer GetValue() {
