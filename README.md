@@ -54,7 +54,7 @@ This project was developed and tested with [Java](https://www.java.com/en/)&nbsp
 
 ## 🌟 Acknowledgements
 - The [developers, testers and contributors](https://github.com/UOASOFTENG306/project-2-project-2-team-16/wiki/Contributors) who have participated in the development of this project.
-- The course instructors for [SOFTENG&nbsp;360](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/306/1235) *Software Engineering Design 2*
+- The course instructors for [SOFTENG&nbsp;306](https://courseoutline.auckland.ac.nz/dco/course/SOFTENG/306/1235) *Software Engineering Design 2*
 
 
 
