@@ -20,6 +20,15 @@
     -fx-font-weight: bold;
 }
 
+.chart-plot-background {
+    -fx-background-color: #ffffff00;
+}
+
+.axis {
+    -fx-tick-label-font-size: 0.833333em;
+    -fx-tick-label-fill: white;
+}
+
 .chart-pie {
     -fx-border-color: derive(-fx-pie-color, -40%);
     -fx-border-width: 1.5px;
