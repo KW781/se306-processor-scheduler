@@ -153,11 +153,27 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
         Random rand = new Random();
 
+        int stealCount = 0;
 
         // While not all threads are done
         while (doneThreads.get() < frontiers.size()) {
             while (!frontier.isEmpty()) {
                 ScheduleNode nextNode = frontier.poll();
+
+                stealCount++;
+
+                // Forced steal to keep threads unified
+                if (stealCount % 500 == 0) {
+                    if (frontiers.size() != 1) {
+                        Integer victim = otherThreads.get(rand.nextInt(frontiers.size() - 1));
+
+                        ScheduleNode stolen = frontiers.get(victim).poll();
+
+                        if (stolen != null && (currentOptimal == null || stolen.getfValue() < currentOptimal.getValue())) {
+                            frontier.add(stolen);
+                        }
+                    }
+                }
 
                 // Delayed Sync possible
 
