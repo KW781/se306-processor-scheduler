@@ -29,7 +29,7 @@
         <URL value="@../css/main-visualisation.css"/>
     </stylesheets>
     <children>
-        <VBox fx:id="mainBox" alignment="TOP_CENTER" prefHeight="850.0" prefWidth="900.0" spacing="10.0">
+        <VBox fx:id="mainBox" alignment="TOP_CENTER" prefHeight="850.0" prefWidth="900.0" spacing="14.0">
             <Label id="title" alignment="CENTER" text="OVERVIEW" textFill="WHITE"/>
             <children>
                 <HBox id="topContainer" spacing="15.0">
