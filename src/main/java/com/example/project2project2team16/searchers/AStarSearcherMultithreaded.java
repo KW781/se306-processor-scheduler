@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AStarSearcherMultithreaded extends GreedySearcher {
-    Set<ScheduleNode> createdSchedules = ConcurrentHashMap.newKeySet();
-    ScheduleNode currentOptimal = null;
-    Object lock = new Object();
-    List<PriorityBlockingQueue<ScheduleNode>> frontiers = new ArrayList<>();
-    AtomicInteger doneThreads = new AtomicInteger();
-    int tasksVisited = 0;
-    Object visLock = new Object();
+    private Set<ScheduleNode> createdSchedules = ConcurrentHashMap.newKeySet();
+    private ScheduleNode currentOptimal = null;
+    private Object lock = new Object();
+    private List<PriorityBlockingQueue<ScheduleNode>> frontiers = new ArrayList<>();
+    private AtomicInteger doneThreads = new AtomicInteger();
+    private int tasksVisited = 0;
+    private Object visLock = new Object();
 
 
     public AStarSearcherMultithreaded(SchedulingProblem problem) {
@@ -28,35 +28,35 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
     @Override
     protected void initialiseFrontier() {
-        frontier = new PriorityBlockingQueue<ScheduleNode>(100000, new ScheduleNodeAStarComparator(problem));
+        setFrontier(new PriorityBlockingQueue<ScheduleNode>(100000, new ScheduleNodeAStarComparator(getProblem())));
     }
 
     @Override
     public void initialiseSearcher() {
-        ScheduleNode startNode = problem.getStartNode();
+        ScheduleNode startNode = getProblem().getStartNode();
         SchedulingProblem.initialiseF(startNode);
 
         super.initialiseSearcher();
 
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-        helper.addNode(startNode, startNode.parent);
+        helper.addNode(startNode, startNode.getParent());
         helper.setStartNode(startNode);
     }
 
     protected void AddToFrontier(PriorityBlockingQueue<ScheduleNode> frontier, List<ScheduleNode> newNodes) {
         for (ScheduleNode newNode : newNodes) {
-            if (createdSchedules.contains(newNode)) {
+            if (getCreatedSchedules().contains(newNode)) {
                 continue;
             }
 
-            if (!newNode.hadFixedTaskOrder) {
+            if (!newNode.isHadFixedTaskOrder()) {
                 if (newNode.isEquivalent()) {
                     continue;
                 }
             }
 
             frontier.add(newNode);
-            createdSchedules.add(newNode);
+            getCreatedSchedules().add(newNode);
         }
     }
 
@@ -64,7 +64,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     private ScheduleNode GetNextNode(PriorityBlockingQueue<ScheduleNode> frontier) {
         ScheduleNode node = frontier.poll();
 
-        if (node == null || currentOptimal != null && node.fValue >= currentOptimal.getValue()) {
+        if (node == null || getCurrentOptimal() != null && node.getfValue() >= getCurrentOptimal().getValue()) {
             return null;
         }
 
@@ -78,10 +78,10 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 //        CountDownLatch completed = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
-            frontiers.add(new PriorityBlockingQueue(10000, new ScheduleNodeAStarComparator(problem)));
+            getFrontiers().add(new PriorityBlockingQueue(10000, new ScheduleNodeAStarComparator(getProblem())));
         }
 
-        AddToFrontier(frontiers.get(0), Collections.singletonList(problem.getStartNode()));
+        AddToFrontier(getFrontiers().get(0), Collections.singletonList(getProblem().getStartNode()));
 
         ScheduleNode initialSearchResult = InitialSearch(threadCount);
 
@@ -124,11 +124,11 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 //        }
 
 
-        return currentOptimal;
+        return getCurrentOptimal();
     }
 
     private void threadSearch(Integer threadIndex, CountDownLatch completed) {
-        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(threadIndex);
+        PriorityBlockingQueue<ScheduleNode> frontier = getFrontiers().get(threadIndex);
 
         while (true) {
             ScheduleNode nextNode = GetNextNode(frontier);
@@ -147,18 +147,18 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
 
 
-            if (problem.isGoal(nextNode)) {
-                synchronized (lock) {
-                    if (currentOptimal == null || nextNode.getValue() < currentOptimal.getValue()) {
-                        currentOptimal = nextNode;
+            if (getProblem().isGoal(nextNode)) {
+                synchronized (getLock()) {
+                    if (getCurrentOptimal() == null || nextNode.getValue() < getCurrentOptimal().getValue()) {
+                        setCurrentOptimal(nextNode);
                     }
                 }
             }
             else {
-                AddToFrontier(frontier, problem.getNeighbourStates(nextNode));
-                if (nextNode.unpromisingChildren) {
+                AddToFrontier(frontier, getProblem().getNeighbourStates(nextNode));
+                if (nextNode.isUnpromisingChildren()) {
                     frontier.add(nextNode);
-                    nextNode.unpromisingChildren = false;
+                    nextNode.setUnpromisingChildren(false);
                 }
             }
         }
@@ -166,9 +166,9 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
     private void ThreadSearchPaper(Integer threadIndex) {
         boolean hasWork = true;
-        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(threadIndex);
+        PriorityBlockingQueue<ScheduleNode> frontier = getFrontiers().get(threadIndex);
 
-        List<Integer> otherThreads = IntStream.rangeClosed(0, frontiers.size() - 1).boxed().collect(Collectors.toList());
+        List<Integer> otherThreads = IntStream.rangeClosed(0, getFrontiers().size() - 1).boxed().collect(Collectors.toList());
 
         otherThreads.remove(threadIndex);
 
@@ -176,7 +176,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
 
 
-        while (doneThreads.get() < frontiers.size()) {
+        while (getDoneThreads().get() < getFrontiers().size()) {
             while (!frontier.isEmpty()) {
                 ScheduleNode nextNode = frontier.poll();
 
@@ -186,31 +186,31 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                     continue;
                 }
 
-                if (nextNode.visited.size() > tasksVisited) {
-                    synchronized (visLock) {
-                        if (nextNode.visited.size() > tasksVisited) {
+                if (nextNode.getVisited().size() > getTasksVisited()) {
+                    synchronized (getVisLock()) {
+                        if (nextNode.getVisited().size() > getTasksVisited()) {
                             nextNode.setThreadId(threadIndex);
                             GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-                            helper.addNode(nextNode, nextNode.parent);
+                            helper.addNode(nextNode, nextNode.getParent());
                             helper.updateOptimalNode(nextNode);
-                            tasksVisited = nextNode.visited.size();
+                            setTasksVisited(nextNode.getVisited().size());
                         }
                     }
                 }
 
-                if (currentOptimal == null || nextNode.fValue < currentOptimal.getValue()) {
-                    if (problem.isGoal(nextNode)) {
-                        synchronized (lock) {
-                            if (currentOptimal == null || nextNode.getValue() < currentOptimal.getValue()) {
-                                currentOptimal = nextNode;
+                if (getCurrentOptimal() == null || nextNode.getfValue() < getCurrentOptimal().getValue()) {
+                    if (getProblem().isGoal(nextNode)) {
+                        synchronized (getLock()) {
+                            if (getCurrentOptimal() == null || nextNode.getValue() < getCurrentOptimal().getValue()) {
+                                setCurrentOptimal(nextNode);
                             }
                         }
                     }
                     else {
-                        AddToFrontier(frontier, problem.getNeighbourStates(nextNode));
-                        if (nextNode.unpromisingChildren) {
+                        AddToFrontier(frontier, getProblem().getNeighbourStates(nextNode));
+                        if (nextNode.isUnpromisingChildren()) {
                             frontier.add(nextNode);
-                            nextNode.unpromisingChildren = false;
+                            nextNode.setUnpromisingChildren(false);
                         }
                     }
                 }
@@ -220,34 +220,34 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
             }
 
             if (hasWork) {
-                doneThreads.incrementAndGet();
+                getDoneThreads().incrementAndGet();
                 hasWork = false;
             }
 
-            if (frontiers.size() != 1) {
-                Integer victim = otherThreads.get(rand.nextInt(frontiers.size() - 1));
+            if (getFrontiers().size() != 1) {
+                Integer victim = otherThreads.get(rand.nextInt(getFrontiers().size() - 1));
 
-                ScheduleNode stolen = frontiers.get(victim).poll();
+                ScheduleNode stolen = getFrontiers().get(victim).poll();
 
-                if (stolen != null && (currentOptimal == null || stolen.fValue < currentOptimal.getValue())) {
+                if (stolen != null && (getCurrentOptimal() == null || stolen.getfValue() < getCurrentOptimal().getValue())) {
                     frontier.add(stolen);
                     hasWork = true;
-                    doneThreads.decrementAndGet();
+                    getDoneThreads().decrementAndGet();
                 }
             }
         }
     }
 
     private void DistributeFrontiers(Integer threadCount) {
-        PriorityBlockingQueue<ScheduleNode> nodes = frontiers.get(0);
+        PriorityBlockingQueue<ScheduleNode> nodes = getFrontiers().get(0);
 
         for (int i = 1; i < threadCount; i++) {
-            frontiers.get(i).add(nodes.poll());
+            getFrontiers().get(i).add(nodes.poll());
         }
     }
 
     public ScheduleNode InitialSearch(Integer threadCount) {
-        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(0);
+        PriorityBlockingQueue<ScheduleNode> frontier = getFrontiers().get(0);
 
         while (!frontier.isEmpty()) {
             if (frontier.size() >= threadCount) {
@@ -256,14 +256,14 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
             ScheduleNode nextNode = GetNextNode(frontier);
 
-            if (problem.isGoal(nextNode)) {
+            if (getProblem().isGoal(nextNode)) {
                 return nextNode;
             }
             else {
-                AddToFrontier(frontier, problem.getNeighbourStates(nextNode));
-                if (nextNode.unpromisingChildren) {
+                AddToFrontier(frontier, getProblem().getNeighbourStates(nextNode));
+                if (nextNode.isUnpromisingChildren()) {
                     frontier.add(nextNode);
-                    nextNode.unpromisingChildren = false;
+                    nextNode.setUnpromisingChildren(false);
                 }
             }
         }
@@ -274,19 +274,75 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     private void stealWork(Integer threadIndex) {
 
         while (true) {
-            for (int i = 0; i < frontiers.size(); i++) {
-                ScheduleNode node = frontiers.get(i).poll();
+            for (int i = 0; i < getFrontiers().size(); i++) {
+                ScheduleNode node = getFrontiers().get(i).poll();
 
                 if (node != null) {
-                    frontiers.get(threadIndex).add(node);
+                    getFrontiers().get(threadIndex).add(node);
                     return;
                 }
             }
 
-            if (currentOptimal != null) {
+            if (getCurrentOptimal() != null) {
                 return;
             }
         }
 
+    }
+
+    public Set<ScheduleNode> getCreatedSchedules() {
+        return createdSchedules;
+    }
+
+    public void setCreatedSchedules(Set<ScheduleNode> createdSchedules) {
+        this.createdSchedules = createdSchedules;
+    }
+
+    public ScheduleNode getCurrentOptimal() {
+        return currentOptimal;
+    }
+
+    public void setCurrentOptimal(ScheduleNode currentOptimal) {
+        this.currentOptimal = currentOptimal;
+    }
+
+    public Object getLock() {
+        return lock;
+    }
+
+    public void setLock(Object lock) {
+        this.lock = lock;
+    }
+
+    public List<PriorityBlockingQueue<ScheduleNode>> getFrontiers() {
+        return frontiers;
+    }
+
+    public void setFrontiers(List<PriorityBlockingQueue<ScheduleNode>> frontiers) {
+        this.frontiers = frontiers;
+    }
+
+    public AtomicInteger getDoneThreads() {
+        return doneThreads;
+    }
+
+    public void setDoneThreads(AtomicInteger doneThreads) {
+        this.doneThreads = doneThreads;
+    }
+
+    public int getTasksVisited() {
+        return tasksVisited;
+    }
+
+    public void setTasksVisited(int tasksVisited) {
+        this.tasksVisited = tasksVisited;
+    }
+
+    public Object getVisLock() {
+        return visLock;
+    }
+
+    public void setVisLock(Object visLock) {
+        this.visLock = visLock;
     }
 }

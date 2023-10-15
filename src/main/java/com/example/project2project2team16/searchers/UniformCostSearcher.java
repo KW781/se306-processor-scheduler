@@ -1,6 +1,5 @@
 package com.example.project2project2team16.searchers;
 
-import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeUniformCostComparator;
 
 import java.util.PriorityQueue;
@@ -13,6 +12,6 @@ public class UniformCostSearcher extends AStarSearcher {
 
     @Override
     protected void initialiseFrontier() {
-        frontier = new PriorityQueue<ScheduleNode>(new ScheduleNodeUniformCostComparator(problem));
+        setFrontier(new PriorityQueue<ScheduleNode>(new ScheduleNodeUniformCostComparator(getProblem())));
     }
 }

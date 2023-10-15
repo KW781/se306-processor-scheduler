@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
-    Integer evalLimit = 0;
-    Integer nextEvalLimit = 0;
+    private Integer evalLimit = 0;
+    private Integer nextEvalLimit = 0;
 
     public IterativeDeepeningAStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -14,8 +14,8 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     public void initialiseSearcher() {
         super.initialiseSearcher();
-        nextEvalLimit = problem.getStartNode().fValue;
-        evalLimit = problem.getStartNode().fValue;
+        setNextEvalLimit(getProblem().getStartNode().getfValue());
+        setEvalLimit(getProblem().getStartNode().getfValue());
     }
 
     @Override
@@ -23,11 +23,11 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             ScheduleNode newNode = newNodes.get(i);
 
-            if (newNode.fValue <= evalLimit) {
+            if (newNode.getfValue() <= getEvalLimit()) {
                 pruneOrAdd(newNode);
             }
             else {
-                nextEvalLimit = Math.min(nextEvalLimit, newNode.fValue);
+                setNextEvalLimit(Math.min(getNextEvalLimit(), newNode.getfValue()));
             }
         }
     }
@@ -38,17 +38,33 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
 
         while (result == null) {
             result = super.search();
-            createdSchedules.clear();
-            evalLimit = nextEvalLimit;
-            nextEvalLimit = Integer.MAX_VALUE;
-            ScheduleNode startNode = problem.getStartNode();
+            getCreatedSchedules().clear();
+            setEvalLimit(getNextEvalLimit());
+            setNextEvalLimit(Integer.MAX_VALUE);
+            ScheduleNode startNode = getProblem().getStartNode();
             SchedulingProblem.initialiseF(startNode);
             addToFrontier(Collections.singletonList(startNode));
-            schedulesAdded = 0;
-            dups = 0;
-            schedulesExplored = 0;
+            setSchedulesAdded(0);
+            setDups(0);
+            setSchedulesExplored(0);
         }
 
         return result;
+    }
+
+    public Integer getEvalLimit() {
+        return evalLimit;
+    }
+
+    public void setEvalLimit(Integer evalLimit) {
+        this.evalLimit = evalLimit;
+    }
+
+    public Integer getNextEvalLimit() {
+        return nextEvalLimit;
+    }
+
+    public void setNextEvalLimit(Integer nextEvalLimit) {
+        this.nextEvalLimit = nextEvalLimit;
     }
 }
