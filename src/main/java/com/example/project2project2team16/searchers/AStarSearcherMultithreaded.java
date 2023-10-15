@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.VisualisationApplication;
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.comparators.ScheduleNodeAStarComparator;
 
 import java.util.*;
@@ -17,7 +18,8 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     Object lock = new Object();
     List<PriorityBlockingQueue<ScheduleNode>> frontiers = new ArrayList<>();
     AtomicInteger doneThreads = new AtomicInteger();
-    Integer schedules = 0;
+    int tasksVisited = 0;
+
 
     public AStarSearcherMultithreaded(SchedulingProblem problem) {
         super(problem);
@@ -29,7 +31,16 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     }
 
     @Override
-    public void InitialiseSearcher() {}
+    public void InitialiseSearcher() {
+        ScheduleNode startNode = problem.GetStartNode();
+        SchedulingProblem.initialiseF(startNode);
+
+        super.InitialiseSearcher();
+
+        GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+        helper.addNode(startNode, startNode.parent);
+        helper.setStartNode(startNode);
+    }
 
     protected void AddToFrontier(PriorityBlockingQueue<ScheduleNode> frontier, List<ScheduleNode> newNodes) {
         for (ScheduleNode newNode : newNodes) {
@@ -52,11 +63,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     private ScheduleNode GetNextNode(PriorityBlockingQueue<ScheduleNode> frontier) {
         ScheduleNode node = frontier.poll();
 
-        if (node == null) {
-            return null;
-        }
-
-        if (currentOptimal != null && node.fValue >= currentOptimal.GetValue()) {
+        if (node == null || currentOptimal != null && node.fValue >= currentOptimal.GetValue()) {
             return null;
         }
 
@@ -67,22 +74,18 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     public ScheduleNode Search() {
         Integer threadCount = VisualisationApplication.getThreadCount();
         List<Thread> threads = new ArrayList<>();
-        CountDownLatch completed = new CountDownLatch(threadCount);
-
-        System.out.println("THREADS " + threadCount);
+//        CountDownLatch completed = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
             frontiers.add(new PriorityBlockingQueue(10000, new ScheduleNodeAStarComparator(problem)));
         }
 
-        System.out.println("FRONTS " + frontiers.size());
-
         AddToFrontier(frontiers.get(0), Collections.singletonList(problem.GetStartNode()));
 
-        ScheduleNode intialSearchResult = InitialSearch(threadCount);
+        ScheduleNode initialSearchResult = InitialSearch(threadCount);
 
-        if (intialSearchResult != null) {
-            return intialSearchResult;
+        if (initialSearchResult != null) {
+            return initialSearchResult;
         }
 
         DistributeFrontiers(threadCount);
@@ -94,12 +97,11 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ThreadSearch2(threadIndex);
+                    ThreadSearchPaper(threadIndex);
                 }
                 }));
 
             threads.get(i).start();
-            System.out.println("RUN " + i);
         }
 
         for (int i = 0; i < threadCount; i++) {
@@ -120,7 +122,6 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 //            System.out.println(e.toString());
 //        }
 
-        System.out.println("CHECKED  " + schedules);
 
         return currentOptimal;
     }
@@ -136,7 +137,6 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 stealWork(threadIndex);
 
                 if (frontier.isEmpty()) {
-                    System.out.println("ENDED");
                     completed.countDown();
                     return;
                 }
@@ -161,9 +161,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
         }
     }
 
-    private void ThreadSearch2(Integer threadIndex) {
-        System.out.println("BEGIN " + threadIndex);
-
+    private void ThreadSearchPaper(Integer threadIndex) {
         boolean hasWork = true;
         PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(threadIndex);
 
@@ -173,17 +171,13 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
         Random rand = new Random();
 
-        System.out.println("1");
+
 
         while (doneThreads.get() < frontiers.size()) {
-            //System.out.println("2");
             while (!frontier.isEmpty()) {
-                //System.out.println("3");
                 ScheduleNode nextNode = frontier.poll();
 
-                schedules++;
-
-                //Sync
+                //Sync possible
 
                 if (nextNode == null) {
                     continue;
@@ -215,40 +209,18 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 hasWork = false;
             }
 
-            System.out.println("EMPTY " + threadIndex);
-
             if (frontiers.size() != 1) {
                 Integer victim = otherThreads.get(rand.nextInt(frontiers.size() - 1));
 
-                System.out.println("STEAL  " + threadIndex + "  VIC " + victim);
-                ScheduleNode stolen = null;
-
-                try {
-                    stolen = frontiers.get(victim).poll();
-                }
-                catch (IndexOutOfBoundsException e) {
-                    System.out.println("ERROR");
-                }
-
-
-                if (stolen == null) {
-                    System.out.println("STOLEN NULL");
-                }
-                else {
-                    System.out.println("ATTEMPT " + stolen.id);
-                }
-
+                ScheduleNode stolen = frontiers.get(victim).poll();
 
                 if (stolen != null && (currentOptimal == null || stolen.fValue < currentOptimal.GetValue())) {
                     frontier.add(stolen);
                     hasWork = true;
                     doneThreads.decrementAndGet();
-                    System.out.println("STOLEN " + threadIndex + " " + victim);
                 }
             }
         }
-
-        System.out.println("DONE  " + threadIndex);
     }
 
     private void DistributeFrontiers(Integer threadCount) {
@@ -285,7 +257,6 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     }
 
     private void stealWork(Integer threadIndex) {
-        //System.out.println("STEAL  " + threadIndex);
 
         while (true) {
             for (int i = 0; i < frontiers.size(); i++) {
@@ -301,8 +272,6 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 return;
             }
         }
-
-
 
     }
 }
