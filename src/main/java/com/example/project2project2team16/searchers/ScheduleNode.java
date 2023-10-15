@@ -268,7 +268,7 @@ public class ScheduleNode {
     }
 
     private void addTask(Node newTask, Integer processor) {
-        List<Edge> incomingEdges = newTask.enteringEdges().collect(Collectors.toList());
+        List<Edge> incomingEdges = newTask.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
 
         Integer earliestStartTime = processorEndTimes.get(processor);
         Integer previousEndTime = earliestStartTime;
