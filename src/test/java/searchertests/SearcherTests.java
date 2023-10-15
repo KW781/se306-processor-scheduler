@@ -1,9 +1,7 @@
 package searchertests;
 
-import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.utils.DotFileParser;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
