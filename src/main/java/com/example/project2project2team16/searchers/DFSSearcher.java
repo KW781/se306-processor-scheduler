@@ -8,10 +8,10 @@ import java.util.*;
  * Basic Searcher producing an optional solution using DFS. Can be extended from for more advanced search algorithms.
  */
 public class DFSSearcher {
-    SchedulingProblem problem;
-    Collection<ScheduleNode> frontier;
-    ScheduleNode optimal = null;
-    Integer currentOptimalTime;
+    protected SchedulingProblem problem;
+    protected Collection<ScheduleNode> frontier;
+    private ScheduleNode optimal = null;
+    private Integer currentOptimalTime;
 
     /**
      * Constructor which sets problem for the search

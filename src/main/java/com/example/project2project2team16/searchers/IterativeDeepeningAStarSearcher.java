@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class IterativeDeepeningAStarSearcher extends AStarSearcher {
-    Integer evalLimit = 0;
-    Integer nextEvalLimit = 0;
+    private Integer evalLimit = 0;
+    private Integer nextEvalLimit = 0;
 
     public IterativeDeepeningAStarSearcher(SchedulingProblem problem) {
         super(problem);
@@ -14,8 +14,8 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
     @Override
     public void initialiseSearcher() {
         super.initialiseSearcher();
-        nextEvalLimit = problem.getStartNode().fValue;
-        evalLimit = problem.getStartNode().fValue;
+        nextEvalLimit = problem.getStartNode().getfValue();
+        evalLimit = problem.getStartNode().getfValue();
     }
 
     @Override
@@ -23,11 +23,11 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
             ScheduleNode newNode = newNodes.get(i);
 
-            if (newNode.fValue <= evalLimit) {
+            if (newNode.getfValue() <= evalLimit) {
                 pruneOrAdd(newNode);
             }
             else {
-                nextEvalLimit = Math.min(nextEvalLimit, newNode.fValue);
+                nextEvalLimit = Math.min(nextEvalLimit, newNode.getfValue());
             }
         }
     }
@@ -44,9 +44,6 @@ public class IterativeDeepeningAStarSearcher extends AStarSearcher {
             ScheduleNode startNode = problem.getStartNode();
             SchedulingProblem.initialiseF(startNode);
             addToFrontier(Collections.singletonList(startNode));
-            schedulesAdded = 0;
-            dups = 0;
-            schedulesExplored = 0;
         }
 
         return result;

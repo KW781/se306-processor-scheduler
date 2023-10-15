@@ -6,8 +6,6 @@ import com.example.project2project2team16.searchers.SchedulingProblem;
 import com.example.project2project2team16.utils.AppConfig;
 import org.graphstream.graph.Graph;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class DFSSearcherTests extends SearcherTests {
 
     @Override

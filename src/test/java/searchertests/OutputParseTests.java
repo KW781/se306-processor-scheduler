@@ -7,8 +7,6 @@ import com.example.project2project2team16.searchers.SchedulingProblem;
 import org.graphstream.graph.Graph;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class OutputParseTests {
 
     private ScheduleNode RunSearch(Graph taskGraph, Integer processorNum) {

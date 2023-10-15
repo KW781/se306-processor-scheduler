@@ -19,7 +19,6 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
@@ -41,13 +40,9 @@ import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryManagerMXBean;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.Map;
 
 public class MainVisualisationController {
@@ -312,18 +307,23 @@ public class MainVisualisationController {
             rows[i] = new XYChart.Series();
         }
 
-        for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.getVisited().entrySet()) {
-            String taskId = entry.getKey();
-            Integer taskProcessor = entry.getValue().getKey();
-            Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
-            Integer taskStartTime = entry.getValue().getValue() - taskWeight;
-            int processorIdDisplay = taskProcessor + 1;
-            int styleCode = taskProcessor % 5;
+        // Tries to update graph before the schedule has been loaded.
+        // So we catch and ignore the exception.
+        try {
+            for (Map.Entry<String, Pair<Integer, Integer>> entry : scheduleNode.getVisited().entrySet()) {
+                String taskId = entry.getKey();
+                Integer taskProcessor = entry.getValue().getKey();
+                Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
+                Integer taskStartTime = entry.getValue().getValue() - taskWeight;
+                int processorIdDisplay = taskProcessor + 1;
+                int styleCode = taskProcessor % 5;
 
-            GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart" + styleCode);
-            XYChart.Data data = new XYChart.Data(taskStartTime, "P" + processorIdDisplay, taskData);
-            rows[taskProcessor].getData().add(data);
-        }
+                GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart" + styleCode);
+                XYChart.Data data = new XYChart.Data(taskStartTime, "P" + processorIdDisplay, taskData);
+                rows[taskProcessor].getData().add(data);
+            }
+        } catch (NullPointerException ignored) {}
+
 
         ganttChart.getData().clear();
         for (int i = 0; i < numProcessors; i++) {
@@ -405,7 +405,11 @@ public class MainVisualisationController {
      */
     public static double getCPUUsage() {
         DecimalFormat df = new DecimalFormat("#.#");
-        return Double.parseDouble(df.format((osBean.getSystemLoadAverage() * 100) / osBean.getAvailableProcessors()));
+        double cpuUsage = ((osBean.getSystemLoadAverage() * 100) / osBean.getAvailableProcessors());
+        if (cpuUsage > 100) {
+            cpuUsage = 100.0;
+        }
+        return Double.parseDouble(df.format(cpuUsage));
     }
 
     /**
@@ -417,6 +421,9 @@ public class MainVisualisationController {
         long totalMem = memBean.getHeapMemoryUsage().getMax();
         long memUsed = memBean.getHeapMemoryUsage().getUsed();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
+        if (memoryUsage > 100) {
+            memoryUsage = 100;
+        }
         return (int) Math.round(memoryUsage);
     }
 }

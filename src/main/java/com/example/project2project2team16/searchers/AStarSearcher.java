@@ -12,11 +12,8 @@ import java.util.List;
  * A searcher which utilises the A* searching algorithm
  */
 public class AStarSearcher extends GreedySearcher {
-    Set<ScheduleNode> createdSchedules = new HashSet<>();
-    int tasksVisited = 0;
-    int dups = 0;
-    int schedulesAdded = 0;
-    int schedulesExplored = 0;
+    protected Set<ScheduleNode> createdSchedules = new HashSet<>();
+    protected int tasksVisited = 0;
 
     /**
      * Constructor which sets problem for the search
@@ -37,7 +34,7 @@ public class AStarSearcher extends GreedySearcher {
 
         // Adds the first node to the GUI if visualisation is enabled
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-        helper.addNode(startNode, startNode.parent);
+        helper.addNode(startNode, startNode.getParent());
         helper.setStartNode(startNode);
     }
 
@@ -54,21 +51,18 @@ public class AStarSearcher extends GreedySearcher {
     protected void pruneOrAdd(ScheduleNode node) {
         // Tries to prune using Processor Normalisation technique
         if (createdSchedules.contains(node)) {
-            dups++;
             return;
         }
 
         // Tries to prune using Equivalent Schedule technique
         // If the ScheduleNode had a fixed task order at any point,
         // then Equivalent Schedule pruning is disabled.
-        if (!node.hadFixedTaskOrder) {
+        if (!node.isHadFixedTaskOrder()) {
             if (node.isEquivalent()) {
-                dups++;
                 return;
             }
         }
 
-        schedulesAdded++;
         frontier.add(node);
         createdSchedules.add(node);
     }
@@ -96,14 +90,13 @@ public class AStarSearcher extends GreedySearcher {
             // Checks if the ScheduleNode has visited more tasks than the previous maximum tasks visited
             // If true, it is considered the next best partial schedule
             // Therefore it is added to the GUI for visualisation
-            if (nextNode.visited.size() > tasksVisited) {
+            if (nextNode.getVisited().size() > tasksVisited) {
                 GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-                helper.addNode(nextNode, nextNode.parent);
+                helper.addNode(nextNode, nextNode.getParent());
                 helper.updateOptimalNode(nextNode);
-                tasksVisited = nextNode.visited.size();
+                tasksVisited = nextNode.getVisited().size();
             }
 
-            schedulesExplored++;
             // If the ScheduleNode has visited all the tasks, immediately return as it is optimal.
             if (problem.isGoal(nextNode)) {
                 return nextNode;
@@ -113,9 +106,9 @@ public class AStarSearcher extends GreedySearcher {
                 // If the ScheduleNode expands any unpromising children,
                 // it is added back to the frontier. (Partial Expansion)
                 addToFrontier(problem.getNeighbourStates(nextNode));
-                if (nextNode.unpromisingChildren) {
+                if (nextNode.hasUnpromisingChildren()) {
                     frontier.add(nextNode);
-                    nextNode.unpromisingChildren = false;
+                    nextNode.setUnpromisingChildren(false);
                 }
             }
         }

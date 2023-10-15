@@ -13,36 +13,36 @@ import java.util.stream.Collectors;
  */
 public class ScheduleNode {
     // Total schedule nodes created, used to identify each ScheduleNode
-    static int numCreated = 0;
+    private static int numCreated = 0;
 
     //Task Id as key, data is pair of processor run on and end time.
-    Map<String, Pair<Integer, Integer>> visited;
-    Set<Node> availableTasks;
-    List<Integer> processorEndTimes;
-    List<Node> processorLastTasks;
+    private Map<String, Pair<Integer, Integer>> visited;
+    private Set<Node> availableTasks;
+    private List<Integer> processorEndTimes;
+    private List<Node> processorLastTasks;
     // If not null, represents the fixed task order of the ScheduleNode
-    List<Node> fixedTaskOrder;
+    private List<Node> fixedTaskOrder;
     // All the tasks scheduled on each processor
-    List<List<Node>> processorTasks;
+    private List<List<Node>> processorTasks;
     // The last task scheduled
-    Node lastTask;
+    private Node lastTask;
     // The last processor a task was added to
-    Integer lastProcessor;
+    private Integer lastProcessor;
     // Number of processors available for scheduling
-    Integer processorCount;
-    ScheduleNode parent;
+    private Integer processorCount;
+    private ScheduleNode parent;
     // Estimate cost of complete schedule
-    Integer fValue = 0;
-    Integer idleTime = 0;
-    public Integer completedTaskDuration = 0;
+    private Integer fValue = 0;
+    private Integer idleTime = 0;
+    private Integer completedTaskDuration = 0;
     // True if at any point, the schedule had a fixed task order
-    boolean hadFixedTaskOrder = false;
+    private boolean hadFixedTaskOrder = false;
     // The heuristic used to generate the fValue
-    Heuristic heuristicUsed;
+    private Heuristic heuristicUsed;
     // True if any unpromising children were detected on expansion
-    boolean unpromisingChildren = false;
-    int id;
-    int threadId = 0;
+    private boolean unpromisingChildren = false;
+    private int id;
+    private int threadId = 0;
 
     /**
      * Creates the initial empty schedule, ready for expansion.
@@ -102,13 +102,6 @@ public class ScheduleNode {
 
         id = numCreated;
         numCreated++;
-    }
-
-    /**
-     * @return Tasks visited by this ScheduleNode
-     */
-    public Map<String, Pair<Integer, Integer>> getVisited() {
-        return visited;
     }
 
     /**
@@ -400,7 +393,7 @@ public class ScheduleNode {
         lastProcessor = processor;
         idleTime += earliestStartTime - previousEndTime;
 
-        completedTaskDuration += newTask.getAttribute("Weight", Double.class).intValue();
+        completedTaskDuration = completedTaskDuration + newTask.getAttribute("Weight", Double.class).intValue();
 
         addNewTasks(newTask);
     }
@@ -681,7 +674,70 @@ public class ScheduleNode {
                 '}';
     }
 
+    /**
+     * @return Tasks visited by this ScheduleNode
+     */
+    public Map<String, Pair<Integer, Integer>> getVisited() {
+        return visited;
+    }
+
     public void setThreadId(int threadId) {
         this.threadId = threadId;
+    }
+
+    public int getThreadId() {
+        return this.threadId;
+    }
+
+    public Set<Node> getAvailableTasks() {
+        return availableTasks;
+    }
+    
+    public List<Integer> getProcessorEndTimes() {
+        return processorEndTimes;
+    }
+
+    public List<Node> getProcessorLastTasks() {
+        return processorLastTasks;
+    }
+
+    public Node getLastTask() {
+        return lastTask;
+    }
+
+    public Integer getLastProcessor() {
+        return lastProcessor;
+    }
+
+    public Integer getProcessorCount() {
+        return processorCount;
+    }
+
+    public void setfValue(Integer fValue) {
+        this.fValue = fValue;
+    }
+
+    public Integer getIdleTime() {
+        return idleTime;
+    }
+
+    public Integer getCompletedTaskDuration() {
+        return completedTaskDuration;
+    }
+
+    public boolean isHadFixedTaskOrder() {
+        return hadFixedTaskOrder;
+    }
+
+    public void setHeuristicUsed(Heuristic heuristicUsed) {
+        this.heuristicUsed = heuristicUsed;
+    }
+
+    public boolean hasUnpromisingChildren() {
+        return unpromisingChildren;
+    }
+
+    public void setUnpromisingChildren(boolean unpromisingChildren) {
+        this.unpromisingChildren = unpromisingChildren;
     }
 }

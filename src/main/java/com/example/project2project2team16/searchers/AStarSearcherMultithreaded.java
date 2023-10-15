@@ -41,7 +41,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
         super.initialiseSearcher();
 
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-        helper.addNode(startNode, startNode.parent);
+        helper.addNode(startNode, startNode.getParent());
         helper.setStartNode(startNode);
     }
 
@@ -57,7 +57,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 continue;
             }
 
-            if (!newNode.hadFixedTaskOrder) {
+            if (!newNode.isHadFixedTaskOrder()) {
                 if (newNode.isEquivalent()) {
                     continue;
                 }
@@ -79,7 +79,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     private ScheduleNode getNextNode(PriorityBlockingQueue<ScheduleNode> frontier) {
         ScheduleNode node = frontier.poll();
 
-        if (node == null || currentOptimal != null && node.fValue >= currentOptimal.getValue()) {
+        if (node == null || currentOptimal != null && node.getfValue() >= currentOptimal.getValue()) {
             return null;
         }
 
@@ -113,12 +113,12 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
             int threadIndex = i;
 
             threads.add(
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    threadSearchPaper(threadIndex);
-                }
-                }));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            threadSearchPaper(threadIndex);
+                        }
+                    }));
 
             threads.get(i).start();
         }
@@ -166,20 +166,20 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 }
 
                 // Visualisation update
-                if (nextNode.visited.size() > tasksVisited) {
+                if (nextNode.getVisited().size() > tasksVisited) {
                     synchronized (visLock) {
-                        if (nextNode.visited.size() > tasksVisited) {
+                        if (nextNode.getVisited().size() > tasksVisited) {
                             nextNode.setThreadId(threadIndex);
                             GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-                            helper.addNode(nextNode, nextNode.parent);
+                            helper.addNode(nextNode, nextNode.getParent());
                             helper.updateOptimalNode(nextNode);
-                            tasksVisited = nextNode.visited.size();
+                            tasksVisited = nextNode.getVisited().size();
                         }
                     }
                 }
 
                 // If node could be an improvement on the current optimal
-                if (currentOptimal == null || nextNode.fValue < currentOptimal.getValue()) {
+                if (currentOptimal == null || nextNode.getfValue() < currentOptimal.getValue()) {
                     if (problem.isGoal(nextNode)) {
                         synchronized (lock) {
                             if (currentOptimal == null || nextNode.getValue() < currentOptimal.getValue()) {
@@ -189,9 +189,9 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                     }
                     else {
                         addToFrontier(frontier, problem.getNeighbourStates(nextNode));
-                        if (nextNode.unpromisingChildren) {
+                        if (nextNode.hasUnpromisingChildren()) {
                             frontier.add(nextNode);
-                            nextNode.unpromisingChildren = false;
+                            nextNode.setUnpromisingChildren(false);
                         }
                     }
                 }
@@ -212,7 +212,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
                 ScheduleNode stolen = frontiers.get(victim).poll();
 
-                if (stolen != null && (currentOptimal == null || stolen.fValue < currentOptimal.getValue())) {
+                if (stolen != null && (currentOptimal == null || stolen.getfValue() < currentOptimal.getValue())) {
                     frontier.add(stolen);
                     hasWork = true;
                     doneThreads.decrementAndGet();
@@ -255,9 +255,9 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 return nextNode;
             } else {
                 addToFrontier(frontier, problem.getNeighbourStates(nextNode));
-                if (nextNode.unpromisingChildren) {
+                if (nextNode.hasUnpromisingChildren()) {
                     frontier.add(nextNode);
-                    nextNode.unpromisingChildren = false;
+                    nextNode.setUnpromisingChildren(false);
                 }
             }
         }
