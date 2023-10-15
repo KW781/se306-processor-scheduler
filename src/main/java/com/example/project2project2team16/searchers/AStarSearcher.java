@@ -86,30 +86,30 @@ public class AStarSearcher extends GreedySearcher {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ThreadSearch(threadIndex, completed);
+                    ThreadSearch2(threadIndex);
                 }
                 }));
 
             threads.get(i).start();
         }
 
-//        for (int i = 0; i < threadCount; i++) {
-//            try {
-//                threads.get(i).join();
-//            }
-//            catch (InterruptedException e) {
-//                System.out.println("Thread waiting failed");
-//                System.out.println(e.toString());
-//            }
-//        }
+        for (int i = 0; i < threadCount; i++) {
+            try {
+                threads.get(i).join();
+            }
+            catch (InterruptedException e) {
+                System.out.println("Thread waiting failed");
+                System.out.println(e.toString());
+            }
+        }
 
-        try {
-            completed.await();
-        }
-        catch (InterruptedException e) {
-            System.out.println("Thread waiting failed");
-            System.out.println(e.toString());
-        }
+//        try {
+//            completed.await();
+//        }
+//        catch (InterruptedException e) {
+//            System.out.println("Thread waiting failed");
+//            System.out.println(e.toString());
+//        }
 
         return currentOptimal;
     }
@@ -158,6 +158,10 @@ public class AStarSearcher extends GreedySearcher {
 
                 //Sync
 
+                if (nextNode == null) {
+                    continue;
+                }
+
                 if (currentOptimal == null || nextNode.fValue < currentOptimal.GetValue()) {
                     if (problem.IsGoal(nextNode)) {
                         synchronized (lock) {
@@ -182,7 +186,7 @@ public class AStarSearcher extends GreedySearcher {
 
             Integer victim = rand.nextInt(frontiers.size());
 
-            System.out.println("STEAL  " + threadIndex + "   " + victim);
+            //System.out.println("STEAL  " + threadIndex + "   " + victim);
 
             ScheduleNode stolen = frontiers.get(victim).poll();
 
@@ -226,7 +230,7 @@ public class AStarSearcher extends GreedySearcher {
     }
 
     private void stealWork(Integer threadIndex) {
-        System.out.println("STEAL  " + threadIndex);
+        //System.out.println("STEAL  " + threadIndex);
 
         while (true) {
             for (int i = 0; i < frontiers.size(); i++) {
