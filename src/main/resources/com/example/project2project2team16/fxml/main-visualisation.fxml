@@ -28,7 +28,7 @@
         <URL value="@../css/main-visualisation.css"/>
     </stylesheets>
     <children>
-        <VBox fx:id="mainBox" alignment="TOP_CENTER" prefHeight="850.0" prefWidth="900.0" spacing="16.0">
+        <VBox fx:id="mainBox" alignment="TOP_CENTER" prefHeight="850.0" prefWidth="900.0" spacing="10.0">
             <Label id="title" alignment="CENTER" text="OVERVIEW" textFill="WHITE"/>
             <children>
                 <HBox id="topContainer" spacing="15.0">
@@ -173,14 +173,15 @@
                         <Insets top="-10.0"/>
                     </padding>
                 </HBox>
-                <StackPane id="progressBox">
-                    <ProgressBar id="progressBar" fx:id="progressBar" prefWidth="900.0" progress="0"/>
-                    <Text fx:id="progressPercentage" id="progressPercentage" fill="WHITE" strokeType="OUTSIDE"
-                          strokeWidth="0.0" text="100%">
-                        <font>
-                            <Font size="24.0"/>
-                        </font>
-                    </Text>
+                <StackPane id="statusBox">
+                    <Rectangle fx:id="statusBar" fill="#ffffff00" height="20.0" width="865.0" stroke="#5A57D8" arcWidth="10.0"
+                               arcHeight="10.0" StackPane.alignment="CENTER"/>
+                    <HBox alignment="CENTER">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="STATUS: " styleClass="statusDisplay"/>
+
+                        <Text fx:id="statusText" id="progressPercentage" fill="WHITE" strokeType="OUTSIDE"
+                              strokeWidth="0.0" text="READY" styleClass="statusDisplay"/>
+                    </HBox>
                 </StackPane>
                 <HBox maxWidth="900.0" spacing="15.0">
                     <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container">
