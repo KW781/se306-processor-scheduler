@@ -153,5 +153,25 @@ public class AStarSearcher extends GreedySearcher {
             frontiers.get(i).add(nodes.poll());
         }
     }
-    
+
+    public ScheduleNode InitialSearch(Integer threadCount) {
+        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(0);
+
+        while (!IsFrontierEmpty()) {
+            if (frontier.size() >= threadCount) {
+                return null;
+            }
+
+            ScheduleNode nextNode = GetNextNode(frontier);
+
+            if (problem.IsGoal(nextNode)) {
+                return nextNode;
+            }
+            else {
+                AddToFrontier(frontier, problem.GetNeighbourStates(nextNode));
+            }
+        }
+
+        return null;
+    }
 }
