@@ -35,7 +35,7 @@ Then I would run the following in the terminal:
 java -jar scheduler.jar input_graph.dot 2 -p 2 -o output_graph -v
 ```
 
-i![Screenshot 2023-10-16 034903](https://github.com/UOASOFTENG306/project-2-project-2-team-16/assets/100402382/270e9862-099d-44df-9554-d4178f29ca8e)
+![Screenshot 2023-10-16 034903](https://github.com/UOASOFTENG306/project-2-project-2-team-16/assets/100402382/270e9862-099d-44df-9554-d4178f29ca8e)
 
 
 ## 💾 Technology Stack
