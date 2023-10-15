@@ -18,8 +18,8 @@ java -jar scheduler.jar COMMAND_LINE_PARAMS
 Note that `COMMAND_LINE_PARAMS` is a series of command line parameters that specify the configuration for the app to be run with:
 * `INPUT.dot` - The input dot file that you would like the search to be performed on, `INPUT` is the file name (Compulsory).
 * `NUM_PROCESSORS` - The number of processors that the tasks in the task graph need to be scheduled on (Compulsory).
-* `-p NUM_CORES` - This flag specifies the number of cores that the searching needs to be performed with, `NUM-CORES` is the number of cores (Optional).
-* `-o OUTPUT.dot` - The name of the output dot file for the optimal schedule that you would like it to be, `OUTPUT` is the file name (Optional).
+* `-p NUM_CORES` - This flag specifies the number of cores that the searching needs to be performed with, `NUM-CORES` is the number of cores. The default number of cores is 1 (Optional).
+* `-o OUTPUT.dot` - The name of the output dot file for the optimal schedule that you would like it to be, `OUTPUT` is the file name. The default file name is `INPUT-output.dot` where `INPUT` is the file name of the input dot file (Optional).
 * `-v` - If this flag is added, then the app runs with the visualisation, otherwise it doesn't (Optional).
 
 For example, let's suppose I wanted to run the app with the following conditions:
