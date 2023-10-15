@@ -55,7 +55,6 @@
                                         <Text fx:id="nodePathCost" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="-" styleClass="nodeInfoText"/>
                                     </VBox>
-
                                 </HBox>
                                 <HBox fx:id="graphControls" spacing="13.0" alignment="CENTER" layoutX="115.0"
                                       layoutY="6.0">
@@ -175,7 +174,7 @@
                     </padding>
                 </HBox>
                 <StackPane id="progressBox">
-                    <ProgressBar id="progressBar" fx:id="progressBar" prefWidth="900.0"/>
+                    <ProgressBar id="progressBar" fx:id="progressBar" prefWidth="900.0" progress="0"/>
                     <Text fx:id="progressPercentage" id="progressPercentage" fill="WHITE" strokeType="OUTSIDE"
                           strokeWidth="0.0" text="100%">
                         <font>
@@ -184,37 +183,53 @@
                     </Text>
                 </StackPane>
                 <HBox maxWidth="900.0" spacing="15.0">
-                    <VBox prefWidth="350.0" prefHeight="185.0" styleClass="container">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE" styleClass="bottomHeaders"/>
+                    <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container">
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
+                              styleClass="bottomHeaders"/>
                     </VBox>
-                    <VBox prefWidth="350.0" styleClass="container">
-                        <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE" styleClass="bottomHeaders"/>
-                        <HBox alignment="CENTER">
-                            <VBox alignment="CENTER" spacing="5.0">
-                                <HBox spacing="4.0">
-                                    <Circle fill="#5A57D8" radius="10.0" stroke="black" strokeWidth="0.5"/>
-                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Idle-Time"/>
-                                </HBox>
-                                <HBox spacing="4.0">
-                                    <Circle fill="#3700B4" radius="10.0" stroke="black" strokeWidth="0.5"/>
-                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Data-Ready"/>
-                                </HBox>
-                                <HBox spacing="4.0">
-                                    <Circle fill="#7F39FB" radius="10.0" stroke="black" strokeWidth="0.5"/>
-                                    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Bottom-Level"/>
-                                </HBox>
-                            </VBox>
-                            <PieChart fx:id="heuristicPieChart" prefWidth="100.0" prefHeight="100.0"/>
-                        </HBox>
-                    </VBox>
-                    <VBox minWidth="152.0" styleClass="container">
-                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="STATS" styleClass="bottomHeaders"/>
-                        <Text fx:id="currentShortestTimeText" fill="WHITE" strokeType="OUTSIDE"
-                              strokeWidth="0.0" text="0" textAlignment="CENTER">
-                            <font>
-                                <Font size="20.0"/>
-                            </font>
-                        </Text>
+                    <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
+                        <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE"
+                              styleClass="bottomHeaders"/>
+                        <VBox spacing="15.0" alignment="CENTER">
+                            <HBox alignment="CENTER">
+                                <VBox maxWidth="175" spacing="10.0" alignment="CENTER">
+                                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                        <Rectangle fill="#d15ffa" width="28.0" height="28.0" arcWidth="10.0"
+                                                   arcHeight="10.0"/>
+                                        <VBox>
+                                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                  text="Idle-Time"/>
+                                            <Text fx:id="idlePercText" fill="WHITE" strokeType="OUTSIDE"
+                                                  strokeWidth="0.0" text="0%"/>
+                                        </VBox>
+                                    </HBox>
+                                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                        <Rectangle fill="#3700B4" width="28.0" height="28.0" arcWidth="10.0"
+                                                   arcHeight="10.0"/>
+                                        <VBox>
+                                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                  text="Data-Ready"/>
+                                            <Text fx:id="dataPercText" fill="WHITE" strokeType="OUTSIDE"
+                                                  strokeWidth="0.0" text="0%"/>
+                                        </VBox>
+                                    </HBox>
+                                    <HBox spacing="6.0" alignment="CENTER_LEFT">
+                                        <Rectangle fill="#7F39FB" width="28.0" height="28.0" arcWidth="10.0"
+                                                   arcHeight="10.0"/>
+                                        <VBox>
+                                            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0"
+                                                  text="Bottom-Level"/>
+                                            <Text fx:id="bottomPercText" fill="WHITE" strokeType="OUTSIDE"
+                                                  strokeWidth="0.0" text="0%"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+                                <PieChart fx:id="heuristicPieChart" maxWidth="160.0" maxHeight="160.0"/>
+                            </HBox>
+                            <VBox.margin>
+                                <Insets top="5.0" left="38.0"/>
+                            </VBox.margin>
+                        </VBox>
                     </VBox>
                 </HBox>
             </children>
