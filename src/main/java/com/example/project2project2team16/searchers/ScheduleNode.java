@@ -1,5 +1,6 @@
 package com.example.project2project2team16.searchers;
 
+import com.example.project2project2team16.searchers.enums.Heuristic;
 import javafx.util.Pair;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Edge;
@@ -23,6 +24,7 @@ public class ScheduleNode {
     Integer fValue = 0;
     Integer idleTime = 0;
     public Integer completedTaskDuration = 0;
+    Heuristic heuristicUsed;
 
 
 
@@ -248,6 +250,10 @@ public class ScheduleNode {
         return (taskCount == visited.size());
     }
 
+    public Integer getfValue() {
+        return this.fValue;
+    }
+
     public Integer GetValue() {
         int result = 0;
 
@@ -445,6 +451,10 @@ public class ScheduleNode {
         }
 
         return true;
+    }
+
+    public Heuristic getHeuristicUsed() {
+        return this.heuristicUsed;
     }
 
 
