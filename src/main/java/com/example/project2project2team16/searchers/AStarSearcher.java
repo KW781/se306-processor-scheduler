@@ -146,6 +146,56 @@ public class AStarSearcher extends GreedySearcher {
         }
     }
 
+    private void ThreadSearch2(Integer threadIndex) {
+        boolean hasWork = true;
+        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(threadIndex);
+
+        Random rand = new Random();
+
+        while (doneThreads.get() < frontiers.size()) {
+            while (!frontier.isEmpty()) {
+                ScheduleNode nextNode = frontier.poll();
+
+                //Sync
+
+                if (currentOptimal == null || nextNode.fValue < currentOptimal.GetValue()) {
+                    if (problem.IsGoal(nextNode)) {
+                        synchronized (lock) {
+                            if (currentOptimal == null || nextNode.GetValue() < currentOptimal.GetValue()) {
+                                currentOptimal = nextNode;
+                            }
+                        }
+                    }
+                    else {
+                        AddToFrontier(frontier, problem.GetNeighbourStates(nextNode));
+                    }
+                }
+                else {
+                    frontier.clear();
+                }
+            }
+
+            if (hasWork) {
+                doneThreads.incrementAndGet();
+                hasWork = false;
+            }
+
+            Integer victim = rand.nextInt(frontiers.size());
+
+            System.out.println("STEAL  " + threadIndex + "   " + victim);
+
+            ScheduleNode stolen = frontiers.get(victim).poll();
+
+            if (stolen != null && (currentOptimal == null || stolen.fValue < currentOptimal.GetValue())) {
+                frontier.add(stolen);
+                hasWork = true;
+                doneThreads.decrementAndGet();
+            }
+        }
+
+        System.out.println("DONE  " + threadIndex);
+    }
+
     private void DistributeFrontiers(Integer threadCount) {
         PriorityBlockingQueue<ScheduleNode> nodes = frontiers.get(0);
 
