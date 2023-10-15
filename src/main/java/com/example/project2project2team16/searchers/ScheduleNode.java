@@ -684,4 +684,8 @@ public class ScheduleNode {
     public void setThreadId(int threadId) {
         this.threadId = threadId;
     }
+
+    public int getThreadId() {
+        return this.threadId;
+    }
 }
