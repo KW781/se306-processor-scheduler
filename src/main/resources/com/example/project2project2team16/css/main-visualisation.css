@@ -13,6 +13,7 @@
 
 .hardwareHeader {
     -fx-font-size: 16px;
+    -fx-font-weight: bold;
 }
 
 .bottomHeaders {
@@ -23,6 +24,15 @@
 .statusDisplay {
     -fx-font-size: 10px;
     -fx-font-weight: bold;
+}
+
+.chart-plot-background {
+    -fx-background-color: #ffffff00;
+}
+
+.axis {
+    -fx-tick-label-font-size: 0.833333em;
+    -fx-tick-label-fill: white;
 }
 
 .chart-pie {

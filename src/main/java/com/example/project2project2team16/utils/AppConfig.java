@@ -7,6 +7,10 @@ public class AppConfig {
     private boolean visualize;
     private String outputFileName;
 
+    public AppConfig(int numCores) {
+        this.numCores = numCores;
+    }
+
     public AppConfig(String inputFilePath, int numProcessors, int numCores, boolean visualize, String outputFileName) {
         this.inputFilePath = inputFilePath;
         this.numProcessors = numProcessors;

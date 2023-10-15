@@ -42,6 +42,7 @@ public class ScheduleNode {
     // True if any unpromising children were detected on expansion
     boolean unpromisingChildren = false;
     int id;
+    int threadId = 0;
 
     /**
      * Creates the initial empty schedule, ready for expansion.
@@ -678,5 +679,9 @@ public class ScheduleNode {
         return "ScheduleNode{" +
                 "id=" + id +
                 '}';
+    }
+
+    public void setThreadId(int threadId) {
+        this.threadId = threadId;
     }
 }

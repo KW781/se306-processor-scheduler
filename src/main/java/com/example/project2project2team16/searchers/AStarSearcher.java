@@ -106,10 +106,6 @@ public class AStarSearcher extends GreedySearcher {
             schedulesExplored++;
             // If the ScheduleNode has visited all the tasks, immediately return as it is optimal.
             if (problem.isGoal(nextNode)) {
-                System.out.println(schedulesAdded + " schedules added");
-                System.out.println(dups + " duplicates detected");
-                System.out.println(schedulesExplored + " schedules explored");
-                System.out.println("--------------------------------");
                 return nextNode;
             }
             else {
