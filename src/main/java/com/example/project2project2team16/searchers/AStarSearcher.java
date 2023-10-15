@@ -8,6 +8,9 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.List;
 
+/**
+ * A searcher which utilises the A* searching algorithm
+ */
 public class AStarSearcher extends GreedySearcher {
     Set<ScheduleNode> createdSchedules = new HashSet<>();
     int tasksVisited = 0;
@@ -15,17 +18,24 @@ public class AStarSearcher extends GreedySearcher {
     int schedulesAdded = 0;
     int schedulesExplored = 0;
 
+    /**
+     * Constructor which sets problem for the search
+     *
+     * @param problem The Scheduling Problem
+     */
     public AStarSearcher(SchedulingProblem problem) {
         super(problem);
     }
 
     @Override
     public void InitialiseSearcher() {
+        // Initialises the F value for the starting node
         ScheduleNode startNode = problem.GetStartNode();
         SchedulingProblem.initialiseF(startNode);
 
         super.InitialiseSearcher();
 
+        // Adds the first node to the GUI if visualisation is enabled
         GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
         helper.addNode(startNode, startNode.parent);
         helper.setStartNode(startNode);
@@ -36,26 +46,38 @@ public class AStarSearcher extends GreedySearcher {
         frontier = new PriorityQueue<>(new ScheduleNodeAStarComparator(problem));
     }
 
+    /**
+     * Tries to prune the provided ScheduleNode.
+     * If it is not detected as a duplicate, it is added to the frontier.
+     * @param node The ScheduleNode to add.
+     */
+    protected void PruneOrAdd(ScheduleNode node) {
+        // Tries to prune using Processor Normalisation technique
+        if (createdSchedules.contains(node)) {
+            dups++;
+            return;
+        }
+
+        // Tries to prune using Equivalent Schedule technique
+        // If the ScheduleNode had a fixed task order at any point,
+        // then Equivalent Schedule pruning is disabled.
+        if (!node.hadFixedTaskOrder) {
+            if (node.IsEquivalent()) {
+                dups++;
+                return;
+            }
+        }
+
+        schedulesAdded++;
+        frontier.add(node);
+        createdSchedules.add(node);
+    }
+
     @Override
     protected void AddToFrontier(List<ScheduleNode> newNodes) {
         for (ScheduleNode newNode : newNodes) {
-            if (createdSchedules.contains(newNode)) {
-                dups++;
-                continue;
-            }
-
-            if (!newNode.hadFixedTaskOrder) {
-                if (newNode.IsEquivalent()) {
-                    dups++;
-                    continue;
-                }
-            }
-
-            schedulesAdded++;
-            frontier.add(newNode);
-            createdSchedules.add(newNode);
+            PruneOrAdd(newNode);
         }
-
     }
 
     @Override
@@ -63,10 +85,17 @@ public class AStarSearcher extends GreedySearcher {
         return ((PriorityQueue<ScheduleNode>) frontier).poll();
     }
 
+    /**
+     * Performs a search using the A* search algorithm.
+     * @return The optimal schedule, or null if none is found.
+     */
     @Override
     public ScheduleNode Search() {
         while (!IsFrontierEmpty()) {
             ScheduleNode nextNode = GetNextNode();
+            // Checks if the ScheduleNode has visited more tasks than the previous maximum tasks visited
+            // If true, it is considered the next best partial schedule
+            // Therefore it is added to the GUI for visualisation
             if (nextNode.visited.size() > tasksVisited) {
                 GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
                 helper.addNode(nextNode, nextNode.parent);
@@ -75,6 +104,7 @@ public class AStarSearcher extends GreedySearcher {
             }
 
             schedulesExplored++;
+            // If the ScheduleNode has visited all the tasks, immediately return as it is optimal.
             if (problem.IsGoal(nextNode)) {
                 System.out.println(schedulesAdded + " schedules added");
                 System.out.println(dups + " duplicates detected");
@@ -83,6 +113,9 @@ public class AStarSearcher extends GreedySearcher {
                 return nextNode;
             }
             else {
+                // Expanding and adding the neighbour states to the frontier.
+                // If the ScheduleNode expands any unpromising children,
+                // it is added back to the frontier. (Partial Expansion)
                 AddToFrontier(problem.GetNeighbourStates(nextNode));
                 if (nextNode.unpromisingChildren) {
                     frontier.add(nextNode);
