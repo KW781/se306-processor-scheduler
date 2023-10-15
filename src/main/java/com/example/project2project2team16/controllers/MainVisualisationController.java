@@ -158,7 +158,7 @@ public class MainVisualisationController {
             mainBox.setDisable(false);
 
             statusText.setText("RUNNING");
-            statusBar.setStyle("-fx-fill: #00ff00; -fx-opacity: 20%");
+            statusBar.setStyle("-fx-fill: #FF0000; -fx-opacity: 20%");
             setGraphAndDisplay(GraphVisualisationHelper.instance().getGraph());
             timeline.play();
             if (VisualisationApplication.getThreadCount() == 1) {
@@ -368,7 +368,7 @@ public class MainVisualisationController {
     public void stopTimer() {
         timeline.stop();
         statusText.setText("COMPLETED");
-        statusBar.setStyle("-fx-fill: #FF0000; -fx-opacity: 20%");
+        statusBar.setStyle("-fx-fill: #00ff00; -fx-opacity: 20%");
     }
 
     private void createPieChart() {
