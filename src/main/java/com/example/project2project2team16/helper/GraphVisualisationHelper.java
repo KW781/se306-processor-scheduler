@@ -1,14 +1,9 @@
 package com.example.project2project2team16.helper;
 
-import com.example.project2project2team16.VisualisationApplication;
-import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.searchers.ScheduleNode;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
-
-import java.awt.*;
-import java.util.Random;
 
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
@@ -65,7 +60,7 @@ public class GraphVisualisationHelper {
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 addEdge(parentNode, node);
             } else {
-                addNode(parent, parent.GetParent());
+                addNode(parent, parent.getParent());
                 currentScheduleNumber++;
                 node = graph.addNode(scheduleNode.toString());
 

@@ -15,8 +15,8 @@ public class ScheduleNodeAStarComparator implements Comparator<ScheduleNode> {
 
     @Override
     public int compare(ScheduleNode node1, ScheduleNode node2) {
-        int value1 = SchedulingProblem.CalculateF(node1);
-        int value2 = SchedulingProblem.CalculateF(node2);
+        int value1 = SchedulingProblem.calculateF(node1);
+        int value2 = SchedulingProblem.calculateF(node2);
 
         // If the F value is equal, it will prioritise the node with the most number of tasks scheduled
         if (value1 == value2) {
