@@ -109,7 +109,6 @@ public class MainVisualisationController {
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
     private ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
-
     @FXML
     public void initialize() {
         // Initialise graph controls
@@ -279,9 +278,6 @@ public class MainVisualisationController {
 
 
     public void updateGanttChart(ScheduleNode scheduleNode, int numProcessors) {
-
-
-        // Set block height dependent on number of processors
         int blockHeight = 150/numProcessors;
         if(blockHeight > 50) {
             blockHeight = 50;
@@ -289,30 +285,26 @@ public class MainVisualisationController {
 
         ganttChart.setBlockHeight(blockHeight);
 
-        // Initialize processor row of tasks
         XYChart.Series[] rows = new XYChart.Series[numProcessors];
         for (int i = 0; i < numProcessors; i++) {
             rows[i] = new XYChart.Series();
         }
 
         for (Map.Entry<String, Pair<Integer,Integer>> entry : scheduleNode.GetVisited().entrySet()) {
-            int taskProcessor = entry.getValue().getKey();
             String taskId = entry.getKey();
-            int taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
-            int taskStartTime = entry.getValue().getValue() - taskWeight;
+            Integer taskProcessor = entry.getValue().getKey();
+            Integer taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
+            Integer taskStartTime = entry.getValue().getValue() - taskWeight;
             int processorIdDisplay = taskProcessor+1;
             int styleCode = taskProcessor % 5;
 
-            // Create bar in chart
             GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart"+styleCode);
             XYChart.Data data = new XYChart.Data(taskStartTime, "Processor " + processorIdDisplay, taskData);
             rows[taskProcessor].getData().add(data);
         }
 
-        // remove previous graph
         ganttChart.getData().clear();
         for (int i = 0; i < numProcessors; i++) {
-            NumberAxis x = (NumberAxis) ganttChart.getXAxis();
             ganttChart.getData().add(rows[i]);
         }
     }
@@ -324,7 +316,7 @@ public class MainVisualisationController {
     public void setNodeClicked(FxViewPanel view) {
         view.setOnMousePressed(clickEvent -> {
             GraphicElement node = view.findGraphicElementAt(EnumSet.of(InteractiveElement.NODE), clickEvent.getX(), clickEvent.getY());
-            if (node != null) {
+            if (node != null && !node.getLabel().equals("0")){
                 node.setAttribute("ui.style", " stroke-mode: plain; stroke-color: #5A57D8; stroke-width: 2.0; size: 25px;");
                 nodeLabel.setText((String) node.getAttribute("ui.heuristic"));
                 nodePathCost.setText((String) node.getAttribute("ui.heuristicCost"));
