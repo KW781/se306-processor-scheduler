@@ -114,7 +114,37 @@ public class AStarSearcher extends GreedySearcher {
         return currentOptimal;
     }
 
+    private void ThreadSearch(Integer threadIndex, CountDownLatch completed) {
+        PriorityBlockingQueue<ScheduleNode> frontier = frontiers.get(threadIndex);
 
+        while (true) {
+            ScheduleNode nextNode = GetNextNode(frontier);
+
+            if (nextNode == null) {
+                frontier.clear();
+                stealWork(threadIndex);
+
+                if (frontier.isEmpty()) {
+                    System.out.println("ENDED");
+                    completed.countDown();
+                    return;
+                }
+
+                continue;
+            }
+
+            if (problem.IsGoal(nextNode)) {
+                synchronized (lock) {
+                    if (currentOptimal == null || nextNode.GetValue() < currentOptimal.GetValue()) {
+                        currentOptimal = nextNode;
+                    }
+                }
+            }
+            else {
+                AddToFrontier(frontier, problem.GetNeighbourStates(nextNode));
+            }
+        }
+    }
 
 
 
