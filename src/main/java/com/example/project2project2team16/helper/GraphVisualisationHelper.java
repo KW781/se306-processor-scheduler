@@ -1,20 +1,18 @@
 package com.example.project2project2team16.helper;
 
-import com.example.project2project2team16.VisualisationApplication;
-import com.example.project2project2team16.controllers.MainVisualisationController;
 import com.example.project2project2team16.searchers.ScheduleNode;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
-import java.awt.*;
-import java.util.Random;
 
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
     private Graph graph;
+    private Graph taskGraph;
     private ScheduleNode currentOptimal;
     private Integer currentScheduleNumber = 0;
+    private Integer processorCount;
     static final String LABEL = "ui.label";
     static final String HEURISTIC = "ui.heuristic";
     static final String HEURISTIC_COST = "ui.heuristicCost";
@@ -29,6 +27,12 @@ public class GraphVisualisationHelper {
 
         return instance;
     }
+    public void setTaskGraph(Graph taskGraph) {
+        this.taskGraph = taskGraph;
+    }
+    public Graph getTaskGraph() {
+        return taskGraph;
+    }
 
     public void setGraph(Graph graph) {
         this.graph = graph;
@@ -36,6 +40,14 @@ public class GraphVisualisationHelper {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public void setProcessorCount(int numProcessors) {
+        this.processorCount = numProcessors;
+    }
+
+    public int getProcessorCount() {
+        return processorCount;
     }
 
     public void addEdge(Node source, Node target) {
@@ -106,6 +118,10 @@ public class GraphVisualisationHelper {
         currentOptimal = newOptimal;
     }
 
+    public ScheduleNode getCurrentOptimal() {
+        return currentOptimal;
+    }
+
     public String getHeuristic(ScheduleNode node) {
         Heuristic currentHeuristic = node.getHeuristicUsed();
 
@@ -119,4 +135,6 @@ public class GraphVisualisationHelper {
         }
         return null;
     }
+
+
 }

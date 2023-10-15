@@ -75,6 +75,8 @@ public class VisualisationApplication extends Application {
             System.exit(1);
         }
 
+        GraphVisualisationHelper.instance().setTaskGraph(DotFileParser.parseDotFile(appConfig.getInputFilePath()));
+        GraphVisualisationHelper.instance().setProcessorCount(appConfig.getNumProcessors());
         GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");

@@ -20,6 +20,7 @@
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.chart.PieChart?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="790.0"
       prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
@@ -186,6 +187,7 @@
                     <VBox prefWidth="500.0" prefHeight="180.0" styleClass="container">
                         <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
                               styleClass="bottomHeaders"/>
+                        <BorderPane fx:id="ganttPane" prefHeight="250.0"/>
                     </VBox>
                     <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
                         <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE"

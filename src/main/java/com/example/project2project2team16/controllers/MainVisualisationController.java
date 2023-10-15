@@ -3,6 +3,8 @@ package com.example.project2project2team16.controllers;
 import com.example.project2project2team16.VisualisationApplication;
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.SchedulingProblem;
+import com.example.project2project2team16.searchers.ScheduleNode;
+import com.example.project2project2team16.visualisation.GanttChart;
 import com.sun.management.OperatingSystemMXBean;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -13,38 +15,43 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.chart.PieChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.fx_viewer.FxViewPanel;
 import org.graphstream.ui.fx_viewer.FxViewer;
-import org.graphstream.ui.fx_viewer.util.FxMouseManager;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants;
 import org.graphstream.ui.javafx.FxGraphRenderer;
-import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
-import org.graphstream.ui.view.util.MouseManager;
 
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 
 public class MainVisualisationController {
+    @FXML
+    public BorderPane ganttPane;
     @FXML
     private AnchorPane graphPane;
     @FXML
@@ -90,10 +97,12 @@ public class MainVisualisationController {
     @FXML
     private FxViewer viewer;
     private Graph scheduleSearchGraph;
+    private Graph taskGraph;
     private double timeElapsed = 0;
     private Timeline timeline;
     private Double mouseX;
     private Double mouseY;
+    private GanttChart<Number, String> ganttChart;
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
@@ -111,6 +120,8 @@ public class MainVisualisationController {
         startBox.setVisible(true);
 
         createPieChart();
+        createGanttChart();
+        ganttChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/project2project2team16/css/ganttchart.css")).toExternalForm());
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(0.001),
                 actionEvent -> {
@@ -124,6 +135,7 @@ public class MainVisualisationController {
                         }
                         memoryText.setText(String.valueOf(getMemoryUsage()));
                         memoryArc.setLength(((double) getMemoryUsage() / 100) * -360);
+                        updateGanttChart(GraphVisualisationHelper.instance().getCurrentOptimal(), GraphVisualisationHelper.instance().getProcessorCount());
                         updatePieChart(SchedulingProblem.getIdleTimeUsageCount(), SchedulingProblem.getDataReadyHeuristicCount(), SchedulingProblem.getBottomLevelHeuristicCount());
                     });
                 }
@@ -143,7 +155,7 @@ public class MainVisualisationController {
 
     public void setGraphAndDisplay(Graph graph) {
         scheduleSearchGraph = graph;
-        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('com/example/project2project2team16/css/graph.css')");
+        scheduleSearchGraph.setAttribute("ui.stylesheet", "url('file://src/main/resources/com/example/project2project2team16/css/graph.css')");
         scheduleSearchGraph.setAttribute("ui.quality");
 
         viewer = new FxViewer(scheduleSearchGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -253,6 +265,59 @@ public class MainVisualisationController {
         }));
     }
 
+    public void createGanttChart() {
+        NumberAxis xAxis = new NumberAxis();
+        CategoryAxis yAxis = new CategoryAxis();
+        xAxis.setAnimated(false); // axis animations are removed
+        yAxis.setAnimated(false); // axis animations are removed
+
+        ganttChart = new GanttChart<>(xAxis, yAxis);
+        ganttPane.setCenter(ganttChart);
+        ganttChart.setLegendVisible(false);
+
+        //live adjust gantt chart based on window size
+        ganttChart.heightProperty().addListener((observable, oldValue, newValue) -> ganttChart.setBlockHeight(newValue.doubleValue()*0.70/(4))); // replace '4' with number of cores to be used
+    }
+
+
+    public void updateGanttChart(ScheduleNode scheduleNode, int numProcessors) {
+
+
+        // Set block height dependent on number of processors
+        int blockHeight = 150/numProcessors;
+        if(blockHeight > 50) {
+            blockHeight = 50;
+        }
+
+        ganttChart.setBlockHeight(blockHeight);
+
+        // Initialize processor row of tasks
+        XYChart.Series[] rows = new XYChart.Series[numProcessors];
+        for (int i = 0; i < numProcessors; i++) {
+            rows[i] = new XYChart.Series();
+        }
+
+        for (Map.Entry<String, Pair<Integer,Integer>> entry : scheduleNode.GetVisited().entrySet()) {
+            int taskProcessor = entry.getValue().getKey();
+            String taskId = entry.getKey();
+            int taskWeight = GraphVisualisationHelper.instance().getTaskGraph().getNode(taskId).getAttribute("Weight", Double.class).intValue();
+            int taskStartTime = entry.getValue().getValue() - taskWeight;
+            int processorIdDisplay = taskProcessor+1;
+            int styleCode = taskProcessor % 5;
+
+            // Create bar in chart
+            GanttChart.ExtraData taskData = new GanttChart.ExtraData(taskWeight, "ganttchart"+styleCode);
+            XYChart.Data data = new XYChart.Data(taskStartTime, "Processor " + processorIdDisplay, taskData);
+            rows[taskProcessor].getData().add(data);
+        }
+
+        // remove previous graph
+        ganttChart.getData().clear();
+        for (int i = 0; i < numProcessors; i++) {
+            NumberAxis x = (NumberAxis) ganttChart.getXAxis();
+            ganttChart.getData().add(rows[i]);
+        }
+    }
     /**
      * This method handles the mouse events on a node
      *
