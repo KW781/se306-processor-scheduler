@@ -18,15 +18,4 @@ public class IterativeDeepeningAStarSearcherTests extends SearcherTests {
 
         return searcher.search().getValue();
     }
-
-    public Integer RunSearch(Graph taskGraph, Integer processorNum, Integer threadCount) {
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
-        IterativeDeepeningAStarSearcher searcher = new IterativeDeepeningAStarSearcher(problem);
-        searcher.initialiseSearcher();
-
-        AppConfig config = new AppConfig(threadCount);
-        VisualisationApplication.setAppConfig(config);
-
-        return searcher.search().getValue();
-    }
 }

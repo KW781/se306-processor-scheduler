@@ -51,21 +51,21 @@ public class ScheduleNode {
      * @param startingTasks List of the all the initially available to schedule tasks
      */
     public ScheduleNode(Integer processorCount, Set<Node> startingTasks) {
-        this.setAvailableTasks(startingTasks);
-        this.setProcessorCount(processorCount);
-        setVisited(new HashMap<>());
-        setProcessorEndTimes(new ArrayList<>());
-        setProcessorLastTasks(new ArrayList<>());
-        setProcessorTasks(new ArrayList<>());
+        this.availableTasks = startingTasks;
+        this.processorCount = processorCount;
+        visited = new HashMap<>();
+        processorEndTimes = new ArrayList<>();
+        processorLastTasks = new ArrayList<>();
+        processorTasks = new ArrayList<>();
 
         for (int i = 0; i < processorCount; i++) {
-            getProcessorEndTimes().add(0);
-            getProcessorLastTasks().add(null);
-            getProcessorTasks().add(new ArrayList<>());
+            processorEndTimes.add(0);
+            processorLastTasks.add(null);
+            processorTasks.add(new ArrayList<>());
         }
 
-        setId(getNumCreated());
-        setNumCreated(getNumCreated() + 1);
+        id = numCreated;
+        numCreated++;
     }
 
     /**
@@ -79,44 +79,29 @@ public class ScheduleNode {
      * @param fixedTaskOrder The fixed task order to expand this ScheduleNode. Can be null if none exists.
      */
     public ScheduleNode(ScheduleNode copy, Node newTask, Integer processor, List<Node> fixedTaskOrder) {
-        this.setFixedTaskOrder(fixedTaskOrder);
-        this.setHadFixedTaskOrder(fixedTaskOrder != null || copy.isHadFixedTaskOrder());
-        this.setVisited(new HashMap<>(copy.getVisited()));
-        this.setAvailableTasks(new HashSet<>(copy.getAvailableTasks()));
-        this.setProcessorEndTimes(new ArrayList<>(copy.getProcessorEndTimes()));
-        this.setProcessorLastTasks(new ArrayList<>(copy.getProcessorLastTasks()));
-        this.setProcessorCount(copy.getProcessorCount());
-        this.setParent(copy);
-        this.setIdleTime(copy.getIdleTime());
-        this.setfValue(0);
+        this.fixedTaskOrder = fixedTaskOrder;
+        this.hadFixedTaskOrder = fixedTaskOrder != null || copy.hadFixedTaskOrder;
+        this.visited = new HashMap<>(copy.visited);
+        this.availableTasks = new HashSet<>(copy.availableTasks);
+        this.processorEndTimes = new ArrayList<>(copy.processorEndTimes);
+        this.processorLastTasks = new ArrayList<>(copy.processorLastTasks);
+        this.processorCount = copy.processorCount;
+        this.parent = copy;
+        this.idleTime = copy.idleTime;
+        this.fValue = 0;
 
-        this.setProcessorTasks(new ArrayList<>());
+        this.processorTasks = new ArrayList<>();
 
-        for (List<Node> taskIds : copy.getProcessorTasks()) {
-            getProcessorTasks().add(new ArrayList<>(taskIds));
+        for (List<Node> taskIds : copy.processorTasks) {
+            processorTasks.add(new ArrayList<>(taskIds));
         }
 
-        this.setCompletedTaskDuration(copy.getCompletedTaskDuration());
+        this.completedTaskDuration = copy.completedTaskDuration;
 
         addTask(newTask, processor);
 
-        setId(getNumCreated());
-        setNumCreated(getNumCreated() + 1);
-    }
-
-    public static int getNumCreated() {
-        return numCreated;
-    }
-
-    public static void setNumCreated(int numCreated) {
-        ScheduleNode.numCreated = numCreated;
-    }
-
-    /**
-     * @return Tasks visited by this ScheduleNode
-     */
-    public Map<String, Pair<Integer, Integer>> getVisited() {
-        return visited;
+        id = numCreated;
+        numCreated++;
     }
 
     /**
@@ -130,8 +115,8 @@ public class ScheduleNode {
             // Sort tasks by their non-decreasing data ready time
             // DRT = Finish time of parent + weight of edge (parent -> task)
             // With no parent, DRT = 0
-            int aDRT = SchedulingProblem.calculateMaxDRT(a, -1, getVisited());
-            int bDRT = SchedulingProblem.calculateMaxDRT(b, -1, getVisited());
+            int aDRT = SchedulingProblem.calculateMaxDRT(a, -1, visited);
+            int bDRT = SchedulingProblem.calculateMaxDRT(b, -1, visited);
 
             if (aDRT > bDRT) {
                 return 1;
@@ -212,8 +197,8 @@ public class ScheduleNode {
                 // If a task has a parent, all other tasks' parent must be allocated to the same processor
                 String parent = task.enteringEdges().findFirst().orElseThrow().getSourceNode().getId();
                 if (parentProcessor == null) {
-                    parentProcessor = getVisited().get(parent).getKey();
-                } else if (!parentProcessor.equals(getVisited().get(parent).getKey())) {
+                    parentProcessor = visited.get(parent).getKey();
+                } else if (!parentProcessor.equals(visited.get(parent).getKey())) {
                     return null;
                 }
             } catch (NoSuchElementException ignored) {}
@@ -238,39 +223,39 @@ public class ScheduleNode {
         int minUnpromising = Integer.MAX_VALUE;
 
         // If fixed task order is empty, there are no expansions possible.
-        if (getFixedTaskOrder().isEmpty()) {
+        if (fixedTaskOrder.isEmpty()) {
             return new ArrayList<>();
         }
 
         // Expands by scheduling the first task in the fixed order on every available processor.
-        Node task = getFixedTaskOrder().get(0);
-        List<Node> newFixedTaskOrder = getFixedTaskOrder().subList(1, getFixedTaskOrder().size());
+        Node task = fixedTaskOrder.get(0);
+        List<Node> newFixedTaskOrder = fixedTaskOrder.subList(1, fixedTaskOrder.size());
 
-        for (int p = 0; p < getProcessorCount(); p++) {
+        for (int p = 0; p < processorCount; p++) {
             ScheduleNode childSchedule = new ScheduleNode(this, task, p, newFixedTaskOrder);
             SchedulingProblem.calculateF(childSchedule);
 
             // Checks if fixed task order is still possible without recalculations.
             // If the Child Schedule has added new tasks to availableTasks, then a recalculation is required.
-            if (childSchedule.getAvailableTasks().size() > getAvailableTasks().size() - 1) {
-                childSchedule.setFixedTaskOrder(null);
+            if (childSchedule.availableTasks.size() > availableTasks.size() - 1) {
+                childSchedule.fixedTaskOrder = null;
             }
 
             // Performs Partial Expansion.
             // Adds the Child Schedule if it's F value is <= the current F value
             // Otherwise, stores the minimum F value of the unpromising children.
-            if (childSchedule.getfValue() <= this.getfValue()) {
+            if (childSchedule.fValue <= this.fValue) {
                 neighbours.add(childSchedule);
             } else {
-                minUnpromising = Math.min(minUnpromising, childSchedule.getfValue());
+                minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
             }
         }
 
         // If != Integer.MAX_VALUE, it means unpromising children were found.
         // Updates the ScheduleNode's F value accordingly and sets unpromisingChildren flag to true.
         if (minUnpromising != Integer.MAX_VALUE) {
-            setUnpromisingChildren(true);
-            this.setfValue(minUnpromising);
+            unpromisingChildren = true;
+            this.fValue = minUnpromising;
         }
 
         return neighbours;
@@ -288,26 +273,26 @@ public class ScheduleNode {
         int minUnpromising = Integer.MAX_VALUE;
 
         // Checks and expands via Fixed Task Ordering if possible.
-        if (getFixedTaskOrder() == null) {
-            setFixedTaskOrder(getFixedTaskOrder(new ArrayList<>(getAvailableTasks())));
+        if (fixedTaskOrder == null) {
+            fixedTaskOrder = getFixedTaskOrder(new ArrayList<>(availableTasks));
         }
 
-        if (getFixedTaskOrder() != null) {
+        if (fixedTaskOrder != null) {
             return generateNeighboursWithFTO();
         }
 
         // Expands normally using Partial Expansion.
-        for (Node task : getAvailableTasks()) {
-            for (int i = 0; i < getProcessorCount(); i++) {
+        for (Node task : availableTasks) {
+            for (int i = 0; i < processorCount; i++) {
                 ScheduleNode childSchedule = new ScheduleNode(this, task, i, null);
                 SchedulingProblem.calculateF(childSchedule);
 
                 // Adds the Child Schedule if it's F value is <= the current F value
                 // Otherwise, stores the minimum F value of the unpromising children.
-                if (childSchedule.getfValue() <= this.getfValue()) {
+                if (childSchedule.fValue <= this.fValue) {
                     neighbours.add(childSchedule);
                 } else {
-                    minUnpromising = Math.min(minUnpromising, childSchedule.getfValue());
+                    minUnpromising = Math.min(minUnpromising, childSchedule.fValue);
                 }
             }
         }
@@ -315,8 +300,8 @@ public class ScheduleNode {
         // If != Integer.MAX_VALUE, it means unpromising children were found.
         // Updates the ScheduleNode's F value accordingly and sets unpromisingChildren flag to true.
         if (minUnpromising != Integer.MAX_VALUE) {
-            setUnpromisingChildren(true);
-            this.setfValue(minUnpromising);
+            unpromisingChildren = true;
+            this.fValue = minUnpromising;
         }
 
         return neighbours;
@@ -326,7 +311,7 @@ public class ScheduleNode {
      * @return Number of tasks scheduled
      */
     public int getNumTasksScheduled() {
-        return getVisited().size();
+        return visited.size();
     }
 
     /**
@@ -335,7 +320,7 @@ public class ScheduleNode {
      * @return
      */
     public boolean isComplete(Integer taskCount) {
-        return (taskCount == getVisited().size());
+        return (taskCount == visited.size());
     }
 
     /**
@@ -352,8 +337,8 @@ public class ScheduleNode {
     public Integer getValue() {
         int result = 0;
 
-        for (int i = 0; i < getProcessorEndTimes().size(); i++) {
-            result = Math.max(result, getProcessorEndTimes().get(i));
+        for (int i = 0; i < processorEndTimes.size(); i++) {
+            result = Math.max(result, processorEndTimes.get(i));
         }
 
         return result;
@@ -371,7 +356,7 @@ public class ScheduleNode {
      * @return The path cost of the specified processor.
      */
     public Integer getProcessorPathCost(Integer processor) {
-        return getProcessorEndTimes().get(processor);
+        return processorEndTimes.get(processor);
     }
 
     /**
@@ -382,14 +367,14 @@ public class ScheduleNode {
     private void addTask(Node newTask, Integer processor) {
         List<Edge> incomingEdges = newTask.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
 
-        Integer earliestStartTime = getProcessorEndTimes().get(processor);
+        Integer earliestStartTime = processorEndTimes.get(processor);
         Integer previousEndTime = earliestStartTime;
 
         // Getting the earliest possible start time for this task when scheduled on the specified processor
         for (Edge incomingEdge : incomingEdges) {
-            Integer parentEndTime = getVisited().get(incomingEdge.getSourceNode().getId()).getValue();
+            Integer parentEndTime = visited.get(incomingEdge.getSourceNode().getId()).getValue();
 
-            if (getVisited().get(incomingEdge.getSourceNode().getId()).getKey() != processor) {
+            if (visited.get(incomingEdge.getSourceNode().getId()).getKey() != processor) {
                 parentEndTime += incomingEdge.getAttribute("Weight", Double.class).intValue();
             }
 
@@ -399,16 +384,16 @@ public class ScheduleNode {
         Integer endTime = earliestStartTime + newTask.getAttribute("Weight", Double.class).intValue();
 
         // Updates ScheduleNode information according to the task just scheduled.
-        getVisited().put(newTask.getId(), new Pair<>(processor, endTime));
-        getProcessorEndTimes().set(processor, endTime);
-        getProcessorTasks().get(processor).add(newTask);
-        getProcessorLastTasks().set(processor, newTask);
-        getAvailableTasks().remove(newTask);
-        setLastTask(newTask);
-        setLastProcessor(processor);
-        setIdleTime(getIdleTime() + earliestStartTime - previousEndTime);
+        visited.put(newTask.getId(), new Pair<>(processor, endTime));
+        processorEndTimes.set(processor, endTime);
+        processorTasks.get(processor).add(newTask);
+        processorLastTasks.set(processor, newTask);
+        availableTasks.remove(newTask);
+        lastTask = newTask;
+        lastProcessor = processor;
+        idleTime += earliestStartTime - previousEndTime;
 
-        setCompletedTaskDuration(getCompletedTaskDuration() + newTask.getAttribute("Weight", Double.class).intValue());
+        completedTaskDuration = completedTaskDuration + newTask.getAttribute("Weight", Double.class).intValue();
 
         addNewTasks(newTask);
     }
@@ -426,8 +411,8 @@ public class ScheduleNode {
         int minTime = Integer.MAX_VALUE;
 
         // If task has been visited, then return its end time + current DRT of it's child
-        if (getVisited().containsKey(node.getId())) {
-            return time + getVisited().get(node.getId()).getValue();
+        if (visited.containsKey(node.getId())) {
+            return time + visited.get(node.getId()).getValue();
         }
 
         // Gets the minimum DRT amongst the task's parents
@@ -438,12 +423,12 @@ public class ScheduleNode {
         // If still equal to Integer.MAX_VALUE, it means current task is not scheduled and has no parent.
         // So we estimate min DRT by returning the earliest time the task can be scheduled.
         if (minTime == Integer.MAX_VALUE) {
-            for (int i = 0; i < getProcessorCount(); i++) {
-                if (i == getLastProcessor()) {
+            for (int i = 0; i < processorCount; i++) {
+                if (i == lastProcessor) {
                     minTime = Math.min(newProcessorEndTime, minTime);;
                 }
 
-                minTime = Math.min(getProcessorEndTimes().get(i), minTime);
+                minTime = Math.min(processorEndTimes.get(i), minTime);
             }
             minTime = minTime + node.getAttribute("Weight", Double.class).intValue();
         }
@@ -463,17 +448,17 @@ public class ScheduleNode {
             Node task = taskEndTime.getKey();
             int endTime = taskEndTime.getValue();
             // It can only delay if the new end time is greater than the previous end time
-            if (endTime > getVisited().get(task.getId()).getValue()) {
+            if (endTime > visited.get(task.getId()).getValue()) {
                 // Checks each child of the task for whether it's start time is delayed
                 for (Edge childEdge : task.leavingEdges().collect(Collectors.toList())) {
                     int newDataArrivalTime = endTime + childEdge.getAttribute("Weight", Double.class).intValue();
                     Node child = childEdge.getTargetNode();
                     // If child is already scheduled, checks if the original start time is greater than the new DRT
                     // If the child is on the same processor as the task, then there shouldn't be any issues.
-                    if (getVisited().containsKey(child.getId())) {
-                        Pair<Integer, Integer> childProcessorEndTime = getVisited().get(child.getId());
+                    if (visited.containsKey(child.getId())) {
+                        Pair<Integer, Integer> childProcessorEndTime = visited.get(child.getId());
                         int originalStartTime = childProcessorEndTime.getValue() - child.getAttribute("Weight", Double.class).intValue();
-                        if (originalStartTime > newDataArrivalTime && childProcessorEndTime.getKey() != getLastProcessor()) {
+                        if (originalStartTime > newDataArrivalTime && childProcessorEndTime.getKey() != lastProcessor) {
                             return false;
                         }
                     } else {
@@ -481,8 +466,8 @@ public class ScheduleNode {
                         // For each processor, we hypothetically schedule the child task.
                         // If the DRT of the child task on any processor is greater than the new DRT,
                         // then there are no delays.
-                        for (int p = 0; p < getProcessorCount(); p++) {
-                            if (p == getLastProcessor()) {
+                        for (int p = 0; p < processorCount; p++) {
+                            if (p == lastProcessor) {
                                 continue;
                             }
 
@@ -495,7 +480,7 @@ public class ScheduleNode {
                                     continue;
                                 }
 
-                                Pair<Integer, Integer> parentProcessorEndTime = getVisited().get(parent.getId());
+                                Pair<Integer, Integer> parentProcessorEndTime = visited.get(parent.getId());
 
                                 int parentDataArrivalTime;
                                 if (parentProcessorEndTime == null) {
@@ -529,18 +514,18 @@ public class ScheduleNode {
      */
     public boolean isEquivalent() {
         // If no task has been scheduled, then return false.
-        if (getLastTask() == null || getLastProcessor() == null) {
+        if (lastTask == null || lastProcessor == null) {
             return false;
         }
 
         // Makes a deep copy of the tasks scheduled on the last processor.
-        List<Node> tasks = new ArrayList<>(getProcessorTasks().get(getLastProcessor()));
+        List<Node> tasks = new ArrayList<>(processorTasks.get(lastProcessor));
         // Gets all the parents of the last scheduled task.
-        Set<Node> lastTaskParents = getLastTask().enteringEdges().map(Edge::getTargetNode).collect(Collectors.toSet());
+        Set<Node> lastTaskParents = lastTask.enteringEdges().map(Edge::getTargetNode).collect(Collectors.toSet());
 
-        int maxTimeToFinish = getProcessorEndTimes().get(getLastProcessor());
+        int maxTimeToFinish = processorEndTimes.get(lastProcessor);
         int i = tasks.size() - 2;
-        int lastTaskId = getLastTask().getIndex();
+        int lastTaskId = lastTask.getIndex();
 
         while (i >= 0 && lastTaskId < tasks.get(i).getIndex()) {
             List<Pair<Node, Integer>> taskEndTimes = new ArrayList<>();
@@ -560,9 +545,9 @@ public class ScheduleNode {
 
                 // Getting the earliest start time of task
                 for (Edge parent : parents) {
-                    Integer parentEndTime = getVisited().get(parent.getSourceNode().getId()).getValue();
+                    Integer parentEndTime = visited.get(parent.getSourceNode().getId()).getValue();
 
-                    if (getVisited().get(parent.getSourceNode().getId()).getKey() != getLastProcessor()) {
+                    if (visited.get(parent.getSourceNode().getId()).getKey() != lastProcessor) {
                         parentEndTime += parent.getAttribute("Weight", Double.class).intValue();
                     }
 
@@ -601,14 +586,14 @@ public class ScheduleNode {
 
             // If any dependency has not been scheduled, then it does not meet the prerequisites.
             for (Edge dependency : dependencies) {
-                if (!getVisited().containsKey(dependency.getSourceNode().getId())) {
+                if (!visited.containsKey(dependency.getSourceNode().getId())) {
                     prereqsMet = false;
                     break;
                 }
             }
 
             if (prereqsMet) {
-                getAvailableTasks().add(child.getTargetNode());
+                availableTasks.add(child.getTargetNode());
             }
         }
     }
@@ -633,20 +618,20 @@ public class ScheduleNode {
         if (o == null || getClass() != o.getClass()) return false;
         ScheduleNode other = (ScheduleNode) o;
 
-        if (getVisited().size() != other.getVisited().size()) {
+        if (visited.size() != other.visited.size()) {
             return false;
         }
 
         // For each visited task, both processors must have visited the task
         // and both processors must have the same task end time for the respective task.
-        for (String nodeId : getVisited().keySet()) {
-            Pair<Integer, Integer> otherProcessorEndTime = other.getVisited().get(nodeId);
+        for (String nodeId : visited.keySet()) {
+            Pair<Integer, Integer> otherProcessorEndTime = other.visited.get(nodeId);
 
             if (otherProcessorEndTime == null) {
                 return false;
             }
 
-            Pair<Integer, Integer> thisProcessorEndTime = getVisited().get(nodeId);
+            Pair<Integer, Integer> thisProcessorEndTime = visited.get(nodeId);
 
             if (!thisProcessorEndTime.getValue().equals(otherProcessorEndTime.getValue())) {
                 return false;
@@ -669,8 +654,8 @@ public class ScheduleNode {
     public int hashCode() {
         Map<String, Integer> nodeEndTime = new HashMap<>();
 
-        for (String nodeId : getVisited().keySet()) {
-            Pair<Integer, Integer> processorEndTime = getVisited().get(nodeId);
+        for (String nodeId : visited.keySet()) {
+            Pair<Integer, Integer> processorEndTime = visited.get(nodeId);
 
             nodeEndTime.put(nodeId, processorEndTime.getValue());
         }
@@ -685,8 +670,15 @@ public class ScheduleNode {
     @Override
     public String toString() {
         return "ScheduleNode{" +
-                "id=" + getId() +
+                "id=" + id +
                 '}';
+    }
+
+    /**
+     * @return Tasks visited by this ScheduleNode
+     */
+    public Map<String, Pair<Integer, Integer>> getVisited() {
+        return visited;
     }
 
     public void setThreadId(int threadId) {
@@ -697,76 +689,28 @@ public class ScheduleNode {
         return this.threadId;
     }
 
-    public void setVisited(Map<String, Pair<Integer, Integer>> visited) {
-        this.visited = visited;
-    }
-
     public Set<Node> getAvailableTasks() {
         return availableTasks;
     }
-
-    public void setAvailableTasks(Set<Node> availableTasks) {
-        this.availableTasks = availableTasks;
-    }
-
+    
     public List<Integer> getProcessorEndTimes() {
         return processorEndTimes;
-    }
-
-    public void setProcessorEndTimes(List<Integer> processorEndTimes) {
-        this.processorEndTimes = processorEndTimes;
     }
 
     public List<Node> getProcessorLastTasks() {
         return processorLastTasks;
     }
 
-    public void setProcessorLastTasks(List<Node> processorLastTasks) {
-        this.processorLastTasks = processorLastTasks;
-    }
-
-    public List<Node> getFixedTaskOrder() {
-        return fixedTaskOrder;
-    }
-
-    public void setFixedTaskOrder(List<Node> fixedTaskOrder) {
-        this.fixedTaskOrder = fixedTaskOrder;
-    }
-
-    public List<List<Node>> getProcessorTasks() {
-        return processorTasks;
-    }
-
-    public void setProcessorTasks(List<List<Node>> processorTasks) {
-        this.processorTasks = processorTasks;
-    }
-
     public Node getLastTask() {
         return lastTask;
-    }
-
-    public void setLastTask(Node lastTask) {
-        this.lastTask = lastTask;
     }
 
     public Integer getLastProcessor() {
         return lastProcessor;
     }
 
-    public void setLastProcessor(Integer lastProcessor) {
-        this.lastProcessor = lastProcessor;
-    }
-
     public Integer getProcessorCount() {
         return processorCount;
-    }
-
-    public void setProcessorCount(Integer processorCount) {
-        this.processorCount = processorCount;
-    }
-
-    public void setParent(ScheduleNode parent) {
-        this.parent = parent;
     }
 
     public void setfValue(Integer fValue) {
@@ -777,43 +721,23 @@ public class ScheduleNode {
         return idleTime;
     }
 
-    public void setIdleTime(Integer idleTime) {
-        this.idleTime = idleTime;
-    }
-
     public Integer getCompletedTaskDuration() {
         return completedTaskDuration;
-    }
-
-    public void setCompletedTaskDuration(Integer completedTaskDuration) {
-        this.completedTaskDuration = completedTaskDuration;
     }
 
     public boolean isHadFixedTaskOrder() {
         return hadFixedTaskOrder;
     }
 
-    public void setHadFixedTaskOrder(boolean hadFixedTaskOrder) {
-        this.hadFixedTaskOrder = hadFixedTaskOrder;
-    }
-
     public void setHeuristicUsed(Heuristic heuristicUsed) {
         this.heuristicUsed = heuristicUsed;
     }
 
-    public boolean isUnpromisingChildren() {
+    public boolean hasUnpromisingChildren() {
         return unpromisingChildren;
     }
 
     public void setUnpromisingChildren(boolean unpromisingChildren) {
         this.unpromisingChildren = unpromisingChildren;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

@@ -8,8 +8,8 @@ import java.util.*;
  * Basic Searcher producing an optional solution using DFS. Can be extended from for more advanced search algorithms.
  */
 public class DFSSearcher {
-    private SchedulingProblem problem;
-    private Collection<ScheduleNode> frontier;
+    protected SchedulingProblem problem;
+    protected Collection<ScheduleNode> frontier;
     private ScheduleNode optimal = null;
     private Integer currentOptimalTime;
 
@@ -19,7 +19,7 @@ public class DFSSearcher {
      * @param problem The Scheduling Problem
      */
     public DFSSearcher(SchedulingProblem problem) {
-        this.setProblem(problem);
+        this.problem = problem;
     }
 
     /**
@@ -27,7 +27,7 @@ public class DFSSearcher {
      */
     public void initialiseSearcher() {
         initialiseFrontier();
-        addToFrontier(Collections.singletonList(getProblem().getStartNode()));
+        addToFrontier(Collections.singletonList(problem.getStartNode()));
     }
 
     /**
@@ -39,23 +39,23 @@ public class DFSSearcher {
         while (!isFrontierEmpty()) {
             ScheduleNode nextNode = getNextNode();
 
-            if (getProblem().isGoal(nextNode)) {
+            if (problem.isGoal(nextNode)) {
                 updateOptimal(nextNode);
             }
             else {
-                addToFrontier(getProblem().getNeighbourStates(nextNode));
+                addToFrontier(problem.getNeighbourStates(nextNode));
             }
         }
 
-        return getOptimal();
+        return optimal;
     }
 
     /**
      * @return The next Schedule Node to expand.
      */
     protected ScheduleNode getNextNode() {
-        ScheduleNode nextNode = ((Stack<ScheduleNode>) getFrontier()).peek();
-        ((Stack<ScheduleNode>) getFrontier()).pop();
+        ScheduleNode nextNode = ((Stack<ScheduleNode>) frontier).peek();
+        ((Stack<ScheduleNode>) frontier).pop();
 
         return nextNode;
     }
@@ -64,14 +64,14 @@ public class DFSSearcher {
      * Initialises the frontier to prepare for searching.
      */
     protected void initialiseFrontier() {
-        setFrontier(new Stack<ScheduleNode>());
+        frontier = new Stack<ScheduleNode>();
     }
 
     /**
      * @return True if frontier is empty, false otherwise.
      */
     protected boolean isFrontierEmpty() {
-        return getFrontier().isEmpty();
+        return frontier.isEmpty();
     }
 
     /**
@@ -80,8 +80,8 @@ public class DFSSearcher {
      */
     protected void addToFrontier(List<ScheduleNode> newNodes) {
         for (int i = newNodes.size() - 1; i >= 0; i--) {
-            if (getOptimal() == null || newNodes.get(i).getValue() < getCurrentOptimalTime()) {
-                getFrontier().add(newNodes.get(i));
+            if (optimal == null || newNodes.get(i).getValue() < currentOptimalTime) {
+                frontier.add(newNodes.get(i));
             }
         }
     }
@@ -94,44 +94,12 @@ public class DFSSearcher {
     private void updateOptimal(ScheduleNode newSolution) {
         Integer newSolutionTime = newSolution.getValue();
 
-        if (getOptimal() == null || newSolutionTime < getCurrentOptimalTime()) {
+        if (optimal == null || newSolutionTime < currentOptimalTime) {
             GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
-            helper.addNode(newSolution, getOptimal());
+            helper.addNode(newSolution, optimal);
             helper.updateOptimalNode(newSolution);
-            setOptimal(newSolution);
-            setCurrentOptimalTime(newSolutionTime);
+            optimal = newSolution;
+            currentOptimalTime = newSolutionTime;
         }
-    }
-
-    public SchedulingProblem getProblem() {
-        return problem;
-    }
-
-    public void setProblem(SchedulingProblem problem) {
-        this.problem = problem;
-    }
-
-    public Collection<ScheduleNode> getFrontier() {
-        return frontier;
-    }
-
-    public void setFrontier(Collection<ScheduleNode> frontier) {
-        this.frontier = frontier;
-    }
-
-    public ScheduleNode getOptimal() {
-        return optimal;
-    }
-
-    public void setOptimal(ScheduleNode optimal) {
-        this.optimal = optimal;
-    }
-
-    public Integer getCurrentOptimalTime() {
-        return currentOptimalTime;
-    }
-
-    public void setCurrentOptimalTime(Integer currentOptimalTime) {
-        this.currentOptimalTime = currentOptimalTime;
     }
 }

@@ -20,14 +20,4 @@ public class DFSSearcherTests extends SearcherTests {
         return searcher.search().getValue();
     }
 
-    public Integer RunSearch(Graph taskGraph, Integer processorNum, Integer threadCount) {
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
-        DFSSearcher searcher = new DFSSearcher(problem);
-        searcher.initialiseSearcher();
-
-        AppConfig config = new AppConfig(threadCount);
-        VisualisationApplication.setAppConfig(config);
-
-        return searcher.search().getValue();
-    }
 }

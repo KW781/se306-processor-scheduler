@@ -18,15 +18,4 @@ public class GreedySearcherTests extends SearcherTests {
 
         return searcher.search().getValue();
     }
-
-    public Integer RunSearch(Graph taskGraph, Integer processorNum, Integer threadCount) {
-        SchedulingProblem problem = new SchedulingProblem(taskGraph, processorNum);
-        GreedySearcher searcher = new GreedySearcher(problem);
-        searcher.initialiseSearcher();
-
-        AppConfig config = new AppConfig(threadCount);
-        VisualisationApplication.setAppConfig(config);
-
-        return searcher.search().getValue();
-    }
 }
