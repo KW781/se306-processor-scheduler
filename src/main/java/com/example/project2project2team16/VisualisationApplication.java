@@ -4,6 +4,7 @@ import com.example.project2project2team16.controllers.MainVisualisationControlle
 import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.exceptions.InvalidArgsException;
 import com.example.project2project2team16.searchers.AStarSearcher;
+import com.example.project2project2team16.searchers.AStarSearcherMultithreaded;
 import com.example.project2project2team16.utils.AppConfig;
 import com.example.project2project2team16.utils.ArgsParser;
 import com.example.project2project2team16.utils.DotFileParser;
@@ -52,6 +53,21 @@ public class VisualisationApplication extends Application {
         stage.show();
     }
 
+    public static void startMultithreadedSearch() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.submit(() -> {
+            Graph taskGraph = DotFileParser.parseDotFile(appConfig.getInputFilePath());
+            SchedulingProblem problem = new SchedulingProblem(taskGraph, appConfig.getNumProcessors());
+            AStarSearcherMultithreaded searcher = new AStarSearcherMultithreaded(problem);
+            searcher.initialiseSearcher();
+            DotFileParser.outputDotFile(searcher.search(), taskGraph, appConfig.getOutputFileName());
+            mainVisualisationController.stopTimer();
+        });
+
+        executorService.shutdown();
+    }
+
     public static void startSearch() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -81,8 +97,18 @@ public class VisualisationApplication extends Application {
         if (appConfig.isVisualized()) {
             System.setProperty("org.graphstream.ui", "javafx");
             launch();
-        } else {
+        } else if (appConfig.getNumCores() == 1) {
             startSearch();
+        } else {
+            startMultithreadedSearch();
         }
+    }
+
+    public static void setAppConfig(AppConfig config) {
+        appConfig = config;
+    }
+
+    public static Integer getThreadCount() {
+        return appConfig.getNumCores();
     }
 }

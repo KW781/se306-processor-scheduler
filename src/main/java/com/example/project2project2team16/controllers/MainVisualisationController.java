@@ -158,7 +158,11 @@ public class MainVisualisationController {
 
             setGraphAndDisplay(GraphVisualisationHelper.instance().getGraph());
             timeline.play();
-            VisualisationApplication.startSearch();
+            if (VisualisationApplication.getThreadCount() == 1) {
+                VisualisationApplication.startSearch();
+            } else {
+                VisualisationApplication.startMultithreadedSearch();
+            }
         });
     }
 
