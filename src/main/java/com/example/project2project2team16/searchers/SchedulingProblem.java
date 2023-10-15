@@ -216,7 +216,7 @@ public class SchedulingProblem {
 
         int cost = 0;
 
-        List<Node> nodeChildren = node.leavingEdges().map(Edge::getTargetNode).collect(Collectors.toList());
+        List<Node> nodeChildren = node.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(Edge::getTargetNode).collect(Collectors.toList());
         for (Node child : nodeChildren) {
             int childCost = dfs(child, dfsMemo);
 
@@ -268,7 +268,7 @@ public class SchedulingProblem {
                 int cp = GetCriticalPath(task) + task.getAttribute("Weight", Double.class).intValue();
 
                 int lastParentEndTime = 0;
-                for (Node parent : task.enteringEdges().map(Edge::getSourceNode).collect(Collectors.toList())) {
+                for (Node parent : task.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).map(Edge::getSourceNode).collect(Collectors.toList())) {
                     lastParentEndTime = Math.max(lastParentEndTime, node.processorEndTimes.get(node.visited.get(parent.getId()).getKey()));
                 }
 
@@ -332,7 +332,7 @@ public class SchedulingProblem {
 
     public static int calculateMaxDRT(Node taskNode, Integer processor, Map<String, Pair<Integer, Integer>> visited) {
         int maxDRT = 0;
-        List<Edge> incomingEdges = taskNode.enteringEdges().collect(Collectors.toList());
+        List<Edge> incomingEdges = taskNode.enteringEdges().filter(edge -> !edge.getId().contains("virtual")).collect(Collectors.toList());
         int finishTime;
 
         for (Edge incomingEdge : incomingEdges) {
