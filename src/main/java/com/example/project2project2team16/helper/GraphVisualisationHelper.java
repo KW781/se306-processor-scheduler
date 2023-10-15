@@ -113,11 +113,19 @@ public class GraphVisualisationHelper {
     }
 
     public void setStartNode(ScheduleNode node) {
+        if (graph == null) {
+            return;
+        }
+
         Node graphNode = graph.getNode(node.toString());
         graphNode.setAttribute("ui.style", "fill-color: #00FF19;");
     }
 
     public void updateOptimalNode(ScheduleNode newOptimal) {
+        if (graph == null) {
+            return;
+        }
+
         Node graphNode = graph.getNode(newOptimal.toString());
         graphNode.setAttribute("ui.style", "fill-color: #FF0000;");
 

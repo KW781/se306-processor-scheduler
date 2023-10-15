@@ -1,6 +1,7 @@
 package com.example.project2project2team16.searchers;
 
 import com.example.project2project2team16.exceptions.PreqrequisiteNotMetException;
+import com.example.project2project2team16.helper.GraphVisualisationHelper;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import javafx.util.Pair;
 import org.graphstream.graph.Edge;
@@ -226,25 +227,25 @@ public class SchedulingProblem {
             return node.fValue;
         }
 
-        // DRT heuristic is currently commented out as it is not improving runtimes
         int loadBalanceHeuristic = loadBalanceHeuristic(node);
-        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
+        // DRT heuristic is currently commented out as it is not improving runtimes
+        // However, it will be used during visualisation, where runtime doesn't matter
+        int dataReadyTimeHeuristic = GraphVisualisationHelper.instance().getGraph() == null ? 0 : dataReadyTimeHeuristic(node);
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
 
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
-//        int maxHeuristic = Math.max(loadBalanceHeuristic, bottomLevelHeuristic);
 
         // Updating which heuristic is used for visualisation information
         if (maxHeuristic == loadBalanceHeuristic) {
             heuristicCount.replace(Heuristic.IDLE_TIME, heuristicCount.get(Heuristic.IDLE_TIME) + 1);
             node.heuristicUsed = Heuristic.IDLE_TIME;
+        } else if (maxHeuristic == dataReadyTimeHeuristic) {
+            heuristicCount.replace(Heuristic.DATA_READY, heuristicCount.get(Heuristic.DATA_READY) + 1);
+            node.heuristicUsed = Heuristic.DATA_READY;
         } else {
             heuristicCount.replace(Heuristic.BOTTOM_LEVEL, heuristicCount.get(Heuristic.BOTTOM_LEVEL) + 1);
             node.heuristicUsed = Heuristic.BOTTOM_LEVEL;
-//        else if (maxHeuristic == dataReadyTimeHeuristic) {
-//            heuristicCount.replace(Heuristic.DATA_READY, heuristicCount.get(Heuristic.DATA_READY) + 1);
-//            node.heuristicUsed = Heuristic.DATA_READY;
-//        }
+
         }
 
         // Set and return the calculated F value

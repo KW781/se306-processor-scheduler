@@ -15,7 +15,7 @@ public abstract class SearcherTests {
 
     @BeforeEach
     public void setup() {
-        GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
+//        GraphVisualisationHelper.instance().setGraph(new SingleGraph("Search Graph"));
     }
 
     @Order(1)
