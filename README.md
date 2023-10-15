@@ -3,6 +3,7 @@ This project is part of the SOFTENG306 design course at the University of Auckla
 
 Our code stems off developing a simple branch-and-bound type algorithm that solves a scheduling problem given from a hypothetical *client*. Following this initial principle, the goal of this project aims to achieve the highest possible performance through parallelisation and visualise this process. 
 
+
 ## 👋 About Us
 We are **Parallels** (Team 16), a group of software engineering students at the [University of Auckland](https://www.auckland.ac.nz) aiming to develop and implement a maintainable and high-performance software algorithm.
 
@@ -33,6 +34,8 @@ Then I would run the following in the terminal:
 ```
 java -jar scheduler.jar input_graph.dot 2 -p 2 -o output_graph -v
 ```
+
+i![Screenshot 2023-10-16 034903](https://github.com/UOASOFTENG306/project-2-project-2-team-16/assets/100402382/270e9862-099d-44df-9554-d4178f29ca8e)
 
 
 ## 💾 Technology Stack
