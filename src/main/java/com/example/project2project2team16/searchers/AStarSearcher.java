@@ -44,7 +44,7 @@ public class AStarSearcher extends GreedySearcher {
                 continue;
             }
 
-            if (newNode.fixedTaskOrder == null) {
+            if (!newNode.hadFixedTaskOrder) {
                 if (newNode.IsEquivalent()) {
                     dups++;
                     continue;
@@ -52,7 +52,6 @@ public class AStarSearcher extends GreedySearcher {
             }
 
             schedulesAdded++;
-            problem.CalculateF(newNode);
             frontier.add(newNode);
             createdSchedules.add(newNode);
         }

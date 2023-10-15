@@ -1,0 +1,27 @@
+digraph equivalent_weights_1 {
+	1	 [Weight=6];
+	2	 [Weight=6];
+	3	 [Weight=6];
+	4	 [Weight=6];
+	5	 [Weight=6];
+	6	 [Weight=6];
+	7	 [Weight=6];
+	8	 [Weight=6];
+	9	 [Weight=6];
+	10	 [Weight=6];
+	11	 [Weight=6];
+	12	 [Weight=6];
+	13	 [Weight=6];
+	14	 [Weight=6];
+	15	 [Weight=6];
+	16	 [Weight=6];
+	17	 [Weight=6];
+	18	 [Weight=6];
+	19	 [Weight=6];
+	20	 [Weight=6];
+	21	 [Weight=6];
+	22	 [Weight=6];
+	23	 [Weight=6];
+	24	 [Weight=6];
+	25	 [Weight=6];
+}
