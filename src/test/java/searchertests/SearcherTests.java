@@ -257,4 +257,20 @@ public abstract class SearcherTests {
 
         assertEquals(680, RunSearch(taskGraph,2));
     }
+
+    @Order(32)
+    @Test
+    public void SeriesParallel_Nodes21_1() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_SeriesParallel-MaxBf-2_Nodes_21_CCR_0.10_WeightType_Random.dot");
+
+        assertEquals(900, RunSearch(taskGraph,8));
+    }
+
+    @Order(32)
+    @Test
+    public void SeriesParallel_Nodes21_99() {
+        Graph taskGraph = DotFileParser.parseDotFile("src/test/resources/2p_SeriesParallel-MaxBf-2_Nodes_21_CCR_0.99_WeightType_Random.dot");
+
+        assertEquals(101, RunSearch(taskGraph,8));
+    }
 }
