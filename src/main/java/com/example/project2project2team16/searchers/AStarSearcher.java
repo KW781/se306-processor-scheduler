@@ -86,30 +86,30 @@ public class AStarSearcher extends GreedySearcher {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ThreadSearch(threadIndex);
+                    ThreadSearch(threadIndex, completed);
                 }
                 }));
 
             threads.get(i).start();
         }
 
-        for (int i = 0; i < threadCount; i++) {
-            try {
-                threads.get(i).join();
-            }
-            catch (InterruptedException e) {
-                System.out.println("Thread waiting failed");
-                System.out.println(e.toString());
-            }
-        }
+//        for (int i = 0; i < threadCount; i++) {
+//            try {
+//                threads.get(i).join();
+//            }
+//            catch (InterruptedException e) {
+//                System.out.println("Thread waiting failed");
+//                System.out.println(e.toString());
+//            }
+//        }
 
-//        try {
-//            completed.await();
-//        }
-//        catch (InterruptedException e) {
-//            System.out.println("Thread waiting failed");
-//            System.out.println(e.toString());
-//        }
+        try {
+            completed.await();
+        }
+        catch (InterruptedException e) {
+            System.out.println("Thread waiting failed");
+            System.out.println(e.toString());
+        }
 
         return currentOptimal;
     }
@@ -146,10 +146,12 @@ public class AStarSearcher extends GreedySearcher {
         }
     }
 
+    private void DistributeFrontiers(Integer threadCount) {
+        PriorityBlockingQueue<ScheduleNode> nodes = frontiers.get(0);
 
-
-
-
-
-
+        for (int i = 1; i < threadCount; i++) {
+            frontiers.get(i).add(nodes.poll());
+        }
+    }
+    
 }
