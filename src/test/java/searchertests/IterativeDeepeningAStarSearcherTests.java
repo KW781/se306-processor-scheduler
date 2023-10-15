@@ -1,7 +1,6 @@
 package searchertests;
 
 import com.example.project2project2team16.VisualisationApplication;
-import com.example.project2project2team16.searchers.AStarSearcher;
 import com.example.project2project2team16.searchers.IterativeDeepeningAStarSearcher;
 import com.example.project2project2team16.searchers.SchedulingProblem;
 import com.example.project2project2team16.utils.AppConfig;
