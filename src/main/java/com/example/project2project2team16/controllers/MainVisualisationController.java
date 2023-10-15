@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -38,7 +39,6 @@ import org.graphstream.ui.javafx.FxGraphRenderer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryManagerMXBean;
@@ -49,7 +49,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.Map;
-
 
 public class MainVisualisationController {
     @FXML
@@ -83,6 +82,8 @@ public class MainVisualisationController {
     @FXML
     private Text bottomPercText;
     @FXML
+    private Text statusText;
+    @FXML
     private Button autoLayoutButton;
     @FXML
     private Button startButton;
@@ -91,13 +92,13 @@ public class MainVisualisationController {
     @FXML
     private Button dragButton;
     @FXML
-    private ProgressBar progressBar;
-    @FXML
     private Arc memoryArc;
     @FXML
     private Arc cpuArc;
     @FXML
     private PieChart heuristicPieChart;
+    @FXML
+    private Rectangle statusBar;
     @FXML
     private FxViewer viewer;
     private Graph scheduleSearchGraph;
@@ -156,6 +157,8 @@ public class MainVisualisationController {
             startBox.setVisible(false);
             mainBox.setDisable(false);
 
+            statusText.setText("RUNNING");
+            statusBar.setStyle("-fx-fill: #FF0000; -fx-opacity: 20%");
             setGraphAndDisplay(GraphVisualisationHelper.instance().getGraph());
             timeline.play();
             if (VisualisationApplication.getThreadCount() == 1) {
@@ -218,18 +221,24 @@ public class MainVisualisationController {
 
     public void setUpGraphControls(FxViewPanel view) {
         // Center graph controller
-        autoLayoutButton.setOnMousePressed((mouseEvent -> {
+        autoLayoutButton.setOnMouseClicked((mouseEvent -> {
             if (autoLayoutButton.getStyleClass().get(0).equals(INACTIVE_BUTTON)) {
-                autoLayoutButton.getStyleClass().clear();
-                autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
                 viewer.enableAutoLayout();
                 view.getCamera().resetView();
+                autoLayoutButton.getStyleClass().clear();
+                autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
             }
+        }));
+
+        autoLayoutButton.setOnMousePressed((mouseEvent -> {
+            autoLayoutButton.getStyleClass().clear();
+            autoLayoutButton.getStyleClass().add(ACTIVE_BUTTON);
         }));
 
         autoLayoutButton.setOnMouseReleased(mouseEvent -> {
             autoLayoutButton.getStyleClass().clear();
             autoLayoutButton.getStyleClass().add(INACTIVE_BUTTON);
+            viewer.disableAutoLayout();
         });
 
         // Pointer controller
@@ -358,6 +367,8 @@ public class MainVisualisationController {
 
     public void stopTimer() {
         timeline.stop();
+        statusText.setText("COMPLETED");
+        statusBar.setStyle("-fx-fill: #00ff00; -fx-opacity: 20%");
     }
 
     private void createPieChart() {

@@ -21,6 +21,11 @@
     -fx-font-weight: bold;
 }
 
+.statusDisplay {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
 .chart-plot-background {
     -fx-background-color: #ffffff00;
 }
@@ -89,23 +94,6 @@
     -fx-border-radius: 10px;
     -fx-border-color: #5A57D8;
     -fx-border-width: 0.75px;
-}
-
-#progressBar .track {
-    -fx-background-color: #272A3D;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-    -fx-border-color: #5A57D8;
-    -fx-border-width: 0.75px;
-}
-
-#progressBar .bar {
-    -fx-background-color: #5A57D8;
-    -fx-background-radius: 10px;
-}
-
-#progressPercentage {
-    -fx-font-size: 12px;
 }
 
 #startButton {
