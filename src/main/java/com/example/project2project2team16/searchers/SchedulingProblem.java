@@ -186,14 +186,10 @@ public class SchedulingProblem {
             return node.fValue;
         }
 
-//        int loadBalanceHeuristic = 0;
-        int dataReadyTimeHeuristic = 0;
-//        int bottomLevelHeuristic = 0;
         int loadBalanceHeuristic = loadBalanceHeuristic(node);
-//        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node, taskGraph);
+        int dataReadyTimeHeuristic = dataReadyTimeHeuristic(node);
         int bottomLevelHeuristic = bottomLevelHeuristic(node);
 
-        // dataReadyTime seems to just increase the runtime currently
         int maxHeuristic = Math.max(Math.max(loadBalanceHeuristic, bottomLevelHeuristic), dataReadyTimeHeuristic);
 
         if (maxHeuristic == loadBalanceHeuristic) {
@@ -311,13 +307,11 @@ public class SchedulingProblem {
         return cost;
     }
 
-    private static int dataReadyTimeHeuristic(ScheduleNode node, Graph taskGraph) {
-        // get all unvisited nodes from the task graph
-        List<Node> freeNodes = taskGraph.nodes().filter(taskNode -> !node.visited.containsKey(taskNode.getId())).collect(Collectors.toList());
+    private static int dataReadyTimeHeuristic(ScheduleNode node) {
         int maxDRTHeuristic = 0;
         int minDRT; // the minimum DRT across all processors
 
-        for (Node currentNode : freeNodes) {
+        for (Node currentNode : node.availableTasks) {
             try {
                 minDRT = calculateMaxDRT(currentNode, 0, node.visited);
                 for (int i = 1; i < node.processorCount; i++) {
@@ -395,14 +389,26 @@ public class SchedulingProblem {
     }
 
     public static int getIdleTimeUsageCount() {
-        return heuristicCount.get(Heuristic.IDLE_TIME);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.IDLE_TIME);
+        } else {
+            return 0;
+        }
     }
 
     public static int getDataReadyHeuristicCount() {
-        return heuristicCount.get(Heuristic.DATA_READY);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.DATA_READY);
+        } else {
+            return 0;
+        }
     }
 
     public static int getBottomLevelHeuristicCount() {
-        return heuristicCount.get(Heuristic.BOTTOM_LEVEL);
+        if (heuristicCount != null) {
+            return heuristicCount.get(Heuristic.BOTTOM_LEVEL);
+        } else {
+            return 0;
+        }
     }
 }
