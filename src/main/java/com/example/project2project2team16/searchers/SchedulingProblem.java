@@ -25,11 +25,13 @@ public class SchedulingProblem {
     static Integer computationCostSum;
 
     static Map<Heuristic, Integer> heuristicCount;
+    static Map<String, Integer> dfsMemo;
 
     public SchedulingProblem(Graph taskGraph, int processorCount) {
         this.taskGraph = taskGraph;
         this.taskCount = taskGraph.getNodeCount();
         this.processorCount = processorCount;
+        dfsMemo = new HashMap<>();
 
         this.pruneDuplicateTasks();
 
@@ -253,10 +255,9 @@ public class SchedulingProblem {
     /**
      * Performs dfs to calculate the Critical Computational Path cost of the specified node.
      * @param node Node to calculate for.
-     * @param dfsMemo Map of already calculated costs.
      * @return Critical Computational Path cost.
      */
-    private static int dfs(Node node, Map<String, Integer> dfsMemo) {
+    private static int dfs(Node node) {
         if (dfsMemo.containsKey(node.getId())) {
             return dfsMemo.get(node.getId());
         }
@@ -268,7 +269,7 @@ public class SchedulingProblem {
         // and not for anything else
         List<Node> nodeChildren = node.leavingEdges().filter(edge -> !edge.getId().contains("virtual")).map(Edge::getTargetNode).collect(Collectors.toList());
         for (Node child : nodeChildren) {
-            int childCost = dfs(child, dfsMemo);
+            int childCost = dfs(child);
 
             cost = Math.max(cost, childCost);
         }
@@ -287,9 +288,7 @@ public class SchedulingProblem {
      * @return Critical Computational Path cost excl. node cost.
      */
     private static int GetCriticalPath(Node node) {
-        Map<String, Integer> dfsMemo = new HashMap<>();
-
-        return dfs(node, dfsMemo) - node.getAttribute("Weight", Double.class).intValue();
+        return dfs(node) - node.getAttribute("Weight", Double.class).intValue();
     }
 
     /**
