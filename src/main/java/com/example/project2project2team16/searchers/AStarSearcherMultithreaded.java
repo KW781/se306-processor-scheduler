@@ -19,6 +19,7 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
     List<PriorityBlockingQueue<ScheduleNode>> frontiers = new ArrayList<>();
     AtomicInteger doneThreads = new AtomicInteger();
     int tasksVisited = 0;
+    Object visLock = new Object();
 
 
     public AStarSearcherMultithreaded(SchedulingProblem problem) {
@@ -144,6 +145,8 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
                 continue;
             }
 
+
+
             if (problem.IsGoal(nextNode)) {
                 synchronized (lock) {
                     if (currentOptimal == null || nextNode.GetValue() < currentOptimal.GetValue()) {
@@ -181,6 +184,17 @@ public class AStarSearcherMultithreaded extends GreedySearcher {
 
                 if (nextNode == null) {
                     continue;
+                }
+
+                if (nextNode.visited.size() > tasksVisited) {
+                    synchronized (visLock) {
+                        if (nextNode.visited.size() > tasksVisited) {
+                            GraphVisualisationHelper helper = GraphVisualisationHelper.instance();
+                            helper.addNode(nextNode, nextNode.parent);
+                            helper.updateOptimalNode(nextNode);
+                            tasksVisited = nextNode.visited.size();
+                        }
+                    }
                 }
 
                 if (currentOptimal == null || nextNode.fValue < currentOptimal.GetValue()) {
