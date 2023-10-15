@@ -40,6 +40,8 @@ import org.graphstream.ui.view.util.GraphMetrics;
 import org.graphstream.ui.view.util.InteractiveElement;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryManagerMXBean;
 import java.text.DecimalFormat;
 import java.util.EnumSet;
 import java.util.Objects;
@@ -107,6 +109,8 @@ public class MainVisualisationController {
     static final String INACTIVE_BUTTON = "svgButton";
     static final String ACTIVE_BUTTON = "svgButtonActive";
     static final OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+
+    static final MemoryMXBean memBean = ManagementFactory.getMemoryMXBean();
     private ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
     private boolean selectedNode = false;
 
@@ -386,7 +390,7 @@ public class MainVisualisationController {
      */
     public static double getCPUUsage() {
         DecimalFormat df = new DecimalFormat("#.#");
-        return Double.parseDouble(df.format(osBean.getSystemCpuLoad() * 100));
+        return Double.parseDouble(df.format((osBean.getSystemLoadAverage() * 100) / osBean.getAvailableProcessors()));
     }
 
     /**
@@ -395,8 +399,8 @@ public class MainVisualisationController {
      * @return current memory used in percentage
      */
     public static int getMemoryUsage() {
-        long totalMem = Runtime.getRuntime().totalMemory();
-        long memUsed = totalMem - Runtime.getRuntime().freeMemory();
+        long totalMem = memBean.getHeapMemoryUsage().getMax();
+        long memUsed = memBean.getHeapMemoryUsage().getUsed();
         double memoryUsage = ((double) (memUsed) / totalMem) * 100;
         return (int) Math.round(memoryUsage);
     }

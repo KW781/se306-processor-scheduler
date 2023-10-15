@@ -188,6 +188,9 @@
                         <Text fx:id="ganttChartLabel" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="CURRENT BEST SCHEDULE"
                               styleClass="bottomHeaders"/>
                         <BorderPane fx:id="ganttPane" prefHeight="250.0"/>
+                        <padding>
+                            <Insets top="4.0" />
+                        </padding>
                     </VBox>
                     <VBox prefWidth="350.0" styleClass="container" alignment="CENTER">
                         <Text text="HEURISTIC USAGE" fill="WHITE" strokeType="OUTSIDE"
@@ -232,6 +235,9 @@
                                 <Insets top="2.0" left="38.0"/>
                             </VBox.margin>
                         </VBox>
+                        <padding>
+                            <Insets top="4.0" />
+                        </padding>
                     </VBox>
                 </HBox>
             </children>
