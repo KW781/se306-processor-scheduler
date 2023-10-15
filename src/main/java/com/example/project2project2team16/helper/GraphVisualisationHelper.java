@@ -4,13 +4,12 @@ import com.example.project2project2team16.searchers.ScheduleNode;
 import com.example.project2project2team16.searchers.enums.Heuristic;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GraphVisualisationHelper {
     private static GraphVisualisationHelper instance = null;
@@ -20,15 +19,12 @@ public class GraphVisualisationHelper {
     private Integer currentScheduleNumber = 0;
     private Integer processorCount;
     private Map<String, ScheduleNode> createdSchedules = new HashMap<>();
-
     private Map<Integer, String> nodeColours = new HashMap<>();
     static final String LABEL = "ui.label";
     static final String HEURISTIC = "ui.heuristic";
     static final String HEURISTIC_COST = "ui.heuristicCost";
     static final String SCHEDULE = "ui.schedule";
     static final String COLOR = "ui.color";
-    private Random random = new Random();
-
 
     private GraphVisualisationHelper() {
     }
@@ -68,17 +64,21 @@ public class GraphVisualisationHelper {
             graph.addEdge("Edge-" + source + "-" + target, source, target, true).setAttribute("ui.min_length", 50);;
         }
     }
+    private Color generateRandomColour() {
+        Random random = new Random();
+        return new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+    }
 
     private String getColour(int threadId) {
         if (nodeColours.containsKey(threadId)) {
             return nodeColours.get(threadId);
         } else {
-            // create a big random number - maximum is ffffff (hex) = 16777215 (dez)
-            int nextInt = random.nextInt(0xffffff + 1);
+            Color randomColour = generateRandomColour();
+            String colorCode = "rgb(" +
+                    randomColour.getRed() + "," +
+                    randomColour.getGreen() + "," +
+                    randomColour.getBlue() + ")";
 
-            // format it as hexadecimal string (with hashtag and leading zeros)
-            String colorCode = String.format("#%06x", nextInt);
-            System.out.println("Colour: " + colorCode);
             nodeColours.put(threadId, colorCode);
             return colorCode;
         }
@@ -102,7 +102,7 @@ public class GraphVisualisationHelper {
                 node = graph.addNode(scheduleNode.toString());
                 // Set node attributes to be displayed
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
-                node.setAttribute(COLOR, getColour(scheduleNode.getThreadId()));
+                node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 node.setAttribute(SCHEDULE, scheduleNode.toString());
@@ -114,7 +114,7 @@ public class GraphVisualisationHelper {
 
                 // Set node attributes to be displayed
                 node.setAttribute(LABEL, currentScheduleNumber - 1);
-                node.setAttribute(COLOR, getColour(scheduleNode.getThreadId()));
+                node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
                 node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
                 node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
                 node.setAttribute(SCHEDULE, scheduleNode.toString());
@@ -126,7 +126,7 @@ public class GraphVisualisationHelper {
 
             // Set node attributes to be displayed
             node.setAttribute(LABEL, currentScheduleNumber);
-            node.setAttribute(COLOR, getColour(scheduleNode.getThreadId()));
+            node.setAttribute("ui.style", "fill-color: " + getColour(scheduleNode.getThreadId()) + ";");
             node.setAttribute(HEURISTIC_COST, scheduleNode.getfValue().toString());
             node.setAttribute(HEURISTIC, getHeuristic(scheduleNode));
             currentScheduleNumber++;
@@ -144,12 +144,13 @@ public class GraphVisualisationHelper {
 
     public void updateOptimalNode(ScheduleNode newOptimal) {
         Node graphNode = graph.getNode(newOptimal.toString());
+        graphNode.setAttribute("ui.prevcolor", graphNode.getAttribute("ui.style"));
         graphNode.setAttribute("ui.style", "fill-color: #FF0000;");
 
         if (currentOptimal != null) {
             Node prevOptimalNode = graph.getNode(currentOptimal.toString());
             if (prevOptimalNode != null) {
-                prevOptimalNode.setAttribute("ui.style", "fill-color: #D9D9D9;");
+                prevOptimalNode.setAttribute("ui.style", prevOptimalNode.getAttribute("ui.prevcolor"));
             }
         }
 
